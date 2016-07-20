@@ -30,63 +30,63 @@ public interface SkillLevelData extends SkillLevelInfo {
 	
 	public static interface SelfEffect {
 
-		/** ¹¥»÷ËÙ¶È */
+		/** æ”»å‡»é€Ÿåº¦ */
 		String EFFECT_ATTACK_SPEED = "AS";
-		/** ×îÐ¡¹¥»÷´ÎÊý */
+		/** æœ€å°æ”»å‡»æ¬¡æ•° */
 		String EFFECT_ATTACK_MIN = "AN";
-		/** ×î´ó¹¥»÷´ÎÊý */
+		/** æœ€å¤§æ”»å‡»æ¬¡æ•° */
 		String EFFECT_ATTACK_MAX = "AM";
-		/** ÉËº¦±È */
+		/** ä¼¤å®³æ¯” */
 		String EFFECT_DAMAGE = "DD";
-		/** ¹¥»÷Á¦°Ù·Ö±È */
+		/** æ”»å‡»åŠ›ç™¾åˆ†æ¯” */
 		String EFFECT_ATTACK_RATE = "TR";
-		/** ·ÀÓù±ÈÂÊ */
+		/** é˜²å¾¡æ¯”çŽ‡ */
 		String EFFECT_DEFEND_RATE = "DR";
-		/** Ä§·À±ÈÂÊ */
+		/** é­”é˜²æ¯”çŽ‡ */
 		String EFFECT_MAGIC_RATE = "MR";
-		/** ÃüÖÐ */
+		/** å‘½ä¸­ */
 		String EFFECT_HIT_RATE = "HR";
-		/** ºÄ·Ñ¶Ô·½MPµÄ°Ù·Ö±È */
+		/** è€—è´¹å¯¹æ–¹MPçš„ç™¾åˆ†æ¯” */
 		String EFFECT_TARGET_MANA_RATE = "FR";
-		/** Ä§·¨·ÀÓù */
+		/** é­”æ³•é˜²å¾¡ */
 		String EFFECT_MAGIC_DEFEND = "RS";
-		/** ÎïÀí·ÀÓù */
+		/** ç‰©ç†é˜²å¾¡ */
 		String EFFECT_PHYSICAL_DEFEND = "RE";
-		/** ÉÁ±Ü */
+		/** é—ªé¿ */
 		String EFFECT_AVOID = "AV";
-		/** ·´»÷Ä¬ÈÏÂÊ(ÏÂÏÞ) */
+		/** åå‡»é»˜è®¤çŽ‡(ä¸‹é™) */
 		String EFFECT_CO = "CO";
-		/** ·´»÷ÂÊ(ÉÏÏÞ) */
+		/** åå‡»çŽ‡(ä¸Šé™) */
 		String EFFECT_COUNTER = "CM";
-		/** ×îÐ¡»Ö¸´ÂÊ */
+		/** æœ€å°æ¢å¤çŽ‡ */
 		String EFFECT_D1 = "D1";
-		/** ×î´ó»Ö¸´ÂÊ */
+		/** æœ€å¤§æ¢å¤çŽ‡ */
 		String EFFECT_D2 = "D2";
-		/** ¿¹¶¾ÐÞÕý */
+		/** æŠ—æ¯’ä¿®æ­£ */
 		String EFFECT_POISON = "PO";
-		/** ¿¹Ë¯ÐÞÕý */
+		/** æŠ—ç¡ä¿®æ­£ */
 		String EFFECT_SLEEP = "SL";
-		/** ¿¹Ê¯ÐÞÕý */
+		/** æŠ—çŸ³ä¿®æ­£ */
 		String EFFECT_STONE = "ST";
-		/** ¿¹×íÐÞÕý */
+		/** æŠ—é†‰ä¿®æ­£ */
 		String EFFECT_INTOXICATION = "YO";
-		/** »ìÂÒÐÞÕý */
+		/** æ··ä¹±ä¿®æ­£ */
 		String EFFECT_CONFUSION = "CN";
-		/** ÒÅÍüÐÞÕý */
+		/** é—å¿˜ä¿®æ­£ */
 		String EFFECT_AMNESIA = "AA";
-		/** ±»ÖäµÄ»úÂÊ */
+		/** è¢«å’’çš„æœºçŽ‡ */
 		String EFFECT_AC = "AC";
-		/** Ä§¹¥ »Ö¸´±ÈÂÊ */
+		/** é­”æ”» æ¢å¤æ¯”çŽ‡ */
 		String EFFECT_MAGIC_ATTACK = "AR";
-		/** ¶Ô·½ÖÐÖä»úÂÊ */
+		/** å¯¹æ–¹ä¸­å’’æœºçŽ‡ */
 		String EFFECT_S_RATE = "SR";
-		/** »ØºÏÊý */
+		/** å›žåˆæ•° */
 		String EFFECT_ROUND = "CH";
-		/** »Ö¸´ÂÊ */
+		/** æ¢å¤çŽ‡ */
 		String EFFECT_RECOVER_RATE = "RR";
-		/** ±ØÉ± */
+		/** å¿…æ€ */
 		String EFFECT_CRITICAL_RATE = "CR";
-		/** ÔªËØÊôÐÔ¡¾EX¡¿ */
+		/** å…ƒç´ å±žæ€§ã€EXã€‘ */
 		String EFFECT_EX_ELEMENT = "EL";
 		
 		String getType();
