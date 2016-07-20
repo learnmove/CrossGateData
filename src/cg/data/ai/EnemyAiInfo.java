@@ -3,552 +3,552 @@ package cg.data.ai;
 public interface EnemyAiInfo {
 	
 	/**
-	 * 100%������� �������0 ��100%ai��ѡ�����
+	 * 100%随机触发 如果设置0 则100%ai会选择这个
 	 */
 	byte AI_CONDITION_100 = 0;
 	/**
-	 * 75%������� �������0 ��75%ai��ѡ�����
+	 * 75%随机触发 如果设置0 则75%ai会选择这个
 	 */
 	byte AI_CONDITION_75 = 1;
 	/**
-	 * 50%������� �������0 ��50%ai��ѡ�����
+	 * 50%随机触发 如果设置0 则50%ai会选择这个
 	 */
 	byte AI_CONDITION_50 = 2;
 	/**
-	 * 25%������� �������0 ��25%ai��ѡ�����
+	 * 25%随机触发 如果设置0 则25%ai会选择这个
 	 */
 	byte AI_CONDITION_25 = 3;
 	/**
-	 * ��������HP = 100%
+	 * 怪物自身HP = 100%
 	 */
 	byte AI_CONDITION_S_HP_E_100 = 4;
 	/**
-	 * ��������HP > 75%
+	 * 怪物自身HP > 75%
 	 */
 	byte AI_CONDITION_S_HP_G_75 = 5;
 	/**
-	 * ��������HP > 50%
+	 * 怪物自身HP > 50%
 	 */
 	byte AI_CONDITION_S_HP_G_50 = 6;
 	/**
-	 * ��������HP < 50%
+	 * 怪物自身HP < 50%
 	 */
 	byte AI_CONDITION_S_HP_L_50 = 7;
 	/**
-	 * ��������HP < 25%
+	 * 怪物自身HP < 25%
 	 */
 	byte AI_CONDITION_S_HP_L_25 = 8;
 	/**
-	 * ��������MP >= 50%
+	 * 怪物自身MP >= 50%
 	 */
 	byte AI_CONDITION_S_MP_GE_50 = 9;
 	/**
-	 * ��������MP < 50%
+	 * 怪物自身MP < 50%
 	 */
 	byte AI_CONDITION_S_MP_L_50 = 10;
 	/**
-	 * ������ӪHP < 50%
+	 * 怪物阵营HP < 50%
 	 */
 	byte AI_CONDITION_T_HP_L_50 = 11;
 	/**
-	 * ������ӪHP < 25%
+	 * 怪物阵营HP < 25%
 	 */
 	byte AI_CONDITION_T_HP_L_25 = 12;
 	/**
-	 * ������Ӫ���ж���λ
+	 * 怪物阵营有中毒单位
 	 */
 	byte AI_CONDITION_T_POSITION = 13;
 	/**
-	 * ������Ӫ�л��ҵ�λ
+	 * 怪物阵营有混乱单位
 	 */
 	byte AI_CONDITION_T_CONFUSION = 14;
 	/**
-	 * ������Ӫ��ʯ����λ
+	 * 怪物阵营有石化单位
 	 */
 	byte AI_CONDITION_T_STONE = 15;
 	/**
-	 * ������Ӫ��˯�ߵ�λ
+	 * 怪物阵营有睡眠单位
 	 */
 	byte AI_CONDITION_T_SLEEP = 16;
 	/**
-	 * ������Ӫ�����Ƶ�λ
+	 * 怪物阵营有醉酒单位
 	 */
 	byte AI_CONDITION_T_INTOXICATION = 17;
 	/**
-	 * ������Ӫ��������λ
+	 * 怪物阵营有遗忘单位
 	 */
 	byte AI_CONDITION_T_AMNESIA = 18;
 	/**
-	 * ��Ҵ�λ���� = 0
+	 * 玩家存活单位数量 = 0
 	 */
 	byte AI_CONDITION_PT_COUNT_E_0 = 19;
 	/**
-	 * ��Ҵ�λ���� = 1
+	 * 玩家存活单位数量 = 1
 	 */
 	byte AI_CONDITION_PT_COUNT_E_1 = 20;
 	/**
-	 * ��Ҵ�λ���� = 2
+	 * 玩家存活单位数量 = 2
 	 */
 	byte AI_CONDITION_PT_COUNT_E_2 = 21;
 	/**
-	 * ����������� = 10
+	 * 怪物怪物数量 = 10
 	 */
 	byte AI_CONDITION_T_COUNT_E_10 = 22;
 	/**
-	 * ����������� >= 8
+	 * 怪物怪物数量 >= 8
 	 */
 	byte AI_CONDITION_T_COUNT_GE_8 = 23;
 	/**
-	 * ����������� >= 5
+	 * 怪物怪物数量 >= 5
 	 */
 	byte AI_CONDITION_T_COUNT_GE_5 = 24;
 	/**
-	 * ����������� < 5
+	 * 怪物怪物数量 < 5
 	 */
 	byte AI_CONDITION_T_COUNT_L_5 = 25;
 	/**
-	 * ����������� < 4
+	 * 怪物怪物数量 < 4
 	 */
 	byte AI_CONDITION_T_COUNT_L_4 = 26;
 	/**
-	 * ����������� <= 1
+	 * 怪物怪物数量 <= 1
 	 */
 	byte AI_CONDITION_T_COUNT_LE_1 = 27;
 	/**
-	 * ��Ч����
+	 * 无效设置
 	 */
 	byte AI_CONDITION_NONE = 28;
 	/**
-	 * ����ƽ���ȼ�С�����ƽ���ȼ�
+	 * 怪物平均等级小于玩家平均等级
 	 */
 	byte AI_CONDITION_LEVEL_T_L_PT = 29;
 	/**
-	 * ����ƽ���ȼ����ڵ������ƽ���ȼ�
+	 * 怪物平均等级大于等于玩家平均等级
 	 */
 	byte AI_CONDITION_LEVEL_T_GE_PT = 30;
 	/**
-	 * ���ĳһ��λHP = 100%
+	 * 玩家某一单位HP = 100%
 	 */
 	byte AI_CONDITION_P_HP_E_100 = 31;
 	/**
-	 * ���ĳһ��λHP > 75%
+	 * 玩家某一单位HP > 75%
 	 */
 	byte AI_CONDITION_P_HP_G_75 = 32;
 	/**
-	 * ���ĳһ��λHP > 50%
+	 * 玩家某一单位HP > 50%
 	 */
 	byte AI_CONDITION_P_HP_G_50 = 33;
 	/**
-	 * ���ĳһ��λHP < 50%
+	 * 玩家某一单位HP < 50%
 	 */
 	byte AI_CONDITION_P_HP_L_50 = 34;
 	/**
-	 * ���ĳһ��λHP < 25%
+	 * 玩家某一单位HP < 25%
 	 */
 	byte AI_CONDITION_P_HP_L_25 = 35;
 	/**
-	 * �����Ӫ��װ��Զ�̹��������ĵ�λ
+	 * 玩家阵营有装备远程攻击武器的单位
 	 */
 	byte AI_CONDITION_P_FAR = 36;
 	/**
-	 * �����Ӫû��װ��Զ�̹��������ĵ�λ
+	 * 玩家阵营没有装备远程攻击武器的单位
 	 */
 	byte AI_CONDITION_P_NOFAR = 37;
 	/**
-	 * �����Ӫ�����ж��ĵ�λ
+	 * 玩家阵营存在中毒的单位
 	 */
 	byte AI_CONDITION_P_POSITION = 38;
 	/**
-	 * �����Ӫ����û���ж��ĵ�λ
+	 * 玩家阵营存在没有中毒的单位
 	 */
 	byte AI_CONDITION_P_NOPOSITION = 39;
 	/**
-	 * �����Ӫ���ڻ��ҵĵ�λ
+	 * 玩家阵营存在混乱的单位
 	 */
 	byte AI_CONDITION_P_CONFUSION = 40;
 	/**
-	 * �����Ӫ����û�л��ҵĵ�λ
+	 * 玩家阵营存在没有混乱的单位
 	 */
 	byte AI_CONDITION_P_NOCONFUSION = 41;
 	/**
-	 * �����Ӫ����ʯ���ĵ�λ
+	 * 玩家阵营存在石化的单位
 	 */
 	byte AI_CONDITION_P_STONE = 42;
 	/**
-	 * �����Ӫ����û��ʯ���ĵ�λ
+	 * 玩家阵营存在没有石化的单位
 	 */
 	byte AI_CONDITION_P_NOSTONE = 43;
 	/**
-	 * �����Ӫ����˯�ߵĵ�λ
+	 * 玩家阵营存在睡眠的单位
 	 */
 	byte AI_CONDITION_P_SLEEP = 44;
 	/**
-	 * �����Ӫ����û��˯�ߵĵ�λ
+	 * 玩家阵营存在没有睡眠的单位
 	 */
 	byte AI_CONDITION_P_NOSLEEP = 45;
 	/**
-	 * �����Ӫ�������Ƶĵ�λ
+	 * 玩家阵营存在醉酒的单位
 	 */
 	byte AI_CONDITION_P_INTOXICATION = 46;
 	/**
-	 * �����Ӫ����û�����Ƶĵ�λ
+	 * 玩家阵营存在没有醉酒的单位
 	 */
 	byte AI_CONDITION_P_NOINTOXICATION = 47;
 	/**
-	 * �����Ӫ���������ĵ�λ
+	 * 玩家阵营存在遗忘的单位
 	 */
 	byte AI_CONDITION_P_AMNESIA = 48;
 	/**
-	 * �����Ӫ����û�������ĵ�λ
+	 * 玩家阵营存在没有遗忘的单位
 	 */
 	byte AI_CONDITION_P_NOAMNESIA = 49;
 	/**
-	 * ���ʹ�ûָ�ħ��
+	 * 玩家使用恢复魔法
 	 */
 	byte AI_CONDITION_P_USE_HUIFU = 50;
 	/**
-	 * ����д���ħ��/ħ��/ħ��״̬�ĵ�λʱ
+	 * 玩家有存在魔无/魔吸/魔反状态的单位时
 	 */
 	byte AI_CONDITION_P_MAGIC_WITCHCRAFT = 51;
 	/**
-	 * ����д���û��ħ��/ħ��/ħ��״̬�ĵ�λʱ
+	 * 玩家有存在没有魔无/魔吸/魔反状态的单位时
 	 */
 	byte AI_CONDITION_P_MAGIC_NOWITCHCRAFT = 52;
 	/**
-	 * ����д��ڹ���/����/����״̬�ĵ�λʱ
+	 * 玩家有存在攻无/攻吸/攻反状态的单位时
 	 */
 	byte AI_CONDITION_P_PHYSICS_WITCHCRAFT = 53;
 	/**
-	 * ����д���û�й���/����/����״̬�ĵ�λʱ
+	 * 玩家有存在没有攻无/攻吸/攻反状态的单位时
 	 */
 	byte AI_CONDITION_P_PHYSICS_NOWITCHCRAFT = 54;
 	/**
-	 * �����غ�ʱ
+	 * 奇数回合时
 	 */
 	byte AI_CONDITION_ODD_ROUND = 55;
 	/**
-	 * ż���غ�ʱ
+	 * 偶数回合时
 	 */
 	byte AI_CONDITION_EVEN_ROUND = 56;
 	/**
-	 * ���2�غ�
+	 * 间隔2回合
 	 */
 	byte AI_CONDITION_INTERVAL_ROUND_2 = 57;
 	/**
-	 * ��ǰ��Ϸ��ʱ��Ϊ����ʱ
+	 * 当前游戏中时间为白天时
 	 */
 	byte AI_CONDITION_DAY = 58;
 	/**
-	 * ��ǰ��Ϸ��ʱ��Ϊҹ��ʱ
+	 * 当前游戏中时间为夜晚时
 	 */
 	byte AI_CONDITION_NIGHT = 59;
 	/**
-	 * ��Ҵ�����
+	 * 玩家带宠物
 	 */
 	byte AI_CONDITION_P_HAS_PET = 60;
 	/**
-	 * ��Ҳ�������
+	 * 玩家不带宠物
 	 */
 	byte AI_CONDITION_P_NO_PET = 61;
 	/**
-	 * ����ж���Ŀ�����0��λ��λʱ #λ�� ���� 4 2 0 1 3 ǰ�� 9 7 5 6 8
+	 * 玩家有对象目标怪物0号位单位时 #位置 后排 4 2 0 1 3 前排 9 7 5 6 8
 	 */
 	byte AI_CONDITION_P_TARGET_0 = 62;
 	/**
-	 * ����ж���Ŀ�����1��λ��λʱ
+	 * 玩家有对象目标怪物1号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_1 = 63;
 	/**
-	 * ����ж���Ŀ�����2��λ��λʱ
+	 * 玩家有对象目标怪物2号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_2 = 64;
 	/**
-	 * ����ж���Ŀ�����3��λ��λʱ
+	 * 玩家有对象目标怪物3号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_3 = 65;
 	/**
-	 * ����ж���Ŀ�����4��λ��λʱ
+	 * 玩家有对象目标怪物4号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_4 = 66;
 	/**
-	 * ����ж���Ŀ�����5��λ��λʱ
+	 * 玩家有对象目标怪物5号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_5 = 67;
 	/**
-	 * ����ж���Ŀ�����6��λ��λʱ
+	 * 玩家有对象目标怪物6号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_6 = 68;
 	/**
-	 * ����ж���Ŀ�����7��λ��λʱ
+	 * 玩家有对象目标怪物7号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_7 = 69;
 	/**
-	 * ����ж���Ŀ�����8��λ��λʱ
+	 * 玩家有对象目标怪物8号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_8 = 70;
 	/**
-	 * ����ж���Ŀ�����9��λ��λʱ
+	 * 玩家有对象目标怪物9号位单位时
 	 */
 	byte AI_CONDITION_P_TARGET_9 = 71;
 	/**
-	 * ���û�ж���Ŀ�����0��λ��λʱ #λ�� ���� 4 2 0 1 3 ǰ�� 9 7 5 6 8
+	 * 玩家没有对象目标怪物0号位单位时 #位置 后排 4 2 0 1 3 前排 9 7 5 6 8
 	 */
 	byte AI_CONDITION_P_NOTARGET_0 = 72;
 	/**
-	 * ���û�ж���Ŀ�����1��λ��λʱ
+	 * 玩家没有对象目标怪物1号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_1 = 73;
 	/**
-	 * ���û�ж���Ŀ�����2��λ��λʱ
+	 * 玩家没有对象目标怪物2号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_2 = 74;
 	/**
-	 * ���û�ж���Ŀ�����3��λ��λʱ
+	 * 玩家没有对象目标怪物3号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_3 = 75;
 	/**
-	 * ���û�ж���Ŀ�����4��λ��λʱ
+	 * 玩家没有对象目标怪物4号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_4 = 76;
 	/**
-	 * ���û�ж���Ŀ�����5��λ��λʱ
+	 * 玩家没有对象目标怪物5号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_5 = 77;
 	/**
-	 * ���û�ж���Ŀ�����6��λ��λʱ
+	 * 玩家没有对象目标怪物6号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_6 = 78;
 	/**
-	 * ���û�ж���Ŀ�����7��λ��λʱ
+	 * 玩家没有对象目标怪物7号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_7 = 79;
 	/**
-	 * ���û�ж���Ŀ�����8��λ��λʱ
+	 * 玩家没有对象目标怪物8号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_8 = 80;
 	/**
-	 * ���û�ж���Ŀ�����9��λ��λʱ
+	 * 玩家没有对象目标怪物9号位单位时
 	 */
 	byte AI_CONDITION_P_NOTARGET_9 = 81;
 	/**
-	 * ���ֻ��1���������
+	 * 玩家只有1个存活的玩家
 	 */
 	byte AI_CONDITION_P_COUNT_E_1 = 82;
 	/**
-	 * ��ҳ���1���������
+	 * 玩家超过1个存活的玩家
 	 */
 	byte AI_CONDITION_P_COUNT_G_1 = 83;
 	/**
-	 * ��ҳ���2���������
+	 * 玩家超过2个存活的玩家
 	 */
 	byte AI_CONDITION_P_COUNT_G_2 = 84;
 	/**
-	 * ��ҳ���3���������
+	 * 玩家超过3个存活的玩家
 	 */
 	byte AI_CONDITION_P_COUNT_G_3 = 85;
 	/**
-	 * �����5���������
+	 * 玩家有5个存活的玩家
 	 */
 	byte AI_CONDITION_P_COUNT_E_5 = 86;
 	/**
-	 * �غ�����4�ı���
+	 * 回合数是4的倍数
 	 */
 	byte AI_CONDITION_GROUND_M_4 = 87;
 	/**
-	 * �غ�����5�ı���
+	 * 回合数是5的倍数
 	 */
 	byte AI_CONDITION_GROUND_M_5 = 88;
 	/**
-	 * ��һ�غ�
+	 * 第一回合
 	 */
 	byte AI_CONDITION_GROUND_E_1 = 89;
 	/**
-	 * ��������MP < 25%
+	 * 怪物自身MP < 25%
 	 */
 	byte AI_CONDITION_S_MP_L_25 = 90;
 	/**
-	 * ��������MP < 15%
+	 * 怪物自身MP < 15%
 	 */
 	byte AI_CONDITION_S_MP_L_15 = 91;
 	/**
-	 * ��������MP < 5%
+	 * 怪物自身MP < 5%
 	 */
 	byte AI_CONDITION_S_MP_L_5 = 92;
 	
 	/**
-	 * ��������
+	 * 怪物自身
 	 */
 	byte AI_TARGET_SELF = 0;
 	/**
-	 * �������
+	 * 怪物随机
 	 */
 	byte AI_TARGET_T_RANDOM = 1;
 	/**
-	 * ������
+	 * 玩家随机
 	 */
 	byte AI_TARGET_PT_RANDOM = 2;
 	/**
-	 * ����Ѫ���� �������һ�������ȡ����һ��
+	 * 怪物血多者 如果多余一个则随机取其中一个
 	 */
 	byte AI_TARGET_T_HP_MOST = 3;
 	/**
-	 * ���Ѫ���� �������һ�������ȡ����һ��
+	 * 玩家血多者 如果多余一个则随机取其中一个
 	 */
 	byte AI_TARGET_PT_HP_MOST = 4;
 	/**
-	 * ����Ѫ���� �������һ�������ȡ����һ��
+	 * 怪物血少者 如果多余一个则随机取其中一个
 	 */
 	byte AI_TARGET_T_HP_LOW = 5;
 	/**
-	 * ���Ѫ���� �������һ�������ȡ����һ��
+	 * 玩家血少者 如果多余一个则随机取其中一个
 	 */
 	byte AI_TARGET_P_HP_LOW = 6;
 	/**
-	 * �������
+	 * 怪物随机
 	 */
 	byte AI_TARGET_T_RANDOM_EX = 7;
 	/**
-	 * ������
+	 * 玩家随机
 	 */
 	byte AI_TARGET_PT_RANDOM_EX = 8;
 	/**
-	 * ������Ӫ�ж���λ
+	 * 怪物阵营中毒单位
 	 */
 	byte AI_TARGET_T_POSITION = 9;
 	/**
-	 * �����Ӫ�ж���λ
+	 * 玩家阵营中毒单位
 	 */
 	byte AI_TARGET_P_POSITION = 10;
 	/**
-	 * ������Ӫ���ҵ�λ
+	 * 怪物阵营混乱单位
 	 */
 	byte AI_TARGET_T_CONFUSION = 11;
 	/**
-	 * �����Ӫ���ҵ�λ
+	 * 玩家阵营混乱单位
 	 */
 	byte AI_TARGET_P_CONFUSION = 12;
 	/**
-	 * ������Ӫʯ���ĵ�λ
+	 * 怪物阵营石化的单位
 	 */
 	byte AI_TARGET_T_STONE = 13;
 	/**
-	 * �����Ӫʯ���ĵ�λ
+	 * 玩家阵营石化的单位
 	 */
 	byte AI_TARGET_P_STONE = 14;
 	/**
-	 * ������Ӫ˯�ߵĵ�λ
+	 * 怪物阵营睡眠的单位
 	 */
 	byte AI_TARGET_T_SLEEP = 15;
 	/**
-	 * �����Ӫ˯�ߵĵ�λ
+	 * 玩家阵营睡眠的单位
 	 */
 	byte AI_TARGET_P_SLEEP = 16;
 	/**
-	 * ������Ӫ���Ƶĵ�λ
+	 * 怪物阵营醉酒的单位
 	 */
 	byte AI_TARGET_T_INTOXICATION = 17;
 	/**
-	 * �����Ӫ���Ƶĵ�λ
+	 * 玩家阵营醉酒的单位
 	 */
 	byte AI_TARGET_P_INTOXICATION = 18;
 	/**
-	 * ������Ӫ�����ĵ�λ
+	 * 怪物阵营遗忘的单位
 	 */
 	byte AI_TARGET_T_AMNESIA = 19;
 	/**
-	 * �����Ӫ�����ĵ�λ
+	 * 玩家阵营遗忘的单位
 	 */
 	byte AI_TARGET_P_AMNESIA = 20;
 	/**
-	 * �����Ӫʹ��Զ�������ĵ�λ
+	 * 玩家阵营使用远程武器的单位
 	 */
 	byte AI_TARGET_P_FAR = 21;
 	/**
-	 * �����Ӫʹ�ý�ս�����ĵ�λ
+	 * 玩家阵营使用近战武器的单位
 	 */
 	byte AI_TARGET_P_NEAR = 22;
 	/**
-	 * ������Ӫħ��/ħ��/ħ��״̬�ĵ�λ
+	 * 怪物阵营魔无/魔吸/魔反状态的单位
 	 */
 	byte AI_TARGET_T_MAGIC_WITCHCRAFT = 23;
 	/**
-	 * �����Ӫħ��/ħ��/ħ��״̬�ĵ�λ
+	 * 玩家阵营魔无/魔吸/魔反状态的单位
 	 */
 	byte AI_TARGET_PT_MAGIC_WITCHCRAFT = 24;
 	/**
-	 * ������Ӫ����/����/����״̬�ĵ�λ
+	 * 怪物阵营攻无/攻吸/攻反状态的单位
 	 */
 	byte AI_TARGET_T_PHYSICS_WITCHCRAFT = 25;
 	/**
-	 * �����Ӫ����/����/����״̬�ĵ�λ
+	 * 玩家阵营攻无/攻吸/攻反状态的单位
 	 */
 	byte AI_TARGET_PT_PHYSICS_WITCHCRAFT = 26;
 	/**
-	 * ������Ӫ�ָ�ħ��Ч���ĵ�λ
+	 * 怪物阵营恢复魔法效果的单位
 	 */
 	byte AI_TARGET_T_USE_HUIFU = 27;
 	/**
-	 * �����Ӫ�ָ�ħ��Ч���ĵ�λ
+	 * 玩家阵营恢复魔法效果的单位
 	 */
 	byte AI_TARGET_PT_USE_HUIFU = 28;
 	/**
-	 * �ҷ���Ӫ���Ե�λ��ͼ����
+	 * 我方阵营男性单位（图档）
 	 */
 	byte AI_TARGET_PT_MALE = 29;
 	/**
-	 * �ҷ���ӪŮ�Ե�λ��ͼ����
+	 * 我方阵营女性单位（图档）
 	 */
 	byte AI_TARGET_PT_FEMALE = 30;
 	/**
-	 * �ҷ���Ӫ�����ҵ�λ
+	 * 我方阵营随机玩家单位
 	 */
 	byte AI_TARGET_PT_PLAYER_RANDOM = 31;
 	/**
-	 * �ҷ���Ӫ������ﵥλ
+	 * 我方阵营随机宠物单位
 	 */
 	byte AI_TARGET_PT_PET_RANDOM = 32;
 	/**
-	 * �����Ӫû��ħ��/ħ��/ħ��״̬�ĵ�λ
+	 * 玩家阵营没有魔无/魔吸/魔反状态的单位
 	 */
 	byte AI_TARGET_PT_MAGIC_NOWITCHCRAFT = 33;
 	/**
-	 * �����Ӫû�й���/����/����״̬�ĵ�λ
+	 * 玩家阵营没有攻无/攻吸/攻反状态的单位
 	 */
 	byte AI_TARGET_PT_PHYSICS_NOWITCHCRAFT = 34;
 	/**
-	 * δ���쳣״̬��λ,�ж�
+	 * 未中异常状态单位,中毒
 	 */
 	byte AI_TARGET_P_NOPOSITION = 35;
 	/**
-	 * δ���쳣״̬��λ,����
+	 * 未中异常状态单位,混乱
 	 */
 	byte AI_TARGET_P_NOCONFUSION = 36;
 	/**
-	 * δ���쳣״̬��λ,ʯ��
+	 * 未中异常状态单位,石化
 	 */
 	byte AI_TARGET_P_NOSTONE = 37;
 	/**
-	 * δ���쳣״̬��λ,��˯
+	 * 未中异常状态单位,昏睡
 	 */
 	byte AI_TARGET_P_NOSLEEP = 38;
 	/**
-	 * δ���쳣״̬��λ,����
+	 * 未中异常状态单位,酒醉
 	 */
 	byte AI_TARGET_P_NOINTOXICATION = 39;
 	/**
-	 * δ���쳣״̬��λ,����
+	 * 未中异常状态单位,遗忘
 	 */
 	byte AI_TARGET_P_NOAMNESIA = 40;
 	/**
-	 * �з���Ӫû�лָ�ħ��Ч���ĵ�λ
+	 * 敌方阵营没有恢复魔法效果的单位
 	 */
 	byte AI_TARGET_T_NOHUIFU = 41;
 	/**
-	 * �з���Ӫû��ħ��/ħ��/ħ��״̬�ĵ�λ
+	 * 敌方阵营没有魔无/魔吸/魔反状态的单位
 	 */
 	byte AI_TARGET_T_MAGIC_NOWITCHCRAFT = 42;
 	/**
-	 * �з���Ӫû�й���/����/����״̬�ĵ�λ
+	 * 敌方阵营没有攻无/攻吸/攻反状态的单位
 	 */
 	byte AI_TARGET_T_PHYSICS_NOWITCHCRAFT = 43;
 	
