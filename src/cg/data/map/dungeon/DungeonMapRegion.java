@@ -4,11 +4,11 @@ import static cg.data.map.MapInfo.DATA_LENGTH;
 
 import java.io.BufferedWriter;
 import java.util.List;
-import java.util.Map;
-
-import cg.base.util.MathUtil;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
+
+import cg.base.util.MathUtil;
 
 class DungeonMapRegion {
 
@@ -75,12 +75,12 @@ class DungeonMapRegion {
 		}
 	}
 	
-	public void link(Map<Integer, Map<Integer, DungeonMapRegion>> mapRegions) {
+	public void link(Table<Integer, Integer, DungeonMapRegion> mapRegions) {
 		for (int i = 0;i < doors.length;i++) {
 			if (doors[i] != null) {
 				int x = this.x + XY[doors[i].dir << 1], y = this.y + XY[(doors[i].dir << 1) + 1];
-				if (mapRegions.containsKey(x) && mapRegions.get(x).containsKey(y)) {
-					DungeonMapRegion oldRegion = mapRegions.get(x).get(y);
+				if (mapRegions.containsRow(x) && mapRegions.containsColumn(y)) {
+					DungeonMapRegion oldRegion = mapRegions.get(x, y);
 					int oppDir = calcOppDir(doors[i].dir);
 					if (oldRegion.doors[oppDir] != null) {
 						setTarget(doors[i].dir, oldRegion);
@@ -101,7 +101,7 @@ class DungeonMapRegion {
 		door.size = MathUtil.getRandomContainsMax(sizeRange[minIndex], sizeRange[maxIndex]);
 	}
 	
-	public void fit(Map<Integer, Map<Integer, DungeonMapRegion>> mapRegions) {
+	public void fit(Table<Integer, Integer, DungeonMapRegion> mapRegions) {
 		fitEast();
 		fitSouth();
 
@@ -296,14 +296,14 @@ class DungeonMapRegion {
 		return MathUtil.bytesToInt2(cellImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH);
 	}
 	
-	public void createSubRoom(Map<Integer, Map<Integer, DungeonMapRegion>> mapRegions, DungeonMapRegionInfo dungeon) {
+	public void createSubRoom(Table<Integer, Integer, DungeonMapRegion> mapRegions, IDungeonMapInfoCreator<GMSV_Dungeon> creator) {
 		createSub = true;
 		// Breadth-first
 		for (int i = 0;i < doors.length;i++) {
 			if (doors[i] != null && doors[i].target == null) {
 				int x = this.x + XY[doors[i].dir << 1], y = this.y + XY[(doors[i].dir << 1) + 1];
-				if (!mapRegions.containsKey(x) || !mapRegions.get(x).containsKey(y)) { // The direction local is empty, will create a sub room.
-					DungeonMapInfo.createRoom(rate >> 1, dungeon, mapRegions, x, y, doors[i]);
+				if (!mapRegions.containsRow(x) || !mapRegions.containsColumn(y)) { // The direction local is empty, will create a sub room.
+					DungeonMapInfo.createRoom(rate >> 1, creator.getDungeon(), mapRegions, x, y, doors[i]);
 				} else { // This direction local has been created once, but it do not link to this room, so close the door.
 					doors[i] = null;
 				}
@@ -312,7 +312,7 @@ class DungeonMapRegion {
 		// Depth-Second
 		for (Door door : doors) {
 			if (door != null && door.target != null && !door.target.room.createSub) {
-				door.target.room.createSubRoom(mapRegions, dungeon);
+				door.target.room.createSubRoom(mapRegions, creator);
 			}
 		}
 	}
