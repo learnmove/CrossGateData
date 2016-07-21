@@ -23,13 +23,13 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 	
 	private static final Logger log = LoggerFactory.getLogger(DungeonMapInfoCreator.class);
 	
-	private final IDungeonMapInfo dungeonMapInfo;
+	private final IDungeonMapInfo<GMSV_Dungeon> dungeonMapInfo;
 	
 	private GMSV_Dungeon dungeon;
 	
 	private Table<Integer, Integer, DungeonMapRegion> mapRegions;
 	
-	public DungeonMapInfoCreator(IDungeonMapInfo dungeonMapInfo) {
+	public DungeonMapInfoCreator(IDungeonMapInfo<GMSV_Dungeon> dungeonMapInfo) {
 		this.dungeonMapInfo = dungeonMapInfo;
 	}
 	
@@ -88,7 +88,10 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 			
 			index++;
 		}
-		
+		return fill0(minCol, maxCol, minRow, maxRow);
+	}
+	
+	private Map<Integer, int[]> fill0(int minCol, int maxCol, int minRow, int maxRow) {
 		int col = maxCol - minCol + 1; // calculate amount of column
 		int row = maxRow - minRow + 1; // calculate amount of row
 		int maxSouth = col * dungeon.getSizeRange()[ROOM_SIZE_SOUTH_MAX_INDEX]; // calculate the max south
@@ -102,22 +105,25 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 		
 		Map<Integer, int[]> canUseCells = newHashMap();
 		int mapId = dungeonMapInfo.getMapId();
-		for (Integer key : keys) {
-			for (DungeonMapRegion mapRegion : mapRegions.row(key).values()) {
-				mapRegion.fill();
-				for (int regionEast = 0;regionEast < dungeon.getSizeRange()[ROOM_SIZE_EAST_MAX_INDEX];regionEast++) {
-					int mapEast = regionEast + (mapRegion.getY() - minRow) * dungeon.getSizeRange()[ROOM_SIZE_EAST_MAX_INDEX]; // calculate east of map
-					for (int regionSouth = 0;regionSouth < dungeon.getSizeRange()[ROOM_SIZE_SOUTH_MAX_INDEX];regionSouth++) {
-						int mapSouth = regionSouth + (mapRegion.getX() - minCol) * dungeon.getSizeRange()[ROOM_SIZE_SOUTH_MAX_INDEX]; // calculate south of map
-						for (int i = 0;i < DATA_LENGTH;i++) { // copy data from region to map
-							cellImageGlobalIds[dungeonMapInfo.calcShortIndex(mapEast, mapSouth) + i] = mapRegion.cellImageGlobalIds[mapRegion.calcShortIndex(regionEast, regionSouth) + i];
-							objectImageGlobalIds[dungeonMapInfo.calcShortIndex(mapEast, mapSouth) + i] = mapRegion.objectImageGlobalIds[mapRegion.calcShortIndex(regionEast, regionSouth) + i];
-						}
-						byte mark = dungeonMapInfo.getMark(dungeon, mapEast, mapSouth);
-						marks[dungeonMapInfo.calcIndex(mapEast, mapSouth)] = mark; // mark
-						if (mark == MARK_NOMARL) { // this is a can use cell
-							canUseCells.put(dungeonMapInfo.calcIndex(mapEast, mapSouth), new int[]{mapEast, mapSouth, mapId});
-						}
+		int eastSize = dungeon.getSizeRange()[ROOM_SIZE_EAST_MAX_INDEX];
+		int southSize = dungeon.getSizeRange()[ROOM_SIZE_SOUTH_MAX_INDEX];
+		for (DungeonMapRegion mapRegion : mapRegions.values()) {
+			mapRegion.fill();
+			for (int regionEast = 0;regionEast < eastSize;regionEast++) {
+				int mapEast = regionEast + (mapRegion.getY() - minRow) * eastSize; // calculate east of map
+				for (int regionSouth = 0;regionSouth < southSize;regionSouth++) {
+					int mapSouth = regionSouth + (mapRegion.getX() - minCol) * southSize; // calculate south of map
+					int shortIndex = mapRegion.calcShortIndex(regionEast, regionSouth);
+					for (int i = 0;i < DATA_LENGTH;i++) { // copy data from region to map
+						int cellIndex = dungeonMapInfo.calcShortIndex(mapEast, mapSouth) + i;
+						cellImageGlobalIds[cellIndex] = mapRegion.cellImageGlobalIds[shortIndex + i];
+						int objectIndex = dungeonMapInfo.calcShortIndex(mapEast, mapSouth) + i;
+						objectImageGlobalIds[objectIndex] = mapRegion.objectImageGlobalIds[shortIndex + i];
+					}
+					byte mark = dungeonMapInfo.getMark(dungeon, mapEast, mapSouth);
+					marks[dungeonMapInfo.calcIndex(mapEast, mapSouth)] = mark; // mark
+					if (mark == MARK_NOMARL) { // this is a can use cell
+						canUseCells.put(dungeonMapInfo.calcIndex(mapEast, mapSouth), new int[]{mapEast, mapSouth, mapId});
 					}
 				}
 			}

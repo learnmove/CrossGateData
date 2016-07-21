@@ -31,6 +31,7 @@ import cg.data.map.dungeon.DungeonData;
 import cg.data.map.dungeon.DungeonMapInfo;
 import cg.data.map.dungeon.DungeonObstacle;
 import cg.data.map.dungeon.GMSV_Dungeon;
+import cg.data.map.dungeon.IDungeonMapInfo;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.NpcInfo;
@@ -38,9 +39,9 @@ import cg.data.sprite.NpcTemplate;
 import cg.data.util.FileUtils;
 import cg.data.util.GameMapUtil;
 
-public class CDungeonReader implements ObjectReader<Dungeon> {
+public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 	
-	private static final Logger log = LoggerFactory.getLogger(CDungeonReader.class);
+	private static final Logger log = LoggerFactory.getLogger(GMSV_DungeonReader.class);
 	
 	private static final Map<Integer, Byte> marks = Maps.newHashMap();
 	
@@ -52,7 +53,7 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 	
 	private final File maze;
 	
-	public CDungeonReader(ImageManager imageManager) {
+	public GMSV_DungeonReader(ImageManager imageManager) {
 		this.imageManager = imageManager;
 		maze = new File("maze");
 		FileUtils.deleteDir(maze);
@@ -177,7 +178,7 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 		@Override
 		public DungeonData refresh(WarpManager warpManager, GameMap enterMap, GameMap exitMap) {
 			List<NpcInfo> npcInfoList = Lists.newLinkedList(); // cache the animation warp and box
-			DungeonMapInfo[] mapInfos = new DungeonMapInfo[MathUtil.getRandomInRangeByte(floorRange)];
+			IDungeonMapInfo<GMSV_Dungeon>[] mapInfos = new DungeonMapInfo[MathUtil.getRandomInRangeByte(floorRange)];
 			List<Map<Integer, int[]>> cellsList = Lists.newArrayListWithCapacity(mapInfos.length);
 			int levelRange = enemyLevel.upperEndpoint() - enemyLevel.lowerEndpoint(), maxFloor = mapInfos.length;
 			for (int floor = 0;floor < maxFloor;floor++) {
@@ -198,7 +199,7 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 //			createNpc(randomCellList, npcInfoList);
 			createBox(randomCellList, npcInfoList);
 			
-			for (DungeonMapInfo mapInfo : mapInfos) {
+			for (IDungeonMapInfo<GMSV_Dungeon> mapInfo : mapInfos) {
 				mapInfo.release(maze); // to out put a map file and free some array
 			}
 			
@@ -213,12 +214,12 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 		}
 		
 		@SuppressWarnings("unused")
-		private void output(DungeonMapInfo[] mapInfos) {
+		private void output(IDungeonMapInfo<GMSV_Dungeon>[] mapInfos) {
 			File path = new File("maze/");
 			if (!path.exists()) {
 				path.mkdir();
 			}
-			for (DungeonMapInfo mapInfo : mapInfos) {
+			for (IDungeonMapInfo<GMSV_Dungeon> mapInfo : mapInfos) {
 				File file = new File(path, System.currentTimeMillis() + ".txt");
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(file));
@@ -275,7 +276,7 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 			return list;
 		}
 		
-		private void createWarp(int floor, List<Map<Integer, int[]>> cellsList, WarpManager warpManager, DungeonMapInfo[] mapInfos, List<NpcInfo> npcInfoList, GameMap enterMap, GameMap exitMap) {
+		private void createWarp(int floor, List<Map<Integer, int[]>> cellsList, WarpManager warpManager, IDungeonMapInfo<GMSV_Dungeon>[] mapInfos, List<NpcInfo> npcInfoList, GameMap enterMap, GameMap exitMap) {
 			Map<Integer, int[]> canUseCells = cellsList.get(floor);
 			List<Integer> canUseKeys = Lists.newLinkedList(canUseCells.keySet());
 			int[] local = canUseCells.remove(canUseKeys.remove(MathUtil.getRandom(canUseCells.size())));
@@ -283,7 +284,7 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 			int backMapId, east, south, resourceGlobalId;;
 			Warp comeWarp;
 			int mapId = mapInfos[floor].getMapId();
-			if (floor == 0) { // the first map's come warp is a map which the enter info��s map id
+			if (floor == 0) { // the first map's come warp in a map which the enter info's map id
 				LocalInfo localInfo = GameMapUtil.getAEmptyLocal(enterMap.getMapInfo(), getEnterInfo());
 				if (localInfo == null) {
 					log.warn("The enter is obstacle.");
@@ -295,7 +296,7 @@ public class CDungeonReader implements ObjectReader<Dungeon> {
 				enterMap.addWarp(comeWarp);
 				backMapId = enterInfo.getMapId();
 				resourceGlobalId = warpResourceGlobalId[ENTER_OUT_RESOURCE_GLOBAL_ID_INDEX];
-			} else { // if the map is not first map the come warp must create in previous map
+			} else { // if the map is not first map, the come warp must create in previous map
 				Map<Integer, int[]> map = cellsList.get(floor - 1);
 				int[] backLocal = map.remove(Lists.newArrayList(map.keySet()).get(MathUtil.getRandom(map.size())));
 				east = backLocal[0];

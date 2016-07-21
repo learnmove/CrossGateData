@@ -270,23 +270,6 @@ class DungeonMapRegion {
 		}
 	}
 	
-	private void fillRight(Door door, int southWallMod) {
-		for (int east = startEast + maxEast;east < sizeRange[ROOM_SIZE_EAST_MAX_INDEX];east++) {
-			for (int south = startSouth + door.start;south < startSouth + door.start + door.size;south++) {
-				intToByte(cellImageGlobalIds, calcFillShortIndex(east, south), DATA_LENGTH, mapCellGlobalId);
-				
-				if (south == startSouth + door.start || south == startSouth + door.start + door.size - 1) { // west or east wall
-					intToByte(objectImageGlobalIds, calcFillShortIndex(east, south), DATA_LENGTH, southWallGlobalId[south % southWallMod]);
-				}
-			}
-		}
-		intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + maxEast - 1, startSouth + door.start + 1), DATA_LENGTH, cornerWallGlobalId);
-		intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + maxEast - 1, startSouth + door.start + door.size - 1), DATA_LENGTH, cornerWallGlobalId);
-		for (int south = startSouth + door.start + 1;south < startSouth + door.start + door.size - 1;south++) { // use to random obstacle and exit
-			intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + maxEast - 1, south), DATA_LENGTH, 0);
-		}
-	}
-	
 	private void fillDown(Door door, int eastWallMod) {
 		for (int east = startEast + door.start;east < startEast + door.start + door.size;east++) {
 			for (int south = startSouth + maxSouth;south < sizeRange[ROOM_SIZE_SOUTH_MAX_INDEX];south++) {
@@ -301,6 +284,23 @@ class DungeonMapRegion {
 		intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + door.start + door.size - 1, startSouth + maxSouth - 1), DATA_LENGTH, cornerWallGlobalId);
 		for (int east = startEast + door.start + 1;east < startEast + door.start + door.size - 1;east++) { // use to random obstacle and exit
 			intToByte(objectImageGlobalIds, calcFillShortIndex(east, startSouth + maxSouth - 1), DATA_LENGTH, 0);
+		}
+	}
+	
+	private void fillRight(Door door, int southWallMod) {
+		for (int east = startEast + maxEast;east < sizeRange[ROOM_SIZE_EAST_MAX_INDEX];east++) {
+			for (int south = startSouth + door.start;south < startSouth + door.start + door.size;south++) {
+				intToByte(cellImageGlobalIds, calcFillShortIndex(east, south), DATA_LENGTH, mapCellGlobalId);
+				
+				if (south == startSouth + door.start || south == startSouth + door.start + door.size - 1) { // west or east wall
+					intToByte(objectImageGlobalIds, calcFillShortIndex(east, south), DATA_LENGTH, southWallGlobalId[south % southWallMod]);
+				}
+			}
+		}
+		intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + maxEast - 1, startSouth + door.start + 1), DATA_LENGTH, cornerWallGlobalId);
+		intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + maxEast - 1, startSouth + door.start + door.size - 1), DATA_LENGTH, cornerWallGlobalId);
+		for (int south = startSouth + door.start + 1;south < startSouth + door.start + door.size - 1;south++) { // use to random obstacle and exit
+			intToByte(objectImageGlobalIds, calcFillShortIndex(startEast + maxEast - 1, south), DATA_LENGTH, 0);
 		}
 	}
 	

@@ -1,8 +1,15 @@
 package cg.data.map.dungeon;
 
-import cg.data.map.MapInfo;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
-public interface IDungeonMapInfo extends MapInfo {
+import cg.data.map.MapInfo;
+import cg.data.map.Warp;
+import cg.data.sprite.NpcInfo;
+
+public interface IDungeonMapInfo<T> extends MapInfo {
 	
 	void setMaxEast(int maxEast);
 	
@@ -14,7 +21,7 @@ public interface IDungeonMapInfo extends MapInfo {
 	
 	void setMarks(byte[] marks);
 	
-	byte getMark(GMSV_Dungeon dungeon, int mapEast, int mapSouth);
+	byte getMark(T dungeon, int mapEast, int mapSouth);
 	
 	int calcIndex(int east, int south);
 	
@@ -23,5 +30,23 @@ public interface IDungeonMapInfo extends MapInfo {
 	}
 	
 	int getObjectId(int index);
+	
+	void setName(String name);
+	
+	void setGoWarp(Warp warp, List<NpcInfo> npcInfoList);
+	
+	void setBackWarp(Warp warp, List<NpcInfo> npcInfoList);
+	
+	void output(BufferedWriter bw) throws Exception;
+	
+	void release(File maze);
+	
+	Map<Integer, int[]> create(int rate, T dungeon, boolean output, short enemyLevel);
+	
+	void createObject(Map<Integer, int[]> canUseCells, DungeonObstacle[] obstacles, T dungeon);
+	
+	void destroy() throws Exception;
+	
+	void setMapId(int mapId);
 
 }

@@ -35,7 +35,7 @@ public final class GMSVReaders {
 	}
 	
 	public static ObjectReader<Dungeon> createDungeonReader(ImageManager imageManager) {
-		return new CDungeonReader(imageManager);
+		return new GMSV_DungeonReader(imageManager);
 	}
 	
 	public static ObjectReader<EncountInfo> createEncountInfoReader() {

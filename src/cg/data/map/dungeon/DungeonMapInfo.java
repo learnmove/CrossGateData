@@ -34,7 +34,7 @@ import cg.data.map.Warp;
 import cg.data.map.WarpManager;
 import cg.data.sprite.NpcInfo;
 
-public class DungeonMapInfo implements IDungeonMapInfo {
+public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	
 	private static final Logger log = LoggerFactory.getLogger(DungeonMapInfo.class);
 	
@@ -72,7 +72,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 	public int getMapId() {
 		return mapId;
 	}
-	
+
+	@Override
 	public void setMapId(int mapId) {
 		this.mapId = mapId;
 	}
@@ -81,7 +82,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 	public String getName() {
 		return name;
 	}
-	
+
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -149,13 +151,15 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 		marks[key] = MARK_WARP;
 		warpManager.addWarp(warp);
 	}
-	
+
+	@Override
 	public void setGoWarp(Warp warp, List<NpcInfo> npcInfoList) {
 		goWarpId = warp.getId();
 		addWarp(warp);
 		setWarpResource(warp, npcInfoList);
 	}
-	
+
+	@Override
 	public void setBackWarp(Warp warp, List<NpcInfo> npcInfoList) {
 		backWarpId = warp.getId();
 		addWarp(warp);
@@ -173,7 +177,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 			intToByte(objectImageGlobalIds, key, DATA_LENGTH, warp.getResourceGlobalId());
 		}
 	}
-	
+
+	@Override
 	public void output(BufferedWriter bw) throws Exception {
 		for (int east = 0;east < maxEast;east++) {
 			for (int south = 0;south < maxSouth;south++) {
@@ -186,7 +191,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 			bw.write("\r\n");
 		}
 	}
-	
+
+	@Override
 	public void release(File maze) {
 		try {
 			File file = new File(maze, "" + System.currentTimeMillis());
@@ -205,7 +211,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 			log.error("", e);
 		}
 	}
-	
+
+	@Override
 	public Map<Integer, int[]> create(int rate, GMSV_Dungeon dungeon, boolean output, short enemyLevel) {
 		this.enemyLevel = enemyLevel;
 		return new DungeonMapInfoCreator(this).create(rate, dungeon, output);
@@ -236,7 +243,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 	public short getEnemyLevel() {
 		return enemyLevel;
 	}
-	
+
+	@Override
 	public void createObject(Map<Integer, int[]> canUseCells, DungeonObstacle[] obstacles, GMSV_Dungeon dungeon) {
 		for (DungeonObstacle obstacle : obstacles) { // for each all obstacle
 			int rangeEast = obstacle.getRates()[OBSTACLE_EAST_INDEX], rangeSouth = obstacle.getRates()[OBSTACLE_SOUTH_INDEX];
@@ -301,7 +309,8 @@ public class DungeonMapInfo implements IDungeonMapInfo {
 			marks[calcIndex(east, south)] = imageDictionary.getMark();
 		}
 	}
-	
+
+	@Override
 	public void destroy() throws Exception {
 		fis.close();
 	}
