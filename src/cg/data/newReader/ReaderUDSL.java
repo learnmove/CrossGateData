@@ -2,7 +2,7 @@ package cg.data.newReader;
 
 import java.util.List;
 
-import dataplatform.udsl.ReadOnlyUDSL;
+import org.tool.server.udsl.ReadOnlyUDSL;
 
 public class ReaderUDSL implements ReadOnlyUDSL {
 

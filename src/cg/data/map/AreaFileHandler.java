@@ -2,12 +2,13 @@ package cg.data.map;
 
 import java.util.List;
 
-import cg.base.io.message.VoMapCell;
+import cg.base.io.message.interfaces.IVoMapCell;
+import cg.base.io.message.proto.VoMapCell;
 
 public class AreaFileHandler implements AreaLoader {
 
 	@Override
-	public void writeInfo(int west, int east, int north, int south, List<VoMapCell> mapCells, MapInfo mapInfo) {
+	public void writeInfo(int west, int east, int north, int south, List<IVoMapCell> mapCells, MapInfo mapInfo) {
 		for (int e = west;e <= east;e++) {
 			for (int s = north;s <= south;s++) {
 				VoMapCell voMapCell = new VoMapCell();

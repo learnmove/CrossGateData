@@ -4,7 +4,8 @@ import static cg.data.map.MapInfo.DATA_LENGTH;
 
 import java.util.List;
 
-import cg.base.io.message.VoMapCell;
+import cg.base.io.message.interfaces.IVoMapCell;
+import cg.base.io.message.proto.VoMapCell;
 import cg.base.util.IOUtils;
 import cg.base.util.MathUtil;
 
@@ -20,7 +21,7 @@ public class AreaNetHandler implements AreaLoader {
 	}
 
 	@Override
-	public void writeInfo(int west, int east, int north, int south, List<VoMapCell> mapCells, MapInfo mapInfo) throws Exception {
+	public void writeInfo(int west, int east, int north, int south, List<IVoMapCell> mapCells, MapInfo mapInfo) throws Exception {
 		IOUtils.getStream(host + "/reader/MapResource?image=true&object=true&" + makeUrlParams(west, east, north, south, mapInfo), (is, info) -> {
 //			packet.writeInt((east - west + 1) * (north - south + 1)); // size
 			for (int e = west;e <= east;e++) {

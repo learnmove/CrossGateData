@@ -2,7 +2,7 @@ package cg.data.resource;
 
 import java.io.File;
 
-import dataplatform.script.IScriptEngine;
+import org.tool.server.script.IScriptEngine;
 
 public class ScriptLoader implements Reloadable {
 	
