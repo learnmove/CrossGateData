@@ -3,16 +3,16 @@ package cg.data.gmsvReader;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 import cg.base.util.MathUtil;
 import cg.data.job.Job;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import gnu.trove.impl.unmodifiable.TUnmodifiableShortByteMap;
+import gnu.trove.map.TShortByteMap;
+import gnu.trove.map.hash.TShortByteHashMap;
 
 public class CJobReader implements ObjectReader<Job> {
 
@@ -38,7 +38,7 @@ public class CJobReader implements ObjectReader<Job> {
 		
 		private byte[] euipmentLevels;
 		
-		private final Map<Short, Byte> promotionSkills;
+		private final TShortByteMap promotionSkills;
 		
 		public CJob(String[] infos) {
 			name = infos[0];
@@ -46,13 +46,14 @@ public class CJobReader implements ObjectReader<Job> {
 			type = MathUtil.stringToByte(infos[3]);
 			cost = MathUtil.stringToInt(infos[4]);
 			fame = MathUtil.stringToInt(infos[4]);
-			promotionSkills = Maps.newHashMap();
+			TShortByteMap promotionSkills = new TShortByteHashMap();
 			for (int i = 0;i < 5;i++) {
 				short skillId = MathUtil.stringToShort(infos[i + 6]);
 				if (skillId > 0) {
 					promotionSkills.put(skillId, MathUtil.stringToByte(infos[i + 34]));
 				}
 			}
+			this.promotionSkills = new TUnmodifiableShortByteMap(promotionSkills);
 			euipmentLevels = new byte[15];
 			for (int i = 0;i < euipmentLevels.length;i++) {
 				euipmentLevels[i] = MathUtil.stringToByte(infos[i + 11]);
@@ -75,8 +76,8 @@ public class CJobReader implements ObjectReader<Job> {
 		}
 
 		@Override
-		public Set<Short> getPromotionSkillIds() {
-			return promotionSkills.keySet();
+		public short[] getPromotionSkillIds() {
+			return promotionSkills.keys();
 		}
 
 		@Override

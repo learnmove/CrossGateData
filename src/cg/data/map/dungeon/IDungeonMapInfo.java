@@ -3,11 +3,11 @@ package cg.data.map.dungeon;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import cg.data.map.MapInfo;
 import cg.data.map.Warp;
 import cg.data.sprite.NpcInfo;
+import gnu.trove.map.TIntObjectMap;
 
 public interface IDungeonMapInfo<T> extends MapInfo {
 	
@@ -41,9 +41,9 @@ public interface IDungeonMapInfo<T> extends MapInfo {
 	
 	void release(File maze);
 	
-	Map<Integer, int[]> create(int rate, T dungeon, boolean output, short enemyLevel);
+	TIntObjectMap<int[]> create(int rate, T dungeon, boolean output, short enemyLevel);
 	
-	void createObject(Map<Integer, int[]> canUseCells, DungeonObstacle[] obstacles, T dungeon);
+	void createObject(TIntObjectMap<int[]> canUseCells, DungeonObstacle[] obstacles, T dungeon);
 	
 	void destroy() throws Exception;
 	

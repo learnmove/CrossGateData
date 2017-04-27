@@ -2,21 +2,21 @@ package cg.data.resource;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import cg.base.time.Time;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 public class ReloadManager implements Reloadable {
 	
 	private static final Logger log = LoggerFactory.getLogger(ReloadManager.class);
 	
-	private Map<String, Integer> reloadSystems;
+	private TObjectIntMap<String> reloadSystems;
 	
 	private List<Reloadable> list;
 	
@@ -24,7 +24,7 @@ public class ReloadManager implements Reloadable {
 	
 	public ReloadManager(Time timer) {
 		this.timer = timer;
-		reloadSystems = Maps.newHashMap();
+		reloadSystems = new TObjectIntHashMap<>();
 		list = Lists.newArrayList();
 	}
 
@@ -58,7 +58,7 @@ public class ReloadManager implements Reloadable {
 		Iterator<String> keys = reloadSystems.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			if (reloadSystems.get(key).equals(reloadable)) {
+			if (list.get(reloadSystems.get(key)).equals(reloadable)) {
 				reloadSystems.remove(key);
 				log.warn("{}::unregister() {} successful!", getClass().getName(), reloadable);
 				return;

@@ -5,12 +5,10 @@ import static cg.base.map.MapCell.MARK_OBSTACLE;
 import static cg.data.map.MapInfo.DATA_LENGTH;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.ROOM_SIZE_EAST_MAX_INDEX;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.ROOM_SIZE_SOUTH_MAX_INDEX;
-import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,6 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 	
@@ -34,12 +35,12 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 	}
 	
 	@Override
-	public Map<Integer, int[]> create(int rate, GMSV_Dungeon dungeon, boolean output) {
+	public TIntObjectMap<int[]> create(int rate, GMSV_Dungeon dungeon, boolean output) {
 		this.dungeon = dungeon;
 		mapRegions = TreeBasedTable.create();
 		DungeonMapRegion mapRegion = createRoom(rate, 0, 0, null);
 		mapRegion.createSubRoom(mapRegions, this);
-		Map<Integer, int[]> canUseCells = tileRoom();
+		TIntObjectMap<int[]> canUseCells = tileRoom();
 		if (output) {
 			try {
 				output();
@@ -62,7 +63,7 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 		return mapRegion;
 	}
 	
-	private Map<Integer, int[]> tileRoom() {
+	private TIntObjectMap<int[]> tileRoom() {
 		Set<Integer> keys = mapRegions.rowKeySet();
 		// calculate the left column number(minCol), the right column number(maxCol), the top row number(minRow) and the bottom row number(maxRow)
 		int index = 0, minCol = 0, maxCol = 0, minRow = 0, maxRow = 0;
@@ -91,7 +92,7 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 		return fill0(minCol, maxCol, minRow, maxRow);
 	}
 	
-	private Map<Integer, int[]> fill0(int minCol, int maxCol, int minRow, int maxRow) {
+	private TIntObjectMap<int[]> fill0(int minCol, int maxCol, int minRow, int maxRow) {
 		int col = maxCol - minCol + 1; // calculate amount of column
 		int row = maxRow - minRow + 1; // calculate amount of row
 		int maxSouth = col * dungeon.getSizeRange()[ROOM_SIZE_SOUTH_MAX_INDEX]; // calculate the max south
@@ -103,7 +104,7 @@ class DungeonMapInfoCreator implements IDungeonMapInfoCreator<GMSV_Dungeon> {
 		byte[] objectImageGlobalIds = new byte[size];
 		byte[] marks = new byte[size / DATA_LENGTH];
 		
-		Map<Integer, int[]> canUseCells = newHashMap();
+		TIntObjectMap<int[]> canUseCells = new TIntObjectHashMap<>();
 		int mapId = dungeonMapInfo.getMapId();
 		int eastSize = dungeon.getSizeRange()[ROOM_SIZE_EAST_MAX_INDEX];
 		int southSize = dungeon.getSizeRange()[ROOM_SIZE_SOUTH_MAX_INDEX];

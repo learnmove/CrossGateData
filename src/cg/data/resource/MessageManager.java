@@ -10,17 +10,19 @@ import com.google.common.collect.Maps;
 
 import cg.data.gmsvReader.CGarbledReader.Garbled;
 import cg.data.sprite.Message;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class MessageManager implements ProjectDataListener {
 	
 	private static final Logger log = LoggerFactory.getLogger(MessageManager.class);
 	
-	private Map<Integer, Message> messages;
+	private TIntObjectMap<Message> messages;
 	
 	private Map<String, String> garbleds;
 	
 	public MessageManager() {
-		messages = Maps.newHashMap();
+		messages = new TIntObjectHashMap<>();
 		garbleds = Maps.newHashMap();
 	}
 

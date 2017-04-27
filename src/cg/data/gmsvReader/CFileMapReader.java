@@ -11,8 +11,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-
 import cg.base.image.ImageDictionary;
 import cg.base.image.ImageReader;
 import cg.base.map.MapCell;
@@ -23,6 +21,8 @@ import cg.data.map.MapInfo;
 import cg.data.map.MapReader;
 import cg.data.map.Warp;
 import cg.data.map.WarpManager;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
 
 public class CFileMapReader implements MapReader {
 	
@@ -70,7 +70,7 @@ public class CFileMapReader implements MapReader {
 		
 		private byte[] marks;
 		
-		private Map<Integer, Integer> warpIds;
+		private TIntIntMap warpIds;
 		
 		public FileMapInfo(File file, WarpManager warpManager) throws IOException {
 			String fileName = file.getName();
@@ -81,7 +81,7 @@ public class CFileMapReader implements MapReader {
 				mapId = Integer.parseInt(infos[1]);
 			}
 			fis = new FileInputStream(file);
-			warpIds = Maps.newHashMap();
+			warpIds = new TIntIntHashMap();
 			
 			readHead();
 			readContent();

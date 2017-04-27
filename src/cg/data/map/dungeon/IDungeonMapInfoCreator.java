@@ -1,10 +1,10 @@
 package cg.data.map.dungeon;
 
-import java.util.Map;
+import gnu.trove.map.TIntObjectMap;
 
 public interface IDungeonMapInfoCreator<T> {
 	
-	Map<Integer, int[]> create(int rate, GMSV_Dungeon dungeon, boolean output);
+	TIntObjectMap<int[]> create(int rate, GMSV_Dungeon dungeon, boolean output);
 	
 	DungeonMapRegion createRoom(int rate, int x, int y, Door parentDoor);
 	

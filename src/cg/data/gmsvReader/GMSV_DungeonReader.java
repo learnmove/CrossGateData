@@ -6,14 +6,13 @@ import java.io.FileWriter;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
+import com.google.common.primitives.Ints;
 
 import cg.base.image.ImageDictionary;
 import cg.base.image.ImageManager;
@@ -38,12 +37,15 @@ import cg.data.sprite.NpcInfo;
 import cg.data.sprite.NpcTemplate;
 import cg.data.util.FileUtils;
 import cg.data.util.GameMapUtil;
+import gnu.trove.map.TIntByteMap;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntByteHashMap;
 
 public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 	
 	private static final Logger log = LoggerFactory.getLogger(GMSV_DungeonReader.class);
 	
-	private static final Map<Integer, Byte> marks = Maps.newHashMap();
+	private static final TIntByteMap marks = new TIntByteHashMap();
 	
 	private static int WARP_ID = -1;
 	
@@ -69,7 +71,7 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			list.add(new CDungeon(line, maze));
 		}
 		marks.remove(0);
-		ImageDictionary[] imageDictionaries = imageReader.getImageDictionaries(MathUtil.collectionIntegerToIntArray(marks.keySet()));
+		ImageDictionary[] imageDictionaries = imageReader.getImageDictionaries(marks.keys());
 		for (int i = 0;i < imageDictionaries.length;i++) {
 			if (imageDictionaries[i] != null) {
 				marks.put(imageDictionaries[i].getGlobalId(), imageDictionaries[i].getMark());
@@ -139,10 +141,10 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			changeDayState = infos[56].equals("1");
 			obstacles = new DungeonObstacle[10];
 			
-			MathUtil.mapAddArray(Byte.class, marks, eastWallGlobalId, (byte) 0);
-			MathUtil.mapAddArray(Byte.class, marks, southWallGlobalId, (byte) 0);
+			MathUtil.mapAddArray(marks, eastWallGlobalId, (byte) 0);
+			MathUtil.mapAddArray(marks, southWallGlobalId, (byte) 0);
 			marks.put(cornerWallGlobalId, (byte) 0);
-			MathUtil.mapAddArray(Byte.class, marks, warpResourceGlobalId, (byte) 0);
+			MathUtil.mapAddArray(marks, warpResourceGlobalId, (byte) 0);
 			
 			for (int i = 0;i < obstacles.length;i++) {
 				obstacles[i] = new DungeonObstacle();
@@ -179,13 +181,13 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 		public DungeonData refresh(WarpManager warpManager, GameMap enterMap, GameMap exitMap) {
 			List<NpcInfo> npcInfoList = Lists.newLinkedList(); // cache the animation warp and box
 			IDungeonMapInfo<GMSV_Dungeon>[] mapInfos = new DungeonMapInfo[MathUtil.getRandomInRangeByte(floorRange)];
-			List<Map<Integer, int[]>> cellsList = Lists.newArrayListWithCapacity(mapInfos.length);
+			List<TIntObjectMap<int[]>> cellsList = Lists.newArrayListWithCapacity(mapInfos.length);
 			int levelRange = enemyLevel.upperEndpoint() - enemyLevel.lowerEndpoint(), maxFloor = mapInfos.length;
 			for (int floor = 0;floor < maxFloor;floor++) {
 				mapInfos[floor] = new DungeonMapInfo(imageReader, warpManager);
 				mapInfos[floor].setMapId(mapId + (floor << 16));
 				mapInfos[floor].setName(getName() + MessageFormat.format(floorText, floor + 1));
-				Map<Integer, int[]> canUseCells = mapInfos[floor].create(CREATE_SUB_ROOM_RATE, this, false, (short) ((floor + 1) * levelRange / maxFloor + enemyLevel.lowerEndpoint()));
+				TIntObjectMap<int[]> canUseCells = mapInfos[floor].create(CREATE_SUB_ROOM_RATE, this, false, (short) ((floor + 1) * levelRange / maxFloor + enemyLevel.lowerEndpoint()));
 				cellsList.add(canUseCells);
 				
 				createWarp(floor, cellsList, warpManager, mapInfos, npcInfoList, enterMap, exitMap);
@@ -254,19 +256,19 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			}
 		}
 		
-		private List<int[]> getRandomCellList(List<Map<Integer, int[]>> cellsList, int count) {
+		private List<int[]> getRandomCellList(List<TIntObjectMap<int[]>> cellsList, int count) {
 			int size = 0; // cache the cellsList's size
-			for (Map<Integer, int[]> canUseCells : cellsList) {
+			for (TIntObjectMap<int[]> canUseCells : cellsList) {
 				size += canUseCells.size(); // add size
 			}
 			List<int[]> list = Lists.newLinkedList();
 			for (int i = 0;i < count;i++) {
 				int rnd = MathUtil.getRandom(size--); // get a random number in [0, size), then size sub one
-				for (Map<Integer, int[]> canUseCells : cellsList) {
+				for (TIntObjectMap<int[]> canUseCells : cellsList) {
 					int index = rnd; // cache random number this time, if the random number less than canUseCells's size, it is this canUseCells's index
 					if (rnd < canUseCells.size()) {
-						List<Integer> keys = Lists.newArrayList(canUseCells.keySet()); // get all key of this canUseCells
-						list.add(canUseCells.remove(keys.get(index))); // local box
+						canUseCells.keySet();
+						list.add(canUseCells.remove(canUseCells.keys()[index])); // local box
 						break;
 					} else {
 						rnd -= canUseCells.size();
@@ -276,9 +278,9 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			return list;
 		}
 		
-		private void createWarp(int floor, List<Map<Integer, int[]>> cellsList, WarpManager warpManager, IDungeonMapInfo<GMSV_Dungeon>[] mapInfos, List<NpcInfo> npcInfoList, GameMap enterMap, GameMap exitMap) {
-			Map<Integer, int[]> canUseCells = cellsList.get(floor);
-			List<Integer> canUseKeys = Lists.newLinkedList(canUseCells.keySet());
+		private void createWarp(int floor, List<TIntObjectMap<int[]>> cellsList, WarpManager warpManager, IDungeonMapInfo<GMSV_Dungeon>[] mapInfos, List<NpcInfo> npcInfoList, GameMap enterMap, GameMap exitMap) {
+			TIntObjectMap<int[]> canUseCells = cellsList.get(floor);
+			List<Integer> canUseKeys = Ints.asList(canUseCells.keys());
 			int[] local = canUseCells.remove(canUseKeys.remove(MathUtil.getRandom(canUseCells.size())));
 			// create back warp and enter warp for each dungeon map
 			int backMapId, east, south, resourceGlobalId;;
@@ -297,8 +299,8 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 				backMapId = enterInfo.getMapId();
 				resourceGlobalId = warpResourceGlobalId[ENTER_OUT_RESOURCE_GLOBAL_ID_INDEX];
 			} else { // if the map is not first map, the come warp must create in previous map
-				Map<Integer, int[]> map = cellsList.get(floor - 1);
-				int[] backLocal = map.remove(Lists.newArrayList(map.keySet()).get(MathUtil.getRandom(map.size())));
+				TIntObjectMap<int[]> map = cellsList.get(floor - 1);
+				int[] backLocal = map.remove(Ints.asList(map.keys()).get(MathUtil.getRandom(map.size())));
 				east = backLocal[0];
 				south = backLocal[1];
 				backMapId = mapInfos[floor - 1].getMapId();

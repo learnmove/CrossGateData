@@ -12,8 +12,6 @@ import static cg.data.map.dungeon.DungeonMapRegionInfo.OBSTACLE_COUNT_INDEX;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.OBSTACLE_EAST_INDEX;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.OBSTACLE_SOUTH_INDEX;
 import static cg.data.sprite.NpcInfo.SPECIAL_NPC_ID_WARP;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +30,9 @@ import cg.base.image.ImageReader;
 import cg.data.map.Warp;
 import cg.data.map.WarpManager;
 import cg.data.sprite.NpcInfo;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntIntHashMap;
 
 public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	
@@ -213,7 +213,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	}
 
 	@Override
-	public Map<Integer, int[]> create(int rate, GMSV_Dungeon dungeon, boolean output, short enemyLevel) {
+	public TIntObjectMap<int[]> create(int rate, GMSV_Dungeon dungeon, boolean output, short enemyLevel) {
 		this.enemyLevel = enemyLevel;
 		return new DungeonMapInfoCreator(this).create(rate, dungeon, output);
 	}
@@ -245,7 +245,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	}
 
 	@Override
-	public void createObject(Map<Integer, int[]> canUseCells, DungeonObstacle[] obstacles, GMSV_Dungeon dungeon) {
+	public void createObject(TIntObjectMap<int[]> canUseCells, DungeonObstacle[] obstacles, GMSV_Dungeon dungeon) {
 		for (DungeonObstacle obstacle : obstacles) { // for each all obstacle
 			int rangeEast = obstacle.getRates()[OBSTACLE_EAST_INDEX], rangeSouth = obstacle.getRates()[OBSTACLE_SOUTH_INDEX];
 			if (rangeSouth == 0 || rangeEast == 0) {
@@ -254,7 +254,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 			int maxRow = divAddOne(maxSouth, rangeSouth), maxCol = divAddOne(maxEast, rangeEast);
 			for (int col = 0;col < maxCol;col++) {
 				for (int row = 0;row < maxRow;row++) {
-					Map<Integer, Integer> cellMap = newHashMap();
+					TIntIntMap cellMap = new TIntIntHashMap();
 					addMapCell(rangeEast, rangeSouth, row, col, cellMap, canUseCells);
 					
 					byte obstacleCount = obstacle.getRates()[OBSTACLE_COUNT_INDEX];
@@ -266,7 +266,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 		}
 	}
 	
-	private void addMapCell(int rangeEast, int rangeSouth, int row, int col, Map<Integer, Integer> cellMap, Map<Integer, int[]> canUseCells) {
+	private void addMapCell(int rangeEast, int rangeSouth, int row, int col, TIntIntMap cellMap, TIntObjectMap<int[]> canUseCells) {
 		int startEast = col * rangeEast, startSouth = row * rangeSouth; // calculate 
 		for (int east = 0;east < rangeEast;east++) {
 			for (int south = 0;south < rangeSouth;south++) {
@@ -278,9 +278,9 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 		}
 	}
 	
-	private void addObstale(int obstacleCount, Map<Integer, Integer> cellMap, Map<Integer, int[]> canUseCells, GMSV_Dungeon dungeon, DungeonObstacle obstacle) {
+	private void addObstale(int obstacleCount, TIntIntMap cellMap, TIntObjectMap<int[]> canUseCells, GMSV_Dungeon dungeon, DungeonObstacle obstacle) {
 		for (int i = 0;i < obstacleCount;i++) {
-			int[] local = canUseCells.remove(cellMap.remove(newArrayList(cellMap.keySet()).get(getRandom(cellMap.size()))));
+			int[] local = canUseCells.remove(cellMap.remove(cellMap.keys()[getRandom(cellMap.size())]));
 			intToByte(objectImageGlobalIds, calcShortIndex(local[0], local[1]), DATA_LENGTH, obstacle.getImageGlobalId());
 			byte mark = dungeon.getMark(obstacle.getImageGlobalId());
 			marks[calcIndex(local[0], local[1])] = mark; // mark

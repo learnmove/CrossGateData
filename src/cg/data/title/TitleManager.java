@@ -2,24 +2,24 @@ package cg.data.title;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import cg.base.sprite.Title;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ProjectDataListener;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import gnu.trove.map.TShortObjectMap;
+import gnu.trove.map.hash.TShortObjectHashMap;
 
 public class TitleManager implements ProjectDataListener {
 	
-	private Map<Short, Title> titles;
+	private TShortObjectMap<Title> titles;
 	
 	private Multimap<Short, TitleConfig> titleConfigs;
 	
 	public TitleManager() {
-		titles = Maps.newHashMap();
+		titles = new TShortObjectHashMap<>();
 		titleConfigs = ArrayListMultimap.create();
 	}
 

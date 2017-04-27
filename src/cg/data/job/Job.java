@@ -1,7 +1,5 @@
 package cg.data.job;
 
-import java.util.Set;
-
 public interface Job {
 	
 	byte RANK_MAX = 10;
@@ -20,7 +18,7 @@ public interface Job {
 	
 	byte getEuipmentLevel(byte type);
 	
-	Set<Short> getPromotionSkillIds();
+	short[] getPromotionSkillIds();
 	
 	byte getType();
 	
