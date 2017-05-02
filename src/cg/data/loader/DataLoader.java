@@ -38,7 +38,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	protected AnimationReaderCreator animationReaderCreator;
 
 	@Override
-	protected final void loadMore() {
+	protected final void loadMore() throws Exception {
 		try {
 			serverFilePath = loadServerFilePath();
 		} catch (Exception e) {
@@ -66,7 +66,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 		loadMore0();
 	}
 	
-	protected abstract void loadMore0();
+	protected abstract void loadMore0() throws Exception;
 	
 	protected void registerReload() throws Exception {
 		reloadManager.register(ProjectData.class.getName(), projectData);
