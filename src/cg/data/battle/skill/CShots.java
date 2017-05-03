@@ -3,18 +3,17 @@ package cg.data.battle.skill;
 import java.util.Map;
 
 import cg.data.resource.ProjectData;
+import cg.data.resource.ProjectDataListener;
 
 import com.google.common.collect.Maps;
 
-public class CShots {
+public class CShots implements ProjectDataListener {
 	
-	private Map<String, Shot> shots;
+	private final Map<String, Shot> shots;
 	
-	public CShots(ProjectData projectData) {
+	public CShots() {
 		shots = Maps.newHashMap();
-		CSpiracleShot spiracleShot = new CSpiracleShot();
-		projectData.addListener(spiracleShot);
-		shots.put(SkillLevelData.TECH_SpiracleShot, spiracleShot);
+		shots.put(SkillLevelData.TECH_SpiracleShot, new CSpiracleShot());
 		shots.put(SkillLevelData.TECH_RandomShot, new CRandomShot());
 	}
 	
@@ -24,6 +23,15 @@ public class CShots {
 	
 	public Shot getShot(String techType) {
 		return shots.get(techType);
+	}
+
+	@Override
+	public void reload(ProjectData projectData) throws Exception {
+		for (Shot shot : shots.values()) {
+			if (shot instanceof ProjectDataListener) {
+				((ProjectDataListener) shot).reload(projectData);
+			}
+		}
 	}
 
 }
