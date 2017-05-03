@@ -40,26 +40,17 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 
 	@Override
 	protected final void loadMore() throws Exception {
-		try {
-			serverFilePath = loadServerFilePath();
-		} catch (Exception e) {
-			log.error("", e);
-		}
+		serverFilePath = loadServerFilePath();
 		model = createModel();
 		reloadManager = createReloadManager();
 		animationReaderCreator = createAnimationReaderCreator();
 
 		projectData = createProjectData();
 		messageManager = createMessageManager();
-		try {
-			registerReload();
-			loadData();
-			reloadManager.reload();
-			loadAnimationReader();
-		} catch (Exception e) {
-			log.error("", e);
-			exit();
-		}
+		registerReload();
+		loadData();
+		reloadManager.reload();
+		loadAnimationReader();
 		titleManager = createTitleManager();
 		warpManager = createWarpManager();
 		mapReader = createMapReader();
@@ -69,7 +60,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	protected abstract void loadMore0() throws Exception;
 	
-	protected void registerReload() throws Exception {
+	protected void registerReload() {
 		reloadManager.register(ProjectData.class.getName(), projectData);
 		reloadManager.register(ImageManager.class.getName(), (Reloadable) imageManager);
 		reloadManager.register(AnimationReaderCreator.class.getName(), animationReaderCreator);
