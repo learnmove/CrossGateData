@@ -6,6 +6,7 @@ import cg.base.animation.AnimationReader;
 import cg.base.image.ImageManager;
 import cg.base.loader.Loader;
 import cg.data.gmsvReader.GMSVReaders;
+import cg.data.map.CWarpManager;
 import cg.data.map.MapReader;
 import cg.data.map.WarpManager;
 import cg.data.newReader.NewReaders;
@@ -126,8 +127,10 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	}
 
 	protected abstract ProjectData createProjectData();
-	
-	protected abstract WarpManager createWarpManager();
+
+	protected WarpManager createWarpManager() {
+		return new CWarpManager(getProjectData());
+	}
 
 	protected MapReader createMapReader() {
 		return GMSVReaders.createFileMapReader("map", this);
