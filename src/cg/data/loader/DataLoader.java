@@ -60,7 +60,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	protected abstract void loadMore0() throws Exception;
 	
-	protected void registerReload() {
+	protected void registerReload() throws Exception {
 		reloadManager.register(ProjectData.class.getName(), projectData);
 		reloadManager.register(ImageManager.class.getName(), (Reloadable) imageManager);
 		reloadManager.register(AnimationReaderCreator.class.getName(), animationReaderCreator);

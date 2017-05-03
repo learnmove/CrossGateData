@@ -94,6 +94,7 @@ public class ProjectData implements Reloadable {
 		
 		for (ProjectDataListener listener : listeners) {
 			listener.reload(this);
+			log.info("{} reload finish.", listener.getClass().getSimpleName());
 		}
 	}
 	
