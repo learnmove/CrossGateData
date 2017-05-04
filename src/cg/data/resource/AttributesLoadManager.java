@@ -16,10 +16,6 @@ import cg.base.util.MathUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-/**
- * EXCEL��ݼ��ؼ�����
- * @author 	Joyce
- */
 public class AttributesLoadManager {
 	
 	private static Map<String, AttributeConfigDef> CONFIG_MAP = Maps.newHashMap();
@@ -154,15 +150,6 @@ public class AttributesLoadManager {
 		}
 	}
     
-	/**
-	 * �����������
-	 * ������һ��������һ������ֵ
-	 * @param claName ���������
-	 * @param keyParamName �ؼ��ֲ�����
-	 * @param paramName ������ 
-	 * @param paramValue ����ֵ�����ַ
-	 * @throws Exception
-	 */	
 	public static int[] loadAttributesData(String claName, String keyParamName, String paramName) throws Exception {
 		return loadAttributesData(claName, keyParamName, paramName, 0);
 	}
@@ -173,15 +160,6 @@ public class AttributesLoadManager {
 		return tmpData[0];
 	}
 	
-	/**
-	 * �����������
-	 * ֧��һ�μ���ͬ�����ݵĶ������ֵ
-	 * @param claName ���������
-	 * @param keyParamName �ؼ��ֲ�����
-	 * @param paramNames �������б� 
-	 * @param paramValues ֵ�б?���ؽ��������ַ
-	 * @throws Exception
-	 */	
     public static void loadAttributesData(String claName, String keyParamName, String[] paramNames, int[][] paramValues, int defaultValue) throws Exception {
         AttributeConfigDef config = checkPara(claName, keyParamName, paramNames, paramValues);
         SheetCacheItem cacheItem = SHEET_CACHE.get(buildCacheKey(config.file, config.sheetname));

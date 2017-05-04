@@ -58,7 +58,7 @@ public class AWSS3 {
 	}
 	
 	public static S3ObjectInputStream readS3(String bucket, String key) {
-		S3Object object = AWSS3.getInstance().s3.getObject(new GetObjectRequest(bucket, key));
+		S3Object object = getInstance().s3.getObject(new GetObjectRequest(bucket, key));
 		return object != null ? object.getObjectContent() : null;
 	}
 	
@@ -67,9 +67,9 @@ public class AWSS3 {
 	}
 	
 	public static void requestS3ToStream(URI uri, URLHandler handler) throws Exception {
-		InputStream is = readS3(uri);
-		handler.handle(is, uri.toString());
-		is.close();
+		try (InputStream is = readS3(uri)) {
+			handler.handle(is, uri.toString());
+		}
 	}
 	
 	public static List<S3ObjectSummary> listObjects(String bucket, String prefix) {
@@ -86,7 +86,7 @@ public class AWSS3 {
 	public static ObjectListing listObjects(String bucket, String prefix, String marker) {
 		ListObjectsRequest request = new ListObjectsRequest().withBucketName(bucket).withPrefix(prefix);
 		request.setMarker(marker);
-		return AWSS3.getInstance().s3.listObjects(request);
+		return getInstance().s3.listObjects(request);
 	}
 
 }
