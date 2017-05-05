@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jdom2.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cg.base.io.IExcelProvider;
 import cg.base.util.IOUtils;
 import cg.data.map.AreaFileHandler;
 import cg.data.map.AreaLoader;
@@ -23,9 +25,8 @@ import cg.data.resource.inputStream.InputStreamHandler;
 import cg.data.resource.inputStream.InputStreamHandler.DataInfo;
 import cg.data.resource.inputStream.InputStreamHandlers;
 import cg.data.resource.loader.ServerResourceLoader;
-import jxl.Workbook;
 
-public class ProjectData implements Reloadable {
+public class ProjectData implements Reloadable, IExcelProvider {
 	
 	public static final String FILE_TYPE_TEXT = "txt";
 	
@@ -108,6 +109,7 @@ public class ProjectData implements Reloadable {
 		return handler.get(name);
 	}
 	
+	@Override
 	public Workbook getWorkbook(String name) {
 		InputStreamHandler<Workbook> handler = getInputStreamHandler(Workbook.class);
 		return handler.get(name);

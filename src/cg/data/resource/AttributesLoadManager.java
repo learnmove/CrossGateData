@@ -103,7 +103,8 @@ public class AttributesLoadManager {
 			WorkbookSettings ws = new WorkbookSettings();
 			ws.setSuppressWarnings(true);
 			ws.setCellValidationDisabled(true);
-			Workbook workbook = projectData.getWorkbook(path);
+//			Workbook workbook = projectData.getWorkbook(path);
+			Workbook workbook = null;
 			WorkbookCacheItem bookItem = new AttributesLoadManager.WorkbookCacheItem();
 			bookItem.path = path;
 			bookItem.book = workbook;
