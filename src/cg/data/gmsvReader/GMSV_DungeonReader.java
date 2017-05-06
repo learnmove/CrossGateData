@@ -15,7 +15,6 @@ import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
 
 import cg.base.image.ImageDictionary;
-import cg.base.image.ImageManager;
 import cg.base.image.ImageReader;
 import cg.base.map.MapCell;
 import cg.base.util.MathUtil;
@@ -51,12 +50,9 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 	
 	private ImageReader imageReader;
 	
-	private final ImageManager imageManager;
-	
 	private final File maze;
 	
-	public GMSV_DungeonReader(ImageManager imageManager) {
-		this.imageManager = imageManager;
+	public GMSV_DungeonReader() {
 		maze = new File("maze");
 		FileUtils.deleteDir(maze);
 		maze.mkdir();
@@ -64,7 +60,7 @@ public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 
 	@Override
 	public List<Dungeon> read(ProjectData projectData) {
-		imageReader = imageManager.getImageReader();
+		imageReader = projectData.getImageManager().getImageReader();
 		String[] lines = projectData.getTextResource("dungeonconf");
 		List<Dungeon> list = Lists.newArrayListWithCapacity(lines.length);
 		for (String line : lines) {

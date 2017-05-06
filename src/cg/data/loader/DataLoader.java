@@ -3,7 +3,6 @@ package cg.data.loader;
 import java.net.URI;
 
 import cg.base.animation.AnimationReader;
-import cg.base.image.ImageManager;
 import cg.base.loader.Loader;
 import cg.data.gmsvReader.GMSVReaders;
 import cg.data.map.CWarpManager;
@@ -13,7 +12,6 @@ import cg.data.newReader.NewReaders;
 import cg.data.resource.AnimationReaderCreator;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ProjectData;
-import cg.data.resource.ReadImageResourceManager;
 import cg.data.resource.ReloadManager;
 import cg.data.title.TitleManager;
 
@@ -66,7 +64,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	private void loadData() {
 		projectData.addObjectReader(GMSVReaders.createBoxContainsReader());
-		projectData.addObjectReader(GMSVReaders.createDungeonReader(imageManager));
+		projectData.addObjectReader(GMSVReaders.createDungeonReader());
 		projectData.addObjectReader(GMSVReaders.createEncountInfoReader());
 		projectData.addObjectReader(GMSVReaders.createEnemyAiReader());
 		projectData.addObjectReader(GMSVReaders.createEnemyBaseInfoReader());
@@ -85,7 +83,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 		projectData.addObjectReader(GMSVReaders.createTitleConfigReader());
 		projectData.addObjectReader(GMSVReaders.createTitleReader());
 		projectData.addObjectReader(GMSVReaders.createWarpReader());
-		projectData.addObjectReader(NewReaders.createRoleAnimationInfoReader(imageManager, animationReaderCreator));
+		projectData.addObjectReader(NewReaders.createRoleAnimationInfoReader(animationReaderCreator));
 	}
 	
 	protected abstract byte createModel();
@@ -108,13 +106,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 		TitleManager titleManager = new TitleManager();
 		getProjectData().addListener(titleManager);
 		return titleManager;
-	}
-	
-	@Override
-	protected ImageManager createImageManager() {
-		ReadImageResourceManager imageManager = new ReadImageResourceManager(getClientFilePath());
-		getProjectData().addListener(imageManager);
-		return imageManager;
 	}
 
 	protected abstract ProjectData createProjectData();

@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
 
 import cg.base.animation.AnimationReader;
 import cg.base.conf.IConfAnimation;
-import cg.base.image.ImageManager;
 import cg.base.image.ImageReader;
 import cg.base.io.ResourceInfo;
 import cg.base.sprite.Unit;
@@ -26,18 +25,15 @@ public class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo>
 	
 	private static final Logger log = LoggerFactory.getLogger(CRoleAnimationInfoReader.class);
 	
-	private final ImageManager imageManager;
-	
 	private final AnimationReaderCreator animationReaderCreator;
 	
-	public CRoleAnimationInfoReader(ImageManager imageManager, AnimationReaderCreator animationReaderCreator) {
-		this.imageManager = imageManager;
+	public CRoleAnimationInfoReader(AnimationReaderCreator animationReaderCreator) {
 		this.animationReaderCreator = animationReaderCreator;
 	}
 
 	@Override
 	public List<RoleAnimationInfo> read(ProjectData projectData) {
-		ImageReader imageReader = imageManager.getImageReader();
+		ImageReader imageReader = projectData.getImageManager().getImageReader();
 		AnimationReader animationReader = animationReaderCreator.getAnimationReader();
 		try {
 			List<IConfAnimation> confAnimations = projectData.read(IConfAnimation.class);

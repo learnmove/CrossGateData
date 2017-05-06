@@ -1,6 +1,5 @@
 package cg.data.gmsvReader;
 
-import cg.base.image.ImageManager;
 import cg.base.item.ItemRecipe;
 import cg.base.skill.SkillTemplate;
 import cg.base.sprite.Title;
@@ -34,8 +33,8 @@ public final class GMSVReaders {
 		return new CBoxContainsReader();
 	}
 	
-	public static ObjectReader<Dungeon> createDungeonReader(ImageManager imageManager) {
-		return new GMSV_DungeonReader(imageManager);
+	public static ObjectReader<Dungeon> createDungeonReader() {
+		return new GMSV_DungeonReader();
 	}
 	
 	public static ObjectReader<EncountInfo> createEncountInfoReader() {

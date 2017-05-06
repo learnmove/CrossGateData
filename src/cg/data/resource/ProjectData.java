@@ -16,8 +16,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cg.base.animation.AnimationReader;
+import cg.base.image.ImageManager;
 import cg.base.io.IExcelProvider;
+import cg.base.loader.ISourceData;
 import cg.base.util.IOUtils;
+import cg.data.loader.IDataPlatform;
 import cg.data.map.AreaFileHandler;
 import cg.data.map.AreaLoader;
 import cg.data.map.AreaNetHandler;
@@ -26,7 +30,7 @@ import cg.data.resource.inputStream.InputStreamHandler.DataInfo;
 import cg.data.resource.inputStream.InputStreamHandlers;
 import cg.data.resource.loader.ServerResourceLoader;
 
-public class ProjectData implements Reloadable, IExcelProvider {
+public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	
 	public static final String FILE_TYPE_TEXT = "txt";
 	
@@ -47,6 +51,8 @@ public class ProjectData implements Reloadable, IExcelProvider {
 	protected String serverPath;
 	
 	protected AreaLoader areaLoader;
+	
+	protected ImageManager imageManager;
 	
 	public ProjectData(String serverPath) throws Exception {
 		this.serverPath = serverPath;
@@ -77,6 +83,16 @@ public class ProjectData implements Reloadable, IExcelProvider {
 			}
 			return null;
 		});
+	}
+	
+	public void init(IDataPlatform dataPlatform) {
+		imageManager = createImageManager(dataPlatform);
+	}
+	
+	protected ImageManager createImageManager(IDataPlatform dataPlatform) {
+		ReadImageResourceManager imageManager = new ReadImageResourceManager(dataPlatform.getClientFilePath());
+		addListener(imageManager);
+		return imageManager;
 	}
 	
 	protected void clearResource() {
@@ -166,6 +182,17 @@ public class ProjectData implements Reloadable, IExcelProvider {
 	
 	public AreaLoader createAreaLoader() {
 		return areaLoader;
+	}
+
+	@Override
+	public ImageManager getImageManager() {
+		return imageManager;
+	}
+
+	@Override
+	public AnimationReader getAnimationReader() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
