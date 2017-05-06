@@ -18,7 +18,7 @@ public class ReadImageResourceManager extends CImageManager implements ProjectDa
 	@Override
 	public void reload(ProjectData projectData) throws Exception {
 		resources.clear();
-		projectData.getReader(IConfImage.class).read(projectData).forEach(confImage -> addResource(
+		projectData.read(IConfImage.class).forEach(confImage -> addResource(
 				new CImageResource(confImage.getVersion(), confImage.getType(), confImage.getPath(), confImage.getSuffix(), 
 					confImage.getName(), confImage.getPalette().toLowerCase().equals("true"))));
 		imageReader = createImageReader(clientFilePath);

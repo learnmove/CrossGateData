@@ -40,7 +40,7 @@ public class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo>
 		ImageReader imageReader = imageManager.getImageReader();
 		AnimationReader animationReader = animationReaderCreator.getAnimationReader();
 		try {
-			List<IConfAnimation> confAnimations = projectData.getReader(IConfAnimation.class).read(projectData);
+			List<IConfAnimation> confAnimations = projectData.read(IConfAnimation.class);
 			Map<Byte, CRoleAnimationInfo> indexs = Maps.newTreeMap();
 			for (IConfAnimation confAnimation : confAnimations) {
 				CRoleAnimationInfo animationInfo;
