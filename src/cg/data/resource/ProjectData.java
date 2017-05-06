@@ -48,7 +48,7 @@ public class ProjectData implements Reloadable, IExcelProvider {
 	
 	protected AreaLoader areaLoader;
 	
-	public ProjectData(String serverPath, ServerResourceLoader serverResourceLoader) throws Exception {
+	public ProjectData(String serverPath) throws Exception {
 		this.serverPath = serverPath;
 		objectReaders = Maps.newHashMap();
 		listeners = Lists.newLinkedList();
@@ -57,7 +57,9 @@ public class ProjectData implements Reloadable, IExcelProvider {
 		inputStreamHandlers.put(Document.class, InputStreamHandlers.createXmlHandler(FILE_TYPE_XML));
 		inputStreamHandlers.put(Workbook.class, InputStreamHandlers.createExcelHandler(FILE_TYPE_EXCEL));
 		areaLoader = new URI(serverPath).getHost() == null ? new AreaFileHandler() : new AreaNetHandler(serverPath);
-		
+	}
+	
+	public void loadURI(ServerResourceLoader serverResourceLoader) throws Exception {
 		serverResourceLoader.load(serverPath, (uri) -> {
 			try {
 				String path = IOUtils.OS.contains("win") ? uri.getPath() : URLDecoder.decode(uri.toString(), "utf-8");
