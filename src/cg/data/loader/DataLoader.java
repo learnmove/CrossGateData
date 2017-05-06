@@ -15,7 +15,6 @@ import cg.data.resource.MessageManager;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ReadImageResourceManager;
 import cg.data.resource.ReloadManager;
-import cg.data.resource.Reloadable;
 import cg.data.title.TitleManager;
 
 public abstract class DataLoader extends Loader implements IDataPlatform {
@@ -62,7 +61,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	protected void registerReload() throws Exception {
 		reloadManager.register(ProjectData.class.getName(), projectData);
-		reloadManager.register(ImageManager.class.getName(), (Reloadable) imageManager);
 		reloadManager.register(AnimationReaderCreator.class.getName(), animationReaderCreator);
 	}
 	
@@ -114,7 +112,9 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	@Override
 	protected ImageManager createImageManager() {
-		return new ReadImageResourceManager(getClientFilePath());
+		ReadImageResourceManager imageManager = new ReadImageResourceManager(getClientFilePath());
+		getProjectData().addListener(imageManager);
+		return imageManager;
 	}
 
 	protected abstract ProjectData createProjectData();

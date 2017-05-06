@@ -12,13 +12,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cg.base.animation.AnimationReader;
+import cg.base.conf.IConfAnimation;
 import cg.base.image.ImageManager;
 import cg.base.image.ImageReader;
 import cg.base.io.ResourceInfo;
 import cg.base.sprite.Unit;
-import cg.base.util.MathUtil;
 import cg.data.resource.AnimationReaderCreator;
-import cg.data.resource.AttributesLoadManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.RoleAnimationInfo;
@@ -26,10 +25,6 @@ import cg.data.sprite.RoleAnimationInfo;
 public class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 	
 	private static final Logger log = LoggerFactory.getLogger(CRoleAnimationInfoReader.class);
-	
-	private ImageReader imageReader;
-	
-	private AnimationReader animationReader;
 	
 	private final ImageManager imageManager;
 	
@@ -42,20 +37,14 @@ public class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo>
 
 	@Override
 	public List<RoleAnimationInfo> read(ProjectData projectData) {
-		imageReader = imageManager.getImageReader();
-		animationReader = animationReaderCreator.getAnimationReader();
+		ImageReader imageReader = imageManager.getImageReader();
+		AnimationReader animationReader = animationReaderCreator.getAnimationReader();
 		try {
-			int[] roleIds = AttributesLoadManager.loadAttributesData("role_animation", "role_id", "role_id");
-			int[] animationGlobalIds = AttributesLoadManager.loadAttributesData("role_animation", "role_id", "animation_global_id");
-			int[] headGlobalIds = AttributesLoadManager.loadAttributesData("role_animation", "role_id", "head_global_id");
-			String[] sexs = AttributesLoadManager.loadAttributesStrData("role_animation", "role_id", "sex");
-			String[] pages = AttributesLoadManager.loadAttributesStrData("role_animation", "role_id", "page");
+			List<IConfAnimation> confAnimations = projectData.getReader(IConfAnimation.class).read(projectData);
 			Map<Byte, CRoleAnimationInfo> indexs = Maps.newTreeMap();
-			ResourceInfo[] headInfos = imageReader.getImageDictionaries(headGlobalIds);
-			ResourceInfo[] animationInfos = animationReader.getResourceInfos(animationGlobalIds);
-			for (int i = 0;i < roleIds.length;i++) {
+			for (IConfAnimation confAnimation : confAnimations) {
 				CRoleAnimationInfo animationInfo;
-				byte roleId = (byte) roleIds[i];
+				byte roleId = confAnimation.getRoleId();
 				if (indexs.containsKey(roleId)) {
 					animationInfo = indexs.get(roleId);
 				} else {
@@ -63,12 +52,12 @@ public class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo>
 					animationInfo.roleId = roleId;
 					indexs.put(roleId, animationInfo);
 				}
-				animationInfo.addAnimationInfo(animationInfos[i]);
-				animationInfo.addHeadInfo(headInfos[i]);
-				animationInfo.sex = sexs[i].equals("男") ? Unit.SEX_MALE : Unit.SEX_FEMALE;
-				animationInfo.pageIndex = MathUtil.stringToByte(pages[i], RoleAnimationInfo.NO_SELECT_PAGE);
+				animationInfo.addAnimationInfo(animationReader.getResourceInfo(confAnimation.getAnimationGlobalId()));
+				animationInfo.addHeadInfo(imageReader.getImageDictionary(confAnimation.getHeadGlobalId()));
+				animationInfo.sex = confAnimation.getGender().equals("男") ? Unit.SEX_MALE : Unit.SEX_FEMALE;
+				animationInfo.pageIndex = confAnimation.getPage();
 			}
-			return Lists.newArrayList(indexs.values().toArray(new RoleAnimationInfo[indexs.size()]));
+			return Lists.newArrayList(indexs.values());
 		} catch (Exception e) {
 			log.error("", e);
 			return null;
