@@ -8,12 +8,10 @@ import cg.base.io.CImageResource;
 import cg.base.reader.CImageReader;
 
 public class ReadImageResourceManager extends CImageManager implements ProjectDataListener {
-	
-	protected final String clientFilePath;
 
 	public ReadImageResourceManager(String clientFilePath) {
 		super(clientFilePath);
-		this.clientFilePath = clientFilePath;
+		imageReader = createImageReader(clientFilePath);
 	}
 
 	@Override
@@ -23,15 +21,11 @@ public class ReadImageResourceManager extends CImageManager implements ProjectDa
 			addResource(new CImageResource(conf.getVersion(), conf.getType(), conf.getPath(), conf.getSuffix(), 
 					conf.getName(), conf.getPalette().toLowerCase().equals("true")));
 		}
-		imageReader = createImageReader(clientFilePath);
+		imageReader.load();
 	}
 
 	@Override
 	protected ImageReader createImageReader(String clientFilePath) {
-		return resources.size() == 0 ? null : createImageReader();
-	}
-	
-	protected ImageReader createImageReader() {
 		return new CImageReader(this, clientFilePath);
 	}
 
