@@ -2,7 +2,7 @@ package cg.data.loader;
 
 import java.net.URI;
 
-import cg.base.loader.Loader;
+import cg.base.loader.Builder;
 import cg.data.gmsvReader.CFileMapReader;
 import cg.data.map.CWarpManager;
 import cg.data.map.MapReader;
@@ -11,7 +11,7 @@ import cg.data.resource.ProjectData;
 import cg.data.resource.ReloadManager;
 import cg.data.title.TitleManager;
 
-public abstract class DataLoader extends Loader implements IDataPlatform {
+public abstract class DataBuilder extends Builder implements IDataPlatform {
 	
 	protected ReloadManager reloadManager;
 	

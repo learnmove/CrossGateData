@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.tool.server.ioc.IOCBean;
 
+import cg.base.loader.IOCBeanType;
 import cg.base.sprite.AttributeCell;
 import cg.base.util.MathUtil;
 import cg.data.battle.skill.SkillInfo;
@@ -22,13 +24,8 @@ import cg.data.resource.ProjectData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@IOCBean(type=IOCBeanType.READER)
 public class CSkillInfoReader implements ObjectReader<SkillInfo> {
-	
-	private final MessageManager messageManager;
-	
-	public CSkillInfoReader(MessageManager messageManager) {
-		this.messageManager = messageManager;
-	}
 
 	@Override
 	public List<SkillInfo> read(ProjectData projectData) {
@@ -39,7 +36,7 @@ public class CSkillInfoReader implements ObjectReader<SkillInfo> {
 			List<SkillInfo> ret = Lists.newArrayListWithCapacity(list.size());
 			for (int i = 0;i < list.size();i++) {
 				Element element = list.get(i);
-				ret.add(new CSkillInfo(element, messageManager));
+				ret.add(new CSkillInfo(element, projectData.getMessageManager()));
 			}
 			return ret;
 		} else {

@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cg.base.animation.AnimationReader;
+import cg.base.conf.ConfAnimation;
 import cg.base.conf.IConfAnimation;
 import cg.base.image.ImageReader;
 import cg.base.io.ResourceInfo;
@@ -32,7 +33,7 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 		ImageReader imageReader = projectData.getImageManager().getImageReader();
 		AnimationReader animationReader = projectData.getAnimationReader();
 		try {
-			List<IConfAnimation> confAnimations = projectData.read(IConfAnimation.class);
+			IConfAnimation[] confAnimations = ConfAnimation.arrayFromExcel(projectData);
 			Map<Byte, CRoleAnimationInfo> indexs = Maps.newTreeMap();
 			for (IConfAnimation confAnimation : confAnimations) {
 				CRoleAnimationInfo animationInfo;

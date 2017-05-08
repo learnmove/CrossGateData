@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.battle.skill.SkillLevelData;
 import cg.data.battle.skill.SkillLevelData.SelfEffect;
@@ -15,6 +18,7 @@ import cg.data.sprite.Message;
 
 import com.google.common.collect.Lists;
 
+@IOCBean(type=IOCBeanType.READER)
 public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 
 	@Override

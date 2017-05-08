@@ -22,8 +22,8 @@ import cg.base.image.ImageManager;
 import cg.base.io.IExcelProvider;
 import cg.base.loader.IOCBeanType;
 import cg.base.loader.ISourceData;
-import cg.base.reader.CAnimationReader;
 import cg.base.util.IOUtils;
+import cg.data.gmsvReader.CAnimationReaderEx;
 import cg.data.loader.IDataPlatform;
 import cg.data.map.AreaFileHandler;
 import cg.data.map.AreaLoader;
@@ -106,7 +106,9 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	}
 	
 	protected AnimationReader createAnimationReader(IDataPlatform dataPlatform) {
-		return new CAnimationReader(dataPlatform.getClientFilePath(), getImageManager(), dataPlatform.getTimer());
+		CAnimationReaderEx animationReader = new CAnimationReaderEx(dataPlatform.getClientFilePath(), dataPlatform.getTimer());
+		addListener(animationReader);
+		return animationReader;
 	}
 	
 	protected MessageManager createMessageManager() {
