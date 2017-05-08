@@ -39,7 +39,7 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	
 	public static final String FILE_TYPE_XML = "xml";
 	
-	public static final String FILE_TYPE_EXCEL = "xls";
+	public static final String FILE_TYPE_EXCEL = "xlsx";
 	
 	protected static final Logger log = LoggerFactory.getLogger(ProjectData.class);
 	

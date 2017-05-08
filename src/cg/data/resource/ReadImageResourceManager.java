@@ -1,5 +1,6 @@
 package cg.data.resource;
 
+import cg.base.conf.ConfImage;
 import cg.base.conf.IConfImage;
 import cg.base.image.CImageManager;
 import cg.base.image.ImageReader;
@@ -18,9 +19,10 @@ public class ReadImageResourceManager extends CImageManager implements ProjectDa
 	@Override
 	public void reload(ProjectData projectData) throws Exception {
 		resources.clear();
-		projectData.read(IConfImage.class).forEach(confImage -> addResource(
-				new CImageResource(confImage.getVersion(), confImage.getType(), confImage.getPath(), confImage.getSuffix(), 
-					confImage.getName(), confImage.getPalette().toLowerCase().equals("true"))));
+		for (IConfImage conf : ConfImage.arrayFromExcel(projectData)) {
+			addResource(new CImageResource(conf.getVersion(), conf.getType(), conf.getPath(), conf.getSuffix(), 
+					conf.getName(), conf.getPalette().toLowerCase().equals("true")));
+		}
 		imageReader = createImageReader(clientFilePath);
 	}
 
