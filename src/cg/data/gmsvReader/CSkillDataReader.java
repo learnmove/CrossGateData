@@ -16,19 +16,13 @@ import cg.data.sprite.Message;
 import com.google.common.collect.Lists;
 
 public class CSkillDataReader implements ObjectReader<SkillLevelData> {
-	
-	private final MessageManager messageManager;
-	
-	public CSkillDataReader(MessageManager messageManager) {
-		this.messageManager = messageManager;
-	}
 
 	@Override
 	public List<SkillLevelData> read(ProjectData projectData) {
 		String[] lines = projectData.getTextResource("tech");
 		List<SkillLevelData> skillDatas = Lists.newArrayListWithCapacity(lines.length);
 		for (String line : lines) {
-			skillDatas.add(new CSkillData(line, messageManager));
+			skillDatas.add(new CSkillData(line, projectData.getMessageManager()));
 		}
 		return skillDatas;
 	}

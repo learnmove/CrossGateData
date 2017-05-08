@@ -57,6 +57,8 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	
 	protected AnimationReader animationReader;
 	
+	protected MessageManager messageManager;
+	
 	public ProjectData(String serverPath) throws Exception {
 		this.serverPath = serverPath;
 		objectReaders = Maps.newHashMap();
@@ -91,6 +93,7 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	public void init(IDataPlatform dataPlatform) {
 		imageManager = createImageManager(dataPlatform);
 		animationReader = createAnimationReader(dataPlatform);
+		messageManager = createMessageManager();
 	}
 	
 	protected ImageManager createImageManager(IDataPlatform dataPlatform) {
@@ -101,6 +104,12 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	
 	protected AnimationReader createAnimationReader(IDataPlatform dataPlatform) {
 		return new CAnimationReader(dataPlatform.getClientFilePath(), getImageManager(), dataPlatform.getTimer());
+	}
+	
+	protected MessageManager createMessageManager() {
+		MessageManager messageManager = new MessageManager();
+		addListener(messageManager);
+		return messageManager;
 	}
 	
 	protected void clearResource() {
@@ -123,18 +132,18 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		}
 	}
 	
-	public String[] getTextResource(String name) {
+	public final String[] getTextResource(String name) {
 		InputStreamHandler<String[]> handler = getInputStreamHandler(String[].class);
 		return handler.get(name);
 	}
 	
-	public Document getXmlResource(String name) {
+	public final Document getXmlResource(String name) {
 		InputStreamHandler<Document> handler = getInputStreamHandler(Document.class);
 		return handler.get(name);
 	}
 	
 	@Override
-	public Workbook getWorkbook(String name) {
+	public final Workbook getWorkbook(String name) {
 		InputStreamHandler<Workbook> handler = getInputStreamHandler(Workbook.class);
 		return handler.get(name);
 	}
@@ -144,7 +153,7 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		return (InputStreamHandler<T>) inputStreamHandlers.get(T);
 	}
 	
-	public <T> void addObjectReader(ObjectReader<T> reader) {
+	public final <T> void addObjectReader(ObjectReader<T> reader) {
 		Type[] types = reader.getClass().getGenericInterfaces();
 		if (types.length > 0 && types[0] instanceof ParameterizedType) {
 			ParameterizedType parameterizedType = (ParameterizedType) types[0];
@@ -159,17 +168,17 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		}
 	}
 	
-	public <T> List<T> read(Class<T> clz) {
+	public final <T> List<T> read(Class<T> clz) {
 		return getReader(clz).read(this);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <X, T extends ObjectReader<X>> T getReader(Class<X> clz) {
+	public final <X, T extends ObjectReader<X>> T getReader(Class<X> clz) {
 		return (T) objectReaders.get(clz.toString());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DataInfo> getFileList() {
+	public final List<DataInfo> getFileList() {
 		int size = 0;
 		List<DataInfo> list = Lists.newArrayListWithCapacity(size);
 		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
@@ -180,27 +189,30 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		return list;
 	}
 	
-	public void addListener(ProjectDataListener listener) {
+	public final void addListener(ProjectDataListener listener) {
 		listeners.add(listener);
 	}
 	
-	public void removeListener(ProjectDataListener listener) {
+	public final void removeListener(ProjectDataListener listener) {
 		listeners.remove(listener);
 	}
 	
-	public AreaLoader createAreaLoader() {
+	public final AreaLoader createAreaLoader() {
 		return areaLoader;
 	}
 
 	@Override
-	public ImageManager getImageManager() {
+	public final ImageManager getImageManager() {
 		return imageManager;
 	}
 
 	@Override
-	public AnimationReader getAnimationReader() {
-		// TODO Auto-generated method stub
-		return null;
+	public final AnimationReader getAnimationReader() {
+		return animationReader;
+	}
+
+	public final MessageManager getMessageManager() {
+		return messageManager;
 	}
 
 }

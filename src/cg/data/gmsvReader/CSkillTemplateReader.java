@@ -18,19 +18,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CSkillTemplateReader implements ObjectReader<SkillTemplate> {
-	
-	private final MessageManager messageManager;
-	
-	public CSkillTemplateReader(MessageManager messageManager) {
-		this.messageManager = messageManager;
-	}
 
 	@Override
 	public List<SkillTemplate> read(ProjectData projectData) {
 		String[] lines = projectData.getTextResource("skill");
 		List<SkillTemplate> list = Lists.newArrayListWithCapacity(lines.length);
 		for (String line : lines) {
-			list.add(new CSkillTemplate(line, messageManager));
+			list.add(new CSkillTemplate(line, projectData.getMessageManager()));
 		}
 		return list;
 	}

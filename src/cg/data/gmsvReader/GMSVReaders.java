@@ -14,7 +14,6 @@ import cg.data.map.GatherArea;
 import cg.data.map.MapReader;
 import cg.data.map.Warp;
 import cg.data.map.dungeon.Dungeon;
-import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.sprite.CreatureTemplate;
 import cg.data.sprite.EncountInfo;
@@ -73,8 +72,8 @@ public final class GMSVReaders {
 		return new CGatherAreaReader();
 	}
 	
-	public static ObjectReader<ItemTemplate> createItemReader(MessageManager messageManager) {
-		return new CItemReader(messageManager);
+	public static ObjectReader<ItemTemplate> createItemReader() {
+		return new CItemReader();
 	}
 	
 	public static ObjectReader<ItemRecipe> createItemRecipeReader() {
@@ -93,12 +92,12 @@ public final class GMSVReaders {
 		return new CNPCReader();
 	}
 	
-	public static ObjectReader<SkillLevelData> createSkillDataReader(MessageManager messageManager) {
-		return new CSkillDataReader(messageManager);
+	public static ObjectReader<SkillLevelData> createSkillDataReader() {
+		return new CSkillDataReader();
 	}
 	
-	public static ObjectReader<SkillTemplate> createSkillTemplateReader(MessageManager messageManager) {
-		return new CSkillTemplateReader(messageManager);
+	public static ObjectReader<SkillTemplate> createSkillTemplateReader() {
+		return new CSkillTemplateReader();
 	}
 	
 	public static ObjectReader<TitleConfig> createTitleConfigReader() {

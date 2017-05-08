@@ -48,12 +48,6 @@ import com.google.common.collect.Range;
 import com.google.common.collect.Table;
 
 public class CItemReader implements ObjectReader<ItemTemplate> {
-	
-	private MessageManager messageManager;
-	
-	public CItemReader(MessageManager messageManager) {
-		this.messageManager = messageManager;
-	}
 
 	@Override
 	public List<ItemTemplate> read(ProjectData projectData) {
@@ -62,6 +56,7 @@ public class CItemReader implements ObjectReader<ItemTemplate> {
 		for (String line : lines) {
 			String[] infos = line.split("\t", -2);
 			CItemTemplate itemTemplate = new CItemTemplate();
+			itemTemplate.messageManager = projectData.getMessageManager();
 			itemTemplate.unidentifyName = infos[0];
 			itemTemplate.identifyName = infos[1];
 			itemTemplate.useEffect = infos[2];
@@ -177,6 +172,8 @@ public class CItemReader implements ObjectReader<ItemTemplate> {
 	}
 	
 	private class CItemTemplate implements ItemTemplate {
+		
+		private MessageManager messageManager;
 		
 		private int id;
 		
