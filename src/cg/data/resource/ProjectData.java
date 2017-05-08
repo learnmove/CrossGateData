@@ -20,6 +20,7 @@ import cg.base.animation.AnimationReader;
 import cg.base.image.ImageManager;
 import cg.base.io.IExcelProvider;
 import cg.base.loader.ISourceData;
+import cg.base.reader.CAnimationReader;
 import cg.base.util.IOUtils;
 import cg.data.loader.IDataPlatform;
 import cg.data.map.AreaFileHandler;
@@ -54,6 +55,8 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	
 	protected ImageManager imageManager;
 	
+	protected AnimationReader animationReader;
+	
 	public ProjectData(String serverPath) throws Exception {
 		this.serverPath = serverPath;
 		objectReaders = Maps.newHashMap();
@@ -87,12 +90,17 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	
 	public void init(IDataPlatform dataPlatform) {
 		imageManager = createImageManager(dataPlatform);
+		animationReader = createAnimationReader(dataPlatform);
 	}
 	
 	protected ImageManager createImageManager(IDataPlatform dataPlatform) {
 		ReadImageResourceManager imageManager = new ReadImageResourceManager(dataPlatform.getClientFilePath());
 		addListener(imageManager);
 		return imageManager;
+	}
+	
+	protected AnimationReader createAnimationReader(IDataPlatform dataPlatform) {
+		return new CAnimationReader(dataPlatform.getClientFilePath(), getImageManager(), dataPlatform.getTimer());
 	}
 	
 	protected void clearResource() {

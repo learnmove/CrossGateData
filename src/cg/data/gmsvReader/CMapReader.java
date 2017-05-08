@@ -112,7 +112,7 @@ public class CMapReader implements MapReader {
 			fis.read(cellImageGlobalIds);
 			fis.read(objectImageGlobalIds);
 
-			ImageReader imageReader = platform.getImageManager().getImageReader();
+			ImageReader imageReader = platform.getSourceData().getImageManager().getImageReader();
 			for (int east = 0;east < maxEast;east++) {
 				for (int south = 0;south < maxSouth;south++) {
 					ImageDictionary imageDictionary = imageReader.getImageDictionary(getObjectId(east, south));
@@ -208,7 +208,7 @@ public class CMapReader implements MapReader {
 
 		@Override
 		public void setObject(int east, int south, int resourceId) {
-			ImageDictionary imageDictionary = platform.getImageManager().getImageReader().getImageDictionary(getObjectId(east, south));
+			ImageDictionary imageDictionary = platform.getSourceData().getImageManager().getImageReader().getImageDictionary(getObjectId(east, south));
 			if (imageDictionary != null) {
 				MathUtil.intToByte(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH, resourceId);
 				setMark(imageDictionary, east, south, marks);

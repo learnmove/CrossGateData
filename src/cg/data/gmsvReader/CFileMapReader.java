@@ -124,7 +124,7 @@ public class CFileMapReader implements MapReader {
 		
 		private void readContent() throws IOException {
 			byte[] objectImageGlobalIds = readBytes(getMaxEast() * getMaxSouth() * DATA_LENGTH, getMaxEast() * getMaxSouth() * DATA_LENGTH);
-			ImageReader imageReader = platform.getImageManager().getImageReader();
+			ImageReader imageReader = platform.getSourceData().getImageManager().getImageReader();
 			for (int east = 0;east < maxEast;east++) {
 				for (int south = 0;south < maxSouth;south++) {
 					ImageDictionary imageDictionary = imageReader.getImageDictionary(MathUtil.bytesToInt2(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH));

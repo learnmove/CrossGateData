@@ -22,8 +22,6 @@ public interface IDataPlatform extends IPlatform {
 	
 	ReloadManager getReloadManager();
 	
-	ProjectData getProjectData();
-	
 	MessageManager getMessageManager();
 	
 	TitleManager getTitleManager();
@@ -31,5 +29,7 @@ public interface IDataPlatform extends IPlatform {
 	WarpManager getWarpManager();
 	
 	MapReader getMapReader();
+	@Override
+	ProjectData getSourceData();
 
 }

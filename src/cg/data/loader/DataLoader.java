@@ -2,14 +2,12 @@ package cg.data.loader;
 
 import java.net.URI;
 
-import cg.base.animation.AnimationReader;
 import cg.base.loader.Loader;
 import cg.data.gmsvReader.GMSVReaders;
 import cg.data.map.CWarpManager;
 import cg.data.map.MapReader;
 import cg.data.map.WarpManager;
 import cg.data.newReader.NewReaders;
-import cg.data.resource.AnimationReaderCreator;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ReloadManager;
@@ -22,7 +20,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	protected ProjectData projectData;
 	
 	protected MessageManager messageManager;
-	
+
 	protected byte model;
 	
 	protected TitleManager titleManager;
@@ -32,22 +30,18 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	protected MapReader mapReader;
 	
 	protected URI serverFilePath;
-	
-	protected AnimationReaderCreator animationReaderCreator;
 
 	@Override
 	protected final void loadMore() throws Exception {
 		serverFilePath = loadServerFilePath();
 		model = createModel();
 		reloadManager = createReloadManager();
-		animationReaderCreator = createAnimationReaderCreator();
 
 		projectData = createProjectData();
 		messageManager = createMessageManager();
 		registerReload();
 		loadData();
 		reloadManager.reload();
-		loadAnimationReader();
 		titleManager = createTitleManager();
 		warpManager = createWarpManager();
 		mapReader = createMapReader();
@@ -59,7 +53,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	protected void registerReload() throws Exception {
 		reloadManager.register(ProjectData.class.getName(), projectData);
-		reloadManager.register(AnimationReaderCreator.class.getName(), animationReaderCreator);
 	}
 	
 	private void loadData() {
@@ -83,14 +76,10 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 		projectData.addObjectReader(GMSVReaders.createTitleConfigReader());
 		projectData.addObjectReader(GMSVReaders.createTitleReader());
 		projectData.addObjectReader(GMSVReaders.createWarpReader());
-		projectData.addObjectReader(NewReaders.createRoleAnimationInfoReader(animationReaderCreator));
+		projectData.addObjectReader(NewReaders.createRoleAnimationInfoReader());
 	}
 	
 	protected abstract byte createModel();
-	
-	protected AnimationReaderCreator createAnimationReaderCreator() {
-		return new AnimationReaderCreator(getClientFilePath(), getTimer(), getImageManager());
-	}
 	
 	protected ReloadManager createReloadManager() {
 		return new ReloadManager(getTimer());
@@ -98,20 +87,20 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	protected MessageManager createMessageManager() {
 		MessageManager messageManager = new MessageManager();
-		getProjectData().addListener(messageManager);
+		getSourceData().addListener(messageManager);
 		return messageManager;
 	}
 	
 	protected TitleManager createTitleManager() {
 		TitleManager titleManager = new TitleManager();
-		getProjectData().addListener(titleManager);
+		getSourceData().addListener(titleManager);
 		return titleManager;
 	}
 
 	protected abstract ProjectData createProjectData();
 
 	protected WarpManager createWarpManager() {
-		return new CWarpManager(getProjectData());
+		return new CWarpManager(getSourceData());
 	}
 
 	protected MapReader createMapReader() {
@@ -119,11 +108,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	}
 	
 	protected abstract URI loadServerFilePath() throws Exception;
-
-	@Override
-	protected AnimationReader createAnimationReader() {
-		return animationReaderCreator.getAnimationReader();
-	}
 
 	@Override
 	public final int getVersion() {
@@ -138,11 +122,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	@Override
 	public final ReloadManager getReloadManager() {
 		return reloadManager;
-	}
-
-	@Override
-	public final ProjectData getProjectData() {
-		return projectData;
 	}
 
 	@Override
@@ -163,6 +142,11 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	@Override
 	public final MapReader getMapReader() {
 		return mapReader;
+	}
+	
+	@Override
+	public ProjectData getSourceData() {
+		return projectData;
 	}
 
 }
