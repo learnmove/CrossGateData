@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
@@ -11,7 +14,8 @@ import cg.data.sprite.NpcTemplate;
 
 import com.google.common.collect.Lists;
 
-public class CNPCReader implements ObjectReader<NpcTemplate> {
+@IOCBean(type=IOCBeanType.READER)
+class CNPCReader implements ObjectReader<NpcTemplate> {
 
 	@Override
 	public List<NpcTemplate> read(ProjectData projectData) {

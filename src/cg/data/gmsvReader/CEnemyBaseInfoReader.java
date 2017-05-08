@@ -6,6 +6,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.attribute.AttributeEx;
 import cg.data.resource.ObjectReader;
@@ -16,7 +19,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 
-public class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
+@IOCBean(type=IOCBeanType.READER)
+class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 
 	@Override
 	public List<CreatureTemplate> read(ProjectData projectData) {

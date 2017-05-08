@@ -4,8 +4,11 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
 import com.google.common.collect.Lists;
 
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.job.Job;
 import cg.data.resource.ObjectReader;
@@ -14,7 +17,8 @@ import gnu.trove.impl.unmodifiable.TUnmodifiableShortByteMap;
 import gnu.trove.map.TShortByteMap;
 import gnu.trove.map.hash.TShortByteHashMap;
 
-public class CJobReader implements ObjectReader<Job> {
+@IOCBean(type=IOCBeanType.READER)
+class CJobReader implements ObjectReader<Job> {
 
 	@Override
 	public List<Job> read(ProjectData projectData) {

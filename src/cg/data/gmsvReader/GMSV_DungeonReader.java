@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
@@ -16,6 +17,7 @@ import com.google.common.primitives.Ints;
 
 import cg.base.image.ImageDictionary;
 import cg.base.image.ImageReader;
+import cg.base.loader.IOCBeanType;
 import cg.base.map.MapCell;
 import cg.base.util.MathUtil;
 import cg.data.map.GameMap;
@@ -40,7 +42,8 @@ import gnu.trove.map.TIntByteMap;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntByteHashMap;
 
-public class GMSV_DungeonReader implements ObjectReader<Dungeon> {
+@IOCBean(type=IOCBeanType.READER)
+class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 	
 	private static final Logger log = LoggerFactory.getLogger(GMSV_DungeonReader.class);
 	

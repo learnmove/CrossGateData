@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.item.DropItemGroup;
 import cg.data.item.DropItemGroup.DropItem;
@@ -16,7 +19,8 @@ import cg.data.resource.ProjectData;
 
 import com.google.common.collect.Lists;
 
-public class CGatherAreaReader implements ObjectReader<GatherArea> {
+@IOCBean(type=IOCBeanType.READER)
+class CGatherAreaReader implements ObjectReader<GatherArea> {
 
 	@Override
 	public List<GatherArea> read(ProjectData projectData) {

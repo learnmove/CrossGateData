@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.map.BoxContains;
 import cg.data.resource.ObjectReader;
@@ -11,7 +14,8 @@ import cg.data.resource.ProjectData;
 
 import com.google.common.collect.Lists;
 
-public class CBoxContainsReader implements ObjectReader<BoxContains> {
+@IOCBean(type=IOCBeanType.READER)
+class CBoxContainsReader implements ObjectReader<BoxContains> {
 	
 	@Override
 	public List<BoxContains> read(ProjectData projectData) {

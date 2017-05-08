@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.map.MapArea;
 import cg.data.map.ReaderMapArea;
@@ -16,7 +19,8 @@ import cg.data.resource.ProjectData;
 import cg.data.sprite.EncountInfo;
 import cg.data.sprite.EncountInfo.GroupInfo;
 
-public class CEncountInfoReader implements ObjectReader<EncountInfo> {
+@IOCBean(type=IOCBeanType.READER)
+class CEncountInfoReader implements ObjectReader<EncountInfo> {
 
 	@Override
 	public List<EncountInfo> read(ProjectData projectData) {

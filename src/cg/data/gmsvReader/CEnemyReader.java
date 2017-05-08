@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.item.DropItemGroup;
 import cg.data.item.DropItemGroup.DropItem;
@@ -14,7 +17,8 @@ import cg.data.sprite.EnemyInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
-public class CEnemyReader implements ObjectReader<EnemyInfo> {
+@IOCBean(type=IOCBeanType.READER)
+class CEnemyReader implements ObjectReader<EnemyInfo> {
 
 	@Override
 	public List<EnemyInfo> read(ProjectData projectData) {

@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.sprite.Title;
 import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
@@ -11,7 +14,8 @@ import cg.data.resource.ProjectData;
 
 import com.google.common.collect.Lists;
 
-public class CTitleReader implements ObjectReader<Title> {
+@IOCBean(type=IOCBeanType.READER)
+class CTitleReader implements ObjectReader<Title> {
 	
 	@Override
 	public List<Title> read(ProjectData projectData) {

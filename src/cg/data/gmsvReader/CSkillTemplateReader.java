@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.skill.SkillTemplate;
 import cg.base.sprite.Attribute;
 import cg.base.sprite.AttributeCell;
@@ -17,6 +20,7 @@ import cg.data.sprite.Message;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@IOCBean(type=IOCBeanType.READER)
 public class CSkillTemplateReader implements ObjectReader<SkillTemplate> {
 
 	@Override

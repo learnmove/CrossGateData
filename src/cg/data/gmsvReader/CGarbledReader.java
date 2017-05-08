@@ -7,14 +7,17 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cg.base.loader.IOCBeanType;
 import cg.data.gmsvReader.CGarbledReader.Garbled;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 
+@IOCBean(type=IOCBeanType.READER)
 public class CGarbledReader implements ObjectReader<Garbled> {
 	
 	private static final Logger log = LoggerFactory.getLogger(CGarbledReader.class);

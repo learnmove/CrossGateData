@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
@@ -12,7 +15,8 @@ import cg.data.sprite.EnemyGroup.SingleGroupInfo;
 
 import com.google.common.collect.Lists;
 
-public class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
+@IOCBean(type=IOCBeanType.READER)
+class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
 
 	@Override
 	public List<EnemyGroup> read(ProjectData projectData) {

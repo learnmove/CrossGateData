@@ -33,6 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.tool.server.ioc.IOCBean;
+
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.item.ItemTemplate;
 import cg.data.resource.MessageManager;
@@ -47,7 +50,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.Table;
 
-public class CItemReader implements ObjectReader<ItemTemplate> {
+@IOCBean(type=IOCBeanType.READER)
+class CItemReader implements ObjectReader<ItemTemplate> {
 
 	@Override
 	public List<ItemTemplate> read(ProjectData projectData) {

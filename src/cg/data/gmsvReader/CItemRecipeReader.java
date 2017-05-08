@@ -4,15 +4,19 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.tool.server.ioc.IOCBean;
+
 import cg.base.item.ItemRecipe;
 import cg.base.item.ItemRecipe.MaterialInfo;
+import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 
 import com.google.common.collect.Lists;
 
-public class CItemRecipeReader implements ObjectReader<ItemRecipe> {
+@IOCBean(type=IOCBeanType.READER)
+class CItemRecipeReader implements ObjectReader<ItemRecipe> {
 
 	@Override
 	public List<ItemRecipe> read(ProjectData projectData) {
