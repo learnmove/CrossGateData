@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -15,12 +16,14 @@ import cg.base.animation.AnimationReader;
 import cg.base.conf.IConfAnimation;
 import cg.base.image.ImageReader;
 import cg.base.io.ResourceInfo;
+import cg.base.loader.IOCBeanType;
 import cg.base.sprite.Unit;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.RoleAnimationInfo;
 
-public class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
+@IOCBean(type=IOCBeanType.READER)
+class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 	
 	private static final Logger log = LoggerFactory.getLogger(CRoleAnimationInfoReader.class);
 

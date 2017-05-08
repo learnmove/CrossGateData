@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.jdom2.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tool.server.ioc.IOC;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -19,6 +20,7 @@ import com.google.common.collect.Maps;
 import cg.base.animation.AnimationReader;
 import cg.base.image.ImageManager;
 import cg.base.io.IExcelProvider;
+import cg.base.loader.IOCBeanType;
 import cg.base.loader.ISourceData;
 import cg.base.reader.CAnimationReader;
 import cg.base.util.IOUtils;
@@ -90,10 +92,11 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		});
 	}
 	
-	public void init(IDataPlatform dataPlatform) {
+	public void init(IDataPlatform dataPlatform) throws Exception {
 		imageManager = createImageManager(dataPlatform);
 		animationReader = createAnimationReader(dataPlatform);
 		messageManager = createMessageManager();
+		loadReaderBeans();
 	}
 	
 	protected ImageManager createImageManager(IDataPlatform dataPlatform) {
@@ -110,6 +113,13 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		MessageManager messageManager = new MessageManager();
 		addListener(messageManager);
 		return messageManager;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void loadReaderBeans() throws Exception {
+		IOC ioc = new IOC();
+		ioc.load("cg", IOCBeanType.READER, null);
+		ioc.getAll().forEach((k, v) -> addObjectReader((ObjectReader) v));
 	}
 	
 	protected void clearResource() {

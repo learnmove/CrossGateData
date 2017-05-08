@@ -3,11 +3,10 @@ package cg.data.loader;
 import java.net.URI;
 
 import cg.base.loader.Loader;
-import cg.data.gmsvReader.GMSVReaders;
+import cg.data.gmsvReader.CFileMapReader;
 import cg.data.map.CWarpManager;
 import cg.data.map.MapReader;
 import cg.data.map.WarpManager;
-import cg.data.newReader.NewReaders;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ReloadManager;
 import cg.data.title.TitleManager;
@@ -35,7 +34,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 		reloadManager = createReloadManager();
 		projectData = createProjectData();
 		registerReload();
-		loadData();
 		reloadManager.reload();
 		titleManager = createTitleManager();
 		warpManager = createWarpManager();
@@ -47,30 +45,6 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	
 	protected void registerReload() throws Exception {
 		reloadManager.register(ProjectData.class.getName(), projectData);
-	}
-	
-	private void loadData() {
-		projectData.addObjectReader(GMSVReaders.createBoxContainsReader());
-		projectData.addObjectReader(GMSVReaders.createDungeonReader());
-		projectData.addObjectReader(GMSVReaders.createEncountInfoReader());
-		projectData.addObjectReader(GMSVReaders.createEnemyAiReader());
-		projectData.addObjectReader(GMSVReaders.createEnemyBaseInfoReader());
-		projectData.addObjectReader(GMSVReaders.createEnemyGroupReader());
-		projectData.addObjectReader(GMSVReaders.createEnemyReader());
-		projectData.addObjectReader(GMSVReaders.createEnemyTalkReader());
-		projectData.addObjectReader(GMSVReaders.createGarbledReader());
-		projectData.addObjectReader(GMSVReaders.createGatherAreaReader());
-		projectData.addObjectReader(GMSVReaders.createItemReader());
-		projectData.addObjectReader(GMSVReaders.createItemRecipeReader());
-		projectData.addObjectReader(GMSVReaders.createJobReader());
-		projectData.addObjectReader(GMSVReaders.createMessageReader());
-		projectData.addObjectReader(GMSVReaders.createNPCReader());
-		projectData.addObjectReader(GMSVReaders.createSkillDataReader());
-		projectData.addObjectReader(GMSVReaders.createSkillTemplateReader());
-		projectData.addObjectReader(GMSVReaders.createTitleConfigReader());
-		projectData.addObjectReader(GMSVReaders.createTitleReader());
-		projectData.addObjectReader(GMSVReaders.createWarpReader());
-		projectData.addObjectReader(NewReaders.createRoleAnimationInfoReader());
 	}
 	
 	protected abstract byte createModel();
@@ -92,7 +66,7 @@ public abstract class DataLoader extends Loader implements IDataPlatform {
 	}
 
 	protected MapReader createMapReader() {
-		return GMSVReaders.createFileMapReader("map", this);
+		return new CFileMapReader("map", this);
 	}
 	
 	protected abstract URI loadServerFilePath() throws Exception;
