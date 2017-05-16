@@ -47,7 +47,7 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 				}
 				animationInfo.addAnimationInfo(animationReader.getResourceInfo(confAnimation.getAnimationGlobalId()));
 				animationInfo.addHeadInfo(imageReader.getImageDictionary(confAnimation.getHeadGlobalId()));
-				animationInfo.sex = confAnimation.getGender().equals("男") ? Unit.SEX_MALE : Unit.SEX_FEMALE;
+				animationInfo.sex = confAnimation.getGender().equals("男") ? Unit.GENDER_MALE : Unit.GENDER_FEMALE;
 				animationInfo.pageIndex = confAnimation.getPage();
 			}
 			return Lists.newArrayList(indexs.values());
