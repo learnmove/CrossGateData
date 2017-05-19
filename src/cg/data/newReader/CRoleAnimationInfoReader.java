@@ -47,7 +47,7 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 				}
 				animationInfo.addAnimationInfo(animationReader.getResourceInfo(confAnimation.getAnimationGlobalId()));
 				animationInfo.addHeadInfo(imageReader.getImageDictionary(confAnimation.getHeadGlobalId()));
-				animationInfo.sex = confAnimation.getGender().equals("男") ? Unit.GENDER_MALE : Unit.GENDER_FEMALE;
+				animationInfo.gender = confAnimation.getGender().equals("男") ? Unit.GENDER_MALE : Unit.GENDER_FEMALE;
 				animationInfo.pageIndex = confAnimation.getPage();
 			}
 			return Lists.newArrayList(indexs.values());
@@ -59,7 +59,7 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 	
 	private static class CRoleAnimationInfo implements RoleAnimationInfo {
 		
-		private byte roleId, sex, pageIndex;
+		private byte roleId, gender, pageIndex;
 		
 		private ResourceInfo[] animationsInfo, headsInfo;
 
@@ -69,8 +69,8 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 		}
 
 		@Override
-		public byte getSex() {
-			return sex;
+		public byte getGender() {
+			return gender;
 		}
 
 		@Override

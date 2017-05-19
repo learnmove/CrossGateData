@@ -8,7 +8,7 @@ public interface RoleAnimationInfo {
 	
 	byte getRoleId();
 	
-	byte getSex();
+	byte getGender();
 	
 	byte getSelectPageIndex();
 	
