@@ -11,7 +11,6 @@ public class ReadImageResourceManager extends CImageManager implements ProjectDa
 
 	public ReadImageResourceManager(String clientFilePath) {
 		super(clientFilePath);
-		imageReader = createImageReader(clientFilePath);
 	}
 
 	@Override
