@@ -17,7 +17,6 @@ public class AreaFileHandler implements AreaLoader {
 				voMapCell.setImageGlobalId(mapInfo.getImageGlobalId(e, s));
 				voMapCell.setMapObjectId(mapInfo.getObjectId(e, s));
 				voMapCell.setCellMark((int) mapInfo.getMark(e, s));
-				
 				mapCells.add(voMapCell);
 			}
 		}
