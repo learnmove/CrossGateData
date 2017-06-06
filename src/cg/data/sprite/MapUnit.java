@@ -7,8 +7,6 @@ import cg.data.map.GameMap;
 
 public interface MapUnit extends Unit, Updatable {
 	
-	byte UNI_TYPE_MAP = 1;
-	
 	byte STATE_WAIT = 0;
 	
 	byte STATE_READY = 1;
