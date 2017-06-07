@@ -1,5 +1,7 @@
 package cg.data.item;
 
+import cg.base.sprite.Attribute;
+
 public interface BaseItem {
 	
 	byte NO_INSTANCE = -1;
@@ -17,6 +19,8 @@ public interface BaseItem {
 	int getCount();
 	
 	int getAttribute(String type, byte valueType);
+	
+	Attribute getAttribute();
 	
 	byte getLuck();
 	
