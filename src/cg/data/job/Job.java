@@ -6,7 +6,7 @@ public interface Job {
 	
 	byte STAGE_MAX = 4;
 	
-	short NO_JOB = 0;
+	short NO_JOB = 1;
 	
 	byte TYPE_BATTLE = 1;
 	

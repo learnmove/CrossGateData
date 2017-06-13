@@ -76,7 +76,7 @@ class CJobReader implements ObjectReader<Job> {
 
 		@Override
 		public byte getEuipmentLevel(byte type) {
-			return euipmentLevels[type];
+			return type < euipmentLevels.length ? euipmentLevels[type] : -1;
 		}
 
 		@Override
