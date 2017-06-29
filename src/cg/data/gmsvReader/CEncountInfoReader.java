@@ -10,10 +10,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
+import cg.base.conf.ConfEncount;
+import cg.base.conf.IConfEncount;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
+import cg.data.map.BaseMapArea;
 import cg.data.map.MapArea;
-import cg.data.map.ReaderMapArea;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.EncountInfo;
@@ -24,23 +25,10 @@ class CEncountInfoReader implements ObjectReader<EncountInfo> {
 
 	@Override
 	public List<EncountInfo> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("encount");
-		List<EncountInfo> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			if (line.indexOf("#") == -1) {
-				list.add(createEncountInfo(line.split("\t", -2)));
-			}
-		}
-		return list;
-	}
-	
-	public static EncountInfo createEncountInfo(String[] infos) {
-		return new CEncountInfo(infos);
+		return ObjectReader.transform(ConfEncount.arrayFromExcel(projectData), s -> { return new CEncountInfo(s); });
 	}
 	
 	private static class CEncountInfo implements EncountInfo {
-		
-		private static final byte GROUP_COUNT = 10;
 		
 		private int id;
 		
@@ -52,19 +40,19 @@ class CEncountInfoReader implements ObjectReader<EncountInfo> {
 		
 		private List<GroupInfo> groupInfos;
 		
-		public CEncountInfo(String[] infos) {
-			id = MathUtil.stringToInt(infos[0]);
-			area = new ReaderMapArea(infos, 3);
-			amount = Range.closed(MathUtil.stringToByte(infos[8]), MathUtil.stringToByte(infos[9]));
-			priority = MathUtil.stringToByte(infos[10]);
-			groupInfos = Lists.newLinkedList();
-			for (int i = 0;i < GROUP_COUNT;i++) {
-				if (infos[14 + i].length() == 0) {
+		public CEncountInfo(IConfEncount conf) {
+			id = conf.getId();
+			area = new BaseMapArea(conf.getMapId(), conf.getWest(), conf.getNorth(), conf.getEast(), conf.getSouth());
+			amount = Range.closed(conf.getMin(), conf.getMax());
+			priority = conf.getPriority();
+			int[] groups = conf.getGroups();
+			byte[] rates = conf.getRates();
+			groupInfos = Lists.newArrayListWithCapacity(groups.length);
+			for (int i = 0;i < groups.length;i++) {
+				if (groups[i] == 0) {
 					break;
-				} else {
-					int groupId = MathUtil.stringToInt(infos[14 + i]);
-					groupInfos.add(new CGroupInfo(groupId, MathUtil.stringToByte(infos[24 + i])));
 				}
+				groupInfos.add(new CGroupInfo(groups[i], rates[i]));
 			}
 		}
 

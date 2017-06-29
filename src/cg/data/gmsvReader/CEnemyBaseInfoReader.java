@@ -1,6 +1,23 @@
 package cg.data.gmsvReader;
 
-import static cg.data.battle.skill.SkillLevelData.NO_SKILL;
+import static cg.base.sprite.Attribute.ATTRIBUTE_EXTEND_AVOID;
+import static cg.base.sprite.Attribute.ATTRIBUTE_EXTEND_COUNTER;
+import static cg.base.sprite.Attribute.ATTRIBUTE_EXTEND_CRITICAL;
+import static cg.base.sprite.Attribute.ATTRIBUTE_EXTEND_HIT;
+import static cg.base.sprite.Attribute.ATTRIBUTE_RESIST_AMNESIA;
+import static cg.base.sprite.Attribute.ATTRIBUTE_RESIST_CONFUSION;
+import static cg.base.sprite.Attribute.ATTRIBUTE_RESIST_INTOXICATION;
+import static cg.base.sprite.Attribute.ATTRIBUTE_RESIST_POISON;
+import static cg.base.sprite.Attribute.ATTRIBUTE_RESIST_SLEEP;
+import static cg.base.sprite.Attribute.ATTRIBUTE_RESIST_STONE;
+import static cg.base.sprite.Attribute.ATTRIBUTE_TYPE_BP;
+import static cg.base.sprite.Attribute.ATTRIBUTE_TYPE_EXTEND;
+import static cg.base.sprite.Attribute.ATTRIBUTE_TYPE_RESIST;
+import static cg.base.sprite.Attribute.BP_MAGIC;
+import static cg.base.sprite.Attribute.BP_QUICK;
+import static cg.base.sprite.Attribute.BP_STRENGTH;
+import static cg.base.sprite.Attribute.BP_TOUGH;
+import static cg.base.sprite.Attribute.BP_VITALITY;
 
 import java.io.File;
 import java.util.Collection;
@@ -8,31 +25,24 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+
+import cg.base.conf.ConfEnemyBase;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
-import cg.data.attribute.AttributeEx;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.CreatureTemplate;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
 
 @IOCBean(type=IOCBeanType.READER)
 class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 
 	@Override
 	public List<CreatureTemplate> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("enemybase");
-		List<CreatureTemplate> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CCreatureTemplate(line.split("\t", -2)));
-		}
-		return list;
+		return ObjectReader.transform(ConfEnemyBase.arrayFromExcel(projectData), s -> { return new CCreatureTemplate(s); });
 	}
 	
-	private class CCreatureTemplate implements CreatureTemplate {
+	private static class CCreatureTemplate implements CreatureTemplate {
 		
 		private String name;
 		
@@ -66,64 +76,39 @@ class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 		
 		private int[] skillCodes;
 		
-		public CCreatureTemplate(String[] infos) {
+		public CCreatureTemplate(ConfEnemyBase conf) {
+			name = conf.getName();
+			id = conf.getId();
+			basePointCount = conf.getBasePointCount();
+			basePointFloat = conf.getBasePointFloat();
+			race = conf.getRace();
+			difficultyOfCatch = conf.getDifficultyOfCatch();
+			cardLevel = conf.getCardLevel();
+			needCharm = conf.getNeedCharm();
+			cardType = conf.getCardType();
+			skillAmount = conf.getSkillAmount();
+			animationId = conf.getAnimationId();
+			cardFileId = conf.getCardFileId();
+			canCatch = conf.getCanCatch();
+			elementAttributes = conf.getElements();
+			skillCodes = conf.getSkills();
+			
 			attributes = HashBasedTable.create();
-			name = infos[0];
-			id = MathUtil.stringToInt(infos[1]);
-			basePointCount = MathUtil.stringToShort(infos[2]);
-			basePointFloat = MathUtil.stringToByte(infos[3]);
-			race = MathUtil.stringToByte(infos[4]);
-			
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_BP, AttributeEx.BP_VITALITY, MathUtil.stringToShort(infos[5]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_BP, AttributeEx.BP_STRENGTH, MathUtil.stringToShort(infos[6]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_BP, AttributeEx.BP_TOUGH, MathUtil.stringToShort(infos[7]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_BP, AttributeEx.BP_QUICK, MathUtil.stringToShort(infos[8]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_BP, AttributeEx.BP_MAGIC, MathUtil.stringToShort(infos[9]));
-			
-			difficultyOfCatch = MathUtil.stringToShort(infos[10]);
-			cardLevel = MathUtil.stringToByte(infos[11]);
-			needCharm = MathUtil.stringToByte(infos[12]);
-			
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_EXTEND, AttributeEx.ATTRIBUTE_EXTEND_HIT, MathUtil.stringToShort(infos[13]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_EXTEND, AttributeEx.ATTRIBUTE_EXTEND_AVOID, MathUtil.stringToShort(infos[14]));
-			
-			elementAttributes = new byte[4];
-			for (int i = 0;i < elementAttributes.length;i++) {
-				elementAttributes[i] = MathUtil.stringToByte(infos[15 + i]);
-			}
-			
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_RESIST, AttributeEx.ATTRIBUTE_RESIST_POISON, MathUtil.stringToShort(infos[19]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_RESIST, AttributeEx.ATTRIBUTE_RESIST_INTOXICATION, MathUtil.stringToShort(infos[20]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_RESIST, AttributeEx.ATTRIBUTE_RESIST_SLEEP, MathUtil.stringToShort(infos[21]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_RESIST, AttributeEx.ATTRIBUTE_RESIST_CONFUSION, MathUtil.stringToShort(infos[22]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_RESIST, AttributeEx.ATTRIBUTE_RESIST_STONE, MathUtil.stringToShort(infos[23]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_RESIST, AttributeEx.ATTRIBUTE_RESIST_AMNESIA, MathUtil.stringToShort(infos[24]));
-			
-			cardType = MathUtil.stringToByte(infos[25]);
-			// 26
-			
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_EXTEND, AttributeEx.ATTRIBUTE_EXTEND_CRITICAL, MathUtil.stringToShort(infos[27]));
-			attributes.put(AttributeEx.ATTRIBUTE_TYPE_EXTEND, AttributeEx.ATTRIBUTE_EXTEND_COUNTER, MathUtil.stringToShort(infos[28]));
-
-			skillAmount = MathUtil.stringToByte(infos[29]);
-			animationId = MathUtil.stringToInt(infos[30]);
-			// 31
-			// 32
-			cardFileId = MathUtil.stringToInt(infos[33]);
-			// 34
-			canCatch = infos[35].equals("1");
-			
-			List<Integer> list = Lists.newArrayListWithCapacity(skillAmount);
-			for (int i = 0;i < skillAmount;i++) {
-				int skillCode = MathUtil.stringToInt(infos[36 + i], NO_SKILL);
-				if (skillCode != NO_SKILL) {
-					list.add(skillCode);
-				}
-			}
-			skillCodes = new int[list.size()];
-			for (int i = 0;i < skillCodes.length;i++) {
-				skillCodes[i] = list.get(i);
-			}
+			attributes.put(ATTRIBUTE_TYPE_BP, BP_VITALITY, conf.getVitality());
+			attributes.put(ATTRIBUTE_TYPE_BP, BP_STRENGTH, conf.getStrength());
+			attributes.put(ATTRIBUTE_TYPE_BP, BP_TOUGH, conf.getTough());
+			attributes.put(ATTRIBUTE_TYPE_BP, BP_QUICK, conf.getQuick());
+			attributes.put(ATTRIBUTE_TYPE_BP, BP_MAGIC, conf.getMagic());
+			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, conf.getHit());
+			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, conf.getAvoid());
+			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, conf.getCritical());
+			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, conf.getCounter());
+			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, conf.getPoison());
+			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, conf.getIntoxication());
+			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, conf.getSleep());
+			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, conf.getConfusion());
+			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, conf.getStone());
+			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, conf.getAmnesia());
 		}
 
 		@Override

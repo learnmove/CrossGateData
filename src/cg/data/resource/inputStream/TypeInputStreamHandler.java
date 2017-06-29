@@ -41,7 +41,9 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 			if ((index = name.lastIndexOf(PATH_SPLIT)) > -1) {
 				name = name.substring(index + 1);
 			}
-			add(name, get(uri));
+			if (!name.startsWith("~$")) {
+				add(name, get(uri));
+			}
 		}
 	}
 	

@@ -6,28 +6,20 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfEnemyTalk;
+import cg.base.conf.IConfEnemyTalk;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.EnemyTalkInfo;
 import cg.data.sprite.EnemyTalkInfo.TalkInfo;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 
 	@Override
 	public List<EnemyTalkInfo> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("enemytalk");
-		List<EnemyTalkInfo> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			if (!line.trim().substring(0, 1).equals("#")) {
-				list.add(new CEnemyTalkInfo(line));
-			}
-		}
-		return list;
+		return ObjectReader.transform(ConfEnemyTalk.arrayFromExcel(projectData), s -> { return new CEnemyTalkInfo(s); });
 	}
 	
 	private static class CTalkInfo implements TalkInfo {
@@ -40,11 +32,11 @@ class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 		
 		private byte fontColor;
 		
-		public CTalkInfo(String[] infos, int offset) {
-			talkCondition = MathUtil.stringToByte(infos[offset + 1]);
-			talkMsgId = Integer.parseInt(infos[offset + 11]);
-			fontSize = MathUtil.stringToByte(infos[offset + 16]);
-			fontColor = MathUtil.stringToByte(infos[offset + 21]);
+		public CTalkInfo(byte talkCondition, int talkMsgId, byte fontSize, byte fontColor) {
+			this.talkCondition = talkCondition;
+			this.talkMsgId = talkMsgId;
+			this.fontSize = fontSize;
+			this.fontColor = fontColor;
 		}
 
 		@Override
@@ -71,29 +63,19 @@ class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 	
 	private static class CEnemyTalkInfo implements EnemyTalkInfo {
 		
-		private static final byte CONDITION_COUNT = 5;
-		
 		private int id;
 		
 		private TalkInfo[] talkInfos;
 		
-		public CEnemyTalkInfo(String line) {
-			String[] infos = line.split("\t", -2);
-			id = MathUtil.stringToInt(infos[0]);
-			for (int i = 0;i < CONDITION_COUNT;i++) {
-				if (talkInfos != null) {
-					if (talkInfos.length > i) {
-						talkInfos[i] = new CTalkInfo(infos, i);
-					} else {
-						break;
-					}
-				} else if (infos[1 + i].length() == 0) {
-					talkInfos = new TalkInfo[i];
-					i = -1;
-				} else if (i == CONDITION_COUNT - 1) {
-					talkInfos = new TalkInfo[CONDITION_COUNT];
-					i = -1;
-				}
+		public CEnemyTalkInfo(IConfEnemyTalk conf) {
+			id = conf.getId();
+			byte[] conditions = conf.getTalkConditions();
+			int[] msgIds = conf.getTalkMsgIds();
+			byte[] fontSizes = conf.getFontSizes();
+			byte[] fontColors = conf.getFontColors();
+			talkInfos = new TalkInfo[conditions.length];
+			for (int i = 0;i < conditions.length;i++) {
+				talkInfos[i] = new CTalkInfo(conditions[i], msgIds[i], fontSizes[i], fontColors[i]);
 			}
 		}
 

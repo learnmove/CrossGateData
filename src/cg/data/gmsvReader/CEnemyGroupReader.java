@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfGroup;
+import cg.base.conf.IConfGroup;
 import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
@@ -13,19 +15,12 @@ import cg.data.resource.ProjectData;
 import cg.data.sprite.EnemyGroup;
 import cg.data.sprite.EnemyGroup.SingleGroupInfo;
 
-import com.google.common.collect.Lists;
-
 @IOCBean(type=IOCBeanType.READER)
 class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
 
 	@Override
 	public List<EnemyGroup> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("group");
-		List<EnemyGroup> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CEnemyGroup(line));
-		}
-		return list;
+		return ObjectReader.transform(ConfGroup.arrayFromExcel(projectData), s -> { return new CEnemyGroup(s); });
 	}
 	
 	private static class CEnemyGroup implements EnemyGroup {
@@ -42,35 +37,28 @@ class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
 		
 		private SingleGroupInfo[] singleGroupInfos;
 		
-		public CEnemyGroup(String line) {
-			line.split("\t");
-			String[] infos = line.split("\t");
-			name = infos[0];
-			String[] locals = infos[1].split(",");
+		public CEnemyGroup(IConfGroup conf) {
+			name = conf.getName();
+			String[] locals = conf.getEnemyLocals().split(",");
 			enemyLocals = new byte[ENEMY_MAX_COUNT];
 			for (int i = 0;i < ENEMY_MAX_COUNT;i++) {
 				enemyLocals[i] = locals.length > i && locals[i].length() > 0 ? MathUtil.stringToByte(locals[i]) : LOCAL_RANDOM;
 			}
-			id = MathUtil.stringToInt(infos[2]);
-			needItemId = MathUtil.stringToInt(infos[3]);
-			notNeedItemId = MathUtil.stringToInt(infos[4]);
-			for (int i = 0;i < ENEMY_MAX_COUNT;i++) {
-				if (singleGroupInfos != null) {
-					if (singleGroupInfos.length > i) {
-						int enemyId = Integer.parseInt(infos[5 + i]);
-						byte rate = MathUtil.stringToByte(infos[15 + i]);
-						boolean isMustAppear = infos[25 + i].equals("1");
-						singleGroupInfos[i] = new CSingleGroupInfo(enemyId, rate, isMustAppear);
-					} else {
-						break;
-					}
-				} else if (infos[5 + i].length() == 0 || infos[5 + i].equals("0")) {
-					singleGroupInfos = new SingleGroupInfo[i];
-					i = -1;
-				} else if (i == ENEMY_MAX_COUNT - 1) {
-					singleGroupInfos = new SingleGroupInfo[ENEMY_MAX_COUNT];
-					i = -1;
+			id = conf.getId();
+			needItemId = conf.getNeedItemId();
+			notNeedItemId = conf.getNotNeedItemId();
+			int[] enemyIds = conf.getEnemyIds();
+			byte[] rates = conf.getRates();
+			boolean[] isMustAppears = conf.getIsMustAppears();
+			int size = 0;
+			for (int i = 0;i < enemyIds.length;i++, size++) {
+				if (enemyIds[i] <= 0) {
+					break;
 				}
+			}
+			singleGroupInfos = new SingleGroupInfo[size];
+			for (int i = 0;i < size;i++) {
+				singleGroupInfos[i] = new CSingleGroupInfo(enemyIds[i], rates[i], isMustAppears[i]);
 			}
 		}
 

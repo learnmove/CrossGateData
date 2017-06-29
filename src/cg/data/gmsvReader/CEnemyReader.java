@@ -6,6 +6,10 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.Range;
+
+import cg.base.conf.ConfEnemy;
+import cg.base.conf.IConfEnemy;
 import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.item.DropItemGroup;
@@ -14,27 +18,15 @@ import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.EnemyInfo;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
-
 @IOCBean(type=IOCBeanType.READER)
 class CEnemyReader implements ObjectReader<EnemyInfo> {
 
 	@Override
 	public List<EnemyInfo> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("enemy");
-		List<EnemyInfo> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CEnemyInfo(line));
-		}
-		return list;
+		return ObjectReader.transform(ConfEnemy.arrayFromExcel(projectData), s -> { return new CEnemyInfo(s); });
 	}
 	
 	private static class CEnemyInfo implements EnemyInfo {
-		
-		private static final byte DROP_ITEM_COUNT = 10;
-		
-		private static final byte STEAL_ITEM_COUNT = 5;
 		
 		private String name;
 		
@@ -46,40 +38,42 @@ class CEnemyReader implements ObjectReader<EnemyInfo> {
 		
 		private boolean canCatch;
 		
-		private DropItemGroup dropItems, stealItems;
+		private DropItemGroup dropItemGroup, stealItemGroup;
 		
 		private byte[] actionCode;
 		
 		private int[] summonCode;
 		
-		public CEnemyInfo(String line) {
-			String[] infos = line.split("\t", -2);
-			name = infos[0];
-			aiParams = infos[1].split(";");
-			enemyId = MathUtil.stringToInt(infos[2]);
-			enemybaseId = MathUtil.stringToInt(infos[3]);
-			level = MathUtil.createRange(MathUtil.stringToShort(infos[4]), MathUtil.stringToShort(infos[5]));
-			amount = MathUtil.createRange(MathUtil.stringToShort(infos[4]), MathUtil.stringToShort(infos[5]));
-			aiId = MathUtil.stringToInt(infos[8]);
-			gainExp = MathUtil.stringToInt(infos[9]);
-			battleScore = MathUtil.stringToInt(infos[10]);
-			// 11
-			canCatch = infos[12].equals("1");
-			List<DropItem> list = Lists.newLinkedList();
-			for (int i = 0;i < DROP_ITEM_COUNT;i++) {
-				list.add(new CDropItem(MathUtil.stringToInt(infos[13 + i]), MathUtil.stringToInt(infos[23 + i], 100)));
+		public CEnemyInfo(IConfEnemy conf) {
+			name = conf.getName();
+			aiParams = conf.getAiParams().split(";");
+			enemyId = conf.getEnemyId();
+			enemybaseId = conf.getEnemybaseId();
+			level = MathUtil.createRange(conf.getMinLevel(), conf.getMaxLevel());
+			amount = MathUtil.createRange(conf.getMinAmount(), conf.getMaxAmount());
+			aiId = conf.getAiId();
+			gainExp = conf.getGainExp();
+			battleScore = conf.getBattleScore();
+			canCatch = conf.getCanCatch();
+			int[] drops = conf.getDrops();
+			int[] dropRates = conf.getDropRates();
+			DropItem[] dropItems = new DropItem[drops.length];
+			for (int i = 0;i < drops.length;i++) {
+				dropItems[i] = new CDropItem(drops[i], dropRates[i]);
 			}
-			dropItems = new CDropItemGroup(list.toArray(new DropItem[list.size()]));
-			list.clear();
-			for (int i = 0;i < STEAL_ITEM_COUNT;i++) {
-				list.add(new CDropItem(MathUtil.stringToInt(infos[33 + i]), MathUtil.stringToInt(infos[38 + i], 100)));
+			dropItemGroup = new CDropItemGroup(dropItems);
+			int[] steals = conf.getSteals();
+			int[] stealRates = conf.getStealRates();
+			DropItem[] stealItems = new DropItem[steals.length];
+			for (int i = 0;i < stealItems.length;i++) {
+				stealItems[i] = new CDropItem(steals[i], stealRates[i]);
 			}
-			stealItems = new CDropItemGroup(list.toArray(new DropItem[list.size()]));
-			actionCode = new byte[]{MathUtil.stringToByte(infos[43]), MathUtil.stringToByte(infos[44])};
-			summonCode = new int[]{MathUtil.stringToInt(infos[45], -1), MathUtil.stringToInt(infos[46], -1)};
-			enemyTalk = MathUtil.stringToInt(infos[47]);
+			stealItemGroup = new CDropItemGroup(stealItems);
+			actionCode = conf.getActionCodes();
+			summonCode = conf.getSummonCodes();
+			enemyTalk = conf.getEnemyTalk();
 		}
-
+		
 		@Override
 		public String getEnemyName() {
 			return name;
@@ -107,12 +101,12 @@ class CEnemyReader implements ObjectReader<EnemyInfo> {
 
 		@Override
 		public DropItemGroup getDropItems() {
-			return dropItems;
+			return dropItemGroup;
 		}
 
 		@Override
 		public DropItemGroup getStealItems() {
-			return stealItems;
+			return stealItemGroup;
 		}
 
 		@Override
