@@ -26,6 +26,7 @@ import static cg.base.sprite.Attribute.ATTRIBUTE_WORK_CHARM;
 import static cg.base.sprite.Attribute.ATTRIBUTE_WORK_DEXTERITY;
 import static cg.base.sprite.Attribute.ATTRIBUTE_WORK_INTELLIGENCE;
 import static cg.base.sprite.Attribute.ATTRIBUTE_WORK_STAMINA;
+import static cg.base.util.MathUtil.createRange;
 
 import java.io.File;
 import java.util.Collection;
@@ -35,147 +36,98 @@ import java.util.Map;
 
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Range;
+import com.google.common.collect.Table;
+
+import cg.base.conf.ConfItemSet;
+import cg.base.conf.IConfItemSet;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.item.ItemTemplate;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.Message;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
-import com.google.common.collect.Table;
-
 @IOCBean(type=IOCBeanType.READER)
 class CItemReader implements ObjectReader<ItemTemplate> {
 
 	@Override
 	public List<ItemTemplate> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("itemset");
-		List<ItemTemplate> itemTemplates = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			String[] infos = line.split("\t", -2);
-			CItemTemplate itemTemplate = new CItemTemplate();
-			itemTemplate.messageManager = projectData.getMessageManager();
-			itemTemplate.unidentifyName = infos[0];
-			itemTemplate.identifyName = infos[1];
-			itemTemplate.useEffect = infos[2];
-			itemTemplate.useInit = infos[3];
-			// 4
-			itemTemplate.useProcess = infos[5];
-			// 6
-			// 7
-			itemTemplate.dropProcess = infos[8];
-			itemTemplate.pickupProcess = infos[9];
-			// 10
-			itemTemplate.id = MathUtil.stringToInt(infos[11]);
-			itemTemplate.iconId = MathUtil.stringToInt(infos[12]);
-			itemTemplate.sellPrice = MathUtil.stringToInt(infos[13]);
-			itemTemplate.type = MathUtil.stringToByte(infos[14]);
-			// 15
-			itemTemplate.doubleHand = infos[16].equals("1");
-			itemTemplate.canDoubleClick = infos[17].equals("1");
-			itemTemplate.canUseInBattle = infos[18].equals("1");
-			// 19
-			// 20
-			// 21
-			itemTemplate.groupSize = MathUtil.stringToShort(infos[22], (short) 1);
-			itemTemplate.level = MathUtil.stringToByte(infos[23]);
-			// 24
-			itemTemplate.durable = MathUtil.createRange(MathUtil.stringToShort(infos[25]), MathUtil.stringToShort(infos[26]));
-			itemTemplate.attackCount = MathUtil.createRange(MathUtil.stringToByte(infos[27]), MathUtil.stringToByte(infos[28]));
-			// 29	[0, 1]
-			itemTemplate.isPrecent = infos[30].equals("1");
-			
-			Range<Integer> value = MathUtil.createRange(MathUtil.stringToInt(infos[31]), MathUtil.stringToInt(infos[32]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_ATTACK, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[33]), MathUtil.stringToInt(infos[34]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_DEFEND, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[35]), MathUtil.stringToInt(infos[36]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_AGILITY, value);
-			
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[37]), MathUtil.stringToInt(infos[38]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_MIND, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[39]), MathUtil.stringToInt(infos[40]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_RECOVER, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[41]), MathUtil.stringToInt(infos[42]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[43]), MathUtil.stringToInt(infos[44]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[45]), MathUtil.stringToInt(infos[46]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[47]), MathUtil.stringToInt(infos[48]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, value);
-
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[49]), MathUtil.stringToInt(infos[50]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_HP_MAX, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[51]), MathUtil.stringToInt(infos[52]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_MP_MAX, value);
-			
-			itemTemplate.luck = MathUtil.createRange(MathUtil.stringToByte(infos[53]), MathUtil.stringToByte(infos[54]));
-			// 55	[-99490, 123]
-			// 56	[-99490, 123]
-			
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[57]), MathUtil.stringToInt(infos[58]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_CHARM, value);
-			
-			itemTemplate.elementAttribute_1 = MathUtil.stringToByte(infos[59]);
-			itemTemplate.elementAttribute_2 = MathUtil.stringToByte(infos[60]);
-			itemTemplate.elementAttributeValue_1 = MathUtil.stringToByte(infos[61]);
-			itemTemplate.elementAttributeValue_2 = MathUtil.stringToByte(infos[62]);
-
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[63]), MathUtil.stringToInt(infos[64]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_STAMINA, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[65]), MathUtil.stringToInt(infos[66]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_DEXTERITY, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[67]), MathUtil.stringToInt(infos[68]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_INTELLIGENCE, value);
-			
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[69]), MathUtil.stringToInt(infos[70]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[71]), MathUtil.stringToInt(infos[72]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[73]), MathUtil.stringToInt(infos[74]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[75]), MathUtil.stringToInt(infos[76]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[77]), MathUtil.stringToInt(infos[78]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, value);
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[79]), MathUtil.stringToInt(infos[80]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, value);
-			
-			itemTemplate.specialType = MathUtil.stringToShort(infos[81]);
-			itemTemplate.subTypeParam[0] = MathUtil.stringToInt(infos[82]);
-			itemTemplate.subTypeParam[1] = MathUtil.stringToInt(infos[83]);
-			itemTemplate.gemWeaponType = MathUtil.stringToShort(infos[84]);
-			itemTemplate.gemArmorType = MathUtil.stringToShort(infos[85]);
-			// 86	{6002, 6000, 411, 6003, 509, ""}
-			// 87	{0, ""}
-			itemTemplate.logoutDispear = infos[88].equals("1");
-			itemTemplate.dropDispear = infos[89].equals("1");
-			itemTemplate.canPostByPet = infos[90].equals("1");
-
-			value = MathUtil.createRange(MathUtil.stringToInt(infos[91]), MathUtil.stringToInt(infos[92]));
-			itemTemplate.attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_MAGIC, value);
-			
-			itemTemplate.canComposite = infos[93].equals("1");
-			itemTemplate.descriptionId = MathUtil.stringToInt(infos[94], -1);
-			itemTemplate.rightButtonDescriptionId = MathUtil.stringToInt(infos[95], -1);
-			itemTemplate.identifyRate = MathUtil.stringToByte(infos[96]);
-			// 97	{0, 1, 5, 10, 30}
-			// 98	{0, 1, 5, 10, 30}
-			itemTemplate.magicAttack = MathUtil.createRange(MathUtil.stringToShort(infos[99]), MathUtil.stringToShort(infos[100]));
-			// 101	{0, 1, 20, 40}
-			itemTemplates.add(itemTemplate);
-		}
-		return itemTemplates;
+		MessageManager messageManager = projectData.getMessageManager();
+		return ObjectReader.transform(ConfItemSet.arrayFromExcel(projectData), s -> { return read(s, messageManager); });
 	}
 	
-	private class CItemTemplate implements ItemTemplate {
+	private static CItemTemplate read(IConfItemSet conf, MessageManager messageManager) {
+		CItemTemplate itemTemplate = new CItemTemplate();
+		itemTemplate.messageManager = messageManager;
+		itemTemplate.unidentifyName = conf.getUnidentifyName();
+		itemTemplate.identifyName = conf.getIdentifyName();
+		itemTemplate.useEffect = conf.getUseEffect();
+		itemTemplate.useInit = conf.getUseInit();
+		itemTemplate.useProcess = conf.getUseProcess();
+		itemTemplate.dropProcess = conf.getDropProcess();
+		itemTemplate.pickupProcess = conf.getPickupProcess();
+		itemTemplate.id = conf.getId();
+		itemTemplate.iconId = conf.getIconId();
+		itemTemplate.sellPrice = conf.getSellPrice();
+		itemTemplate.type = conf.getType();
+		itemTemplate.doubleHand = conf.getDoubleHand();
+		itemTemplate.canDoubleClick = conf.getCanDoubleClick();
+		itemTemplate.canUseInBattle = conf.getCanUseInBattle();
+		itemTemplate.groupSize = (short) Math.max(conf.getGroupSize(), 1);
+		itemTemplate.level = conf.getLevel();
+		itemTemplate.durable = createRange(conf.getDurableMin(), conf.getDurableMax());
+		itemTemplate.attackCount = createRange(conf.getAttackCountMin(), conf.getAttackCountMax());
+		itemTemplate.isPrecent = conf.getIsPrecent();
+		itemTemplate.luck = createRange(conf.getLuckMin(), conf.getLuckMax());
+		itemTemplate.elementAttribute_1 = conf.getElementType1();
+		itemTemplate.elementAttribute_2 = conf.getElementType2();
+		itemTemplate.elementAttributeValue_1 = conf.getElementValue1();
+		itemTemplate.elementAttributeValue_2 = conf.getElementValue2();
+		itemTemplate.specialType = conf.getSpecialType();
+		itemTemplate.subTypeParam = conf.getSubTypeParams();
+		itemTemplate.gemWeaponType = conf.getGemWeaponType();
+		itemTemplate.gemArmorType = conf.getGemArmorType();
+		itemTemplate.logoutDispear = conf.getLogoutDispear();
+		itemTemplate.dropDispear = conf.getDropDispear();
+		itemTemplate.canPostByPet = conf.getCanPostByPet();
+		itemTemplate.canComposite = conf.getCanComposite();
+		itemTemplate.descriptionId = conf.getDescriptionId() == 0 ? -1 : conf.getDescriptionId();
+		itemTemplate.rightButtonDescriptionId = conf.getRightButtonDescriptionId() == 0 ? -1 : conf.getRightButtonDescriptionId();
+		itemTemplate.identifyRate = conf.getIdentifyRate();
+		itemTemplate.magicAttack = createRange(conf.getMagicAttackMin(), conf.getMagicAttackMax());
+		
+		Table<String, Byte, Range<Integer>> attributes = itemTemplate.attributes;
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_ATTACK, createRange(conf.getAttackMin(), conf.getAttackMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_DEFEND, createRange(conf.getDefendMin(), conf.getDefendMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_AGILITY, createRange(conf.getAgilityMin(), conf.getAgilityMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_HP_MAX, createRange(conf.getHpMin(), conf.getHpMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_MP_MAX, createRange(conf.getMpMin(), conf.getMpMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_MIND, createRange(conf.getMindMin(), conf.getMindMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_RECOVER, createRange(conf.getRecoverMin(), conf.getRecoverMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, createRange(conf.getCriticalMin(), conf.getCriticalMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, createRange(conf.getCounterMin(), conf.getCounterMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, createRange(conf.getHitMin(), conf.getHitMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, createRange(conf.getAovidMin(), conf.getAovidMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_CHARM, createRange(conf.getCharmMin(), conf.getCharmMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_STAMINA, createRange(conf.getStaminaMax(), conf.getStaminaMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_DEXTERITY, createRange(conf.getDexterityMin(), conf.getDexterityMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_INTELLIGENCE, createRange(conf.getIntelligenceMin(), conf.getIntelligenceMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, createRange(conf.getPoisonMin(), conf.getPoisonMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, createRange(conf.getSleepMin(), conf.getSleepMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, createRange(conf.getStoneMin(), conf.getStoneMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, createRange(conf.getIntoxicationMin(), conf.getIntoxicationMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, createRange(conf.getConfusionMin(), conf.getConfusionMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, createRange(conf.getAmnesiaMin(), conf.getAmnesiaMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_MAGIC, createRange(conf.getResistMagicMin(), conf.getResistMagicMax()));
+		
+		return itemTemplate;
+	}
+	
+	private static class CItemTemplate implements ItemTemplate {
 		
 		private MessageManager messageManager;
 		

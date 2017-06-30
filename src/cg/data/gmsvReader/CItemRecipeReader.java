@@ -6,26 +6,20 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfItemRecipe;
+import cg.base.conf.IConfItemRecipe;
 import cg.base.item.ItemRecipe;
 import cg.base.item.ItemRecipe.MaterialInfo;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CItemRecipeReader implements ObjectReader<ItemRecipe> {
 
 	@Override
 	public List<ItemRecipe> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("itemrecipe");
-		List<ItemRecipe> itemRecipes = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			itemRecipes.add(new CItemRecipe(line.split("\t", -2)));
-		}
-		return itemRecipes;
+		return ObjectReader.transform(ConfItemRecipe.arrayFromExcel(projectData), s -> { return new CItemRecipe(s); });
 	}
 	
 	private static class CItemRecipe implements ItemRecipe {
@@ -40,15 +34,17 @@ class CItemRecipeReader implements ObjectReader<ItemRecipe> {
 		
 		private MaterialInfo[] materials;
 		
-		public CItemRecipe(String[] infos) {
-			name = infos[0];
-			id = MathUtil.stringToShort(infos[1]);
-			itemId = MathUtil.stringToInt(infos[2]);
-			skillId = MathUtil.stringToShort(infos[3]);
+		public CItemRecipe(IConfItemRecipe conf) {
+			name = conf.getName();
+			id = conf.getId();
+			itemId = conf.getItemId();
+			skillId = conf.getSkillId();
 			// 4 {0, 1, 10, 15, 45, 60, 120}
-			materials = new MaterialInfo[5];
+			int[] materialIds = conf.getMaterialIds();
+			byte[] needAmounts = conf.getNeedAmounts();
+			materials = new MaterialInfo[materialIds.length];
 			for (int i = 0;i < materials.length;i++) {
-				materials[i] = new CMaterialInfo(MathUtil.stringToInt(infos[5 + i]), MathUtil.stringToByte(infos[10 + i]));
+				materials[i] = new CMaterialInfo(materialIds[i], needAmounts[i]);
 			}
 		}
 
