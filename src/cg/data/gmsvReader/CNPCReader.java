@@ -6,25 +6,19 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfNPC;
+import cg.base.conf.IConfNPC;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.NpcTemplate;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CNPCReader implements ObjectReader<NpcTemplate> {
 
 	@Override
 	public List<NpcTemplate> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("npc");
-		List<NpcTemplate> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CNpcTemplate(line));
-		}
-		return list;
+		return ObjectReader.transform(ConfNPC.arrayFromExcel(projectData), s -> { return new CNpcTemplate(s); });
 	}
 	
 	private static class CNpcTemplate implements NpcTemplate {
@@ -37,21 +31,16 @@ class CNPCReader implements ObjectReader<NpcTemplate> {
 		
 		private byte dir, appearTime;
 		
-		public CNpcTemplate(String line) {
-			String[] info = line.split("\t", -2);
-			type = info[0];
-			name = info[1];
-			id = MathUtil.stringToInt(info[3]);
-			mapId = MathUtil.stringToInt(info[8]);
-			coordinates = new int[]{
-					MathUtil.stringToInt(info[9]), MathUtil.stringToInt(info[10]), 
-					MathUtil.stringToInt(info[11]), MathUtil.stringToInt(info[12]), 
-					MathUtil.stringToInt(info[13]), MathUtil.stringToInt(info[14]), 
-					MathUtil.stringToInt(info[15]), MathUtil.stringToInt(info[16])};
-			dir = MathUtil.stringToByte(info[19]);
-			resourcesId = info[20].length() == 0 ? -1 : MathUtil.stringToInt(info[20]);
-			appearTime = MathUtil.stringToByte(info[23]);
-			talkType = info[24];
+		public CNpcTemplate(IConfNPC conf) {
+			type = conf.getType();
+			name = conf.getName();
+			id = conf.getId();
+			mapId = conf.getMapId();
+			coordinates = conf.getCoordinates();
+			dir = conf.getDir();
+			resourcesId = conf.getResourcesId() == 0 ? -1 : conf.getResourcesId();
+			appearTime = conf.getAppearTime();
+			talkType = conf.getTalkType();
 		}
 
 		@Override

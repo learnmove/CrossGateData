@@ -6,35 +6,27 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfTechArea;
+import cg.base.conf.IConfTechArea;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.item.DropItemGroup;
 import cg.data.item.DropItemGroup.DropItem;
+import cg.data.map.BaseMapArea;
 import cg.data.map.GatherArea;
 import cg.data.map.GatherArea.GatherInfo;
 import cg.data.map.MapArea;
-import cg.data.map.ReaderMapArea;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CGatherAreaReader implements ObjectReader<GatherArea> {
 
 	@Override
 	public List<GatherArea> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("techarea");
-		List<GatherArea> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CGatherArea(line));
-		}
-		return list;
+		return ObjectReader.transform(ConfTechArea.arrayFromExcel(projectData), s -> { return new CGatherArea(s); });
 	}
 	
 	private static class CGatherInfo implements GatherInfo {
-		
-		private static final byte DROP_ITEM_COUNT = 10;
 		
 		private String name;
 		
@@ -44,17 +36,18 @@ class CGatherAreaReader implements ObjectReader<GatherArea> {
 		
 		private DropItemGroup itemGroup;
 		
-		public CGatherInfo(String[] infos) {
-			name = infos[0];
-			id = MathUtil.stringToInt(infos[1]);
-			skillId = MathUtil.stringToShort(infos[2]);
-			// 2, 3, 4, 5, 11
-			failRate = MathUtil.stringToShort(infos[12]);
-			List<DropItem> list = Lists.newLinkedList();
-			for (int i = 0;i < DROP_ITEM_COUNT;i++) {
-				list.add(new CDropItem(MathUtil.stringToInt(infos[13 + i]), MathUtil.stringToInt(infos[23 + i], 100)));
+		public CGatherInfo(IConfTechArea conf) {
+			name = conf.getName();
+			id = conf.getId();
+			skillId = conf.getSkillId();
+			failRate = conf.getFailRate();
+			int[] itemIds = conf.getItemIds();
+			int[] rates = conf.getRates();
+			DropItem[] dropItems = new DropItem[itemIds.length];
+			for (int i = 0;i < itemIds.length;i++) {
+				dropItems[i] = new CDropItem(itemIds[i], rates[i] == -1 ? rates[i] : 100);
 			}
-			itemGroup = new CDropItemGroup(list.toArray(new DropItem[list.size()]));
+			itemGroup = new CDropItemGroup(dropItems);
 		}
 
 		@Override
@@ -90,10 +83,9 @@ class CGatherAreaReader implements ObjectReader<GatherArea> {
 		
 		private MapArea area;
 		
-		public CGatherArea(String line) {
-			String[] infos = line.split("\t", -2);
-			gatherInfo = new CGatherInfo(infos);
-			area = new ReaderMapArea(infos, 6);
+		public CGatherArea(IConfTechArea conf) {
+			gatherInfo = new CGatherInfo(conf);
+			area = new BaseMapArea(conf.getMapId(), conf.getWest(), conf.getNorth(), conf.getEast(), conf.getSouth());
 		}
 
 		@Override

@@ -6,10 +6,9 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
-import com.google.common.collect.Lists;
-
+import cg.base.conf.ConfJob;
+import cg.base.conf.IConfJob;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.job.Job;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
@@ -22,12 +21,7 @@ class CJobReader implements ObjectReader<Job> {
 
 	@Override
 	public List<Job> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("jobs");
-		List<Job> jobs = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			jobs.add(new CJob(line.split("\t", -2)));
-		}
-		return jobs;
+		return ObjectReader.transform(ConfJob.arrayFromExcel(projectData), s -> { return new CJob(s); });
 	}
 	
 	private static class CJob implements Job {
@@ -44,24 +38,22 @@ class CJobReader implements ObjectReader<Job> {
 		
 		private final TShortByteMap promotionSkills;
 		
-		public CJob(String[] infos) {
-			name = infos[0];
-			id = MathUtil.stringToShort(infos[2]);
-			type = MathUtil.stringToByte(infos[3]);
-			cost = MathUtil.stringToInt(infos[4]);
-			fame = MathUtil.stringToInt(infos[4]);
+		public CJob(IConfJob conf) {
+			name = conf.getName();
+			id = conf.getId();
+			type = conf.getType();
+			cost = conf.getCost();
+			fame = conf.getFame();
 			TShortByteMap promotionSkills = new TShortByteHashMap();
-			for (int i = 0;i < 5;i++) {
-				short skillId = MathUtil.stringToShort(infos[i + 6]);
-				if (skillId > 0) {
-					promotionSkills.put(skillId, MathUtil.stringToByte(infos[i + 34]));
+			short[] skillIds = conf.getPromotionSkillIds();
+			byte[] skillLevels = conf.getPromotionSkillLevels();
+			for (int i = 0;i < skillIds.length;i++) {
+				if (skillIds[i] > 0) {
+					promotionSkills.put(skillIds[i], skillLevels[i]);
 				}
 			}
 			this.promotionSkills = new TUnmodifiableShortByteMap(promotionSkills);
-			euipmentLevels = new byte[15];
-			for (int i = 0;i < euipmentLevels.length;i++) {
-				euipmentLevels[i] = MathUtil.stringToByte(infos[i + 11]);
-			}
+			euipmentLevels = conf.getEuipmentLevels();
 		}
 
 		@Override

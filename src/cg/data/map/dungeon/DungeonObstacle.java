@@ -1,20 +1,14 @@
 package cg.data.map.dungeon;
 
-import cg.base.util.MathUtil;
-
 public class DungeonObstacle {
 	
 	private int imageGlobalId;
 	
 	private byte[] rates;
 	
-	public void load(String[] infos, int i) {
-		int index = 57 + i * 4;
-		imageGlobalId = MathUtil.stringToInt(infos[index]);
-		rates = new byte[3];
-		for (int j = 0;j < rates.length;j++) {
-			rates[j] = MathUtil.stringToByte(infos[index + 1 + j]);
-		}
+	public void load(int imageGlobalId, byte[] rates) {
+		this.imageGlobalId = imageGlobalId;
+		this.rates = rates;
 	}
 
 	@Override

@@ -3,15 +3,11 @@ package cg.data.gmsvReader;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tool.server.ioc.IOCBean;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
+import cg.base.conf.ConfCreatureGarbled;
+import cg.base.conf.IConfCreatureGarbled;
 import cg.base.loader.IOCBeanType;
 import cg.data.gmsvReader.CGarbledReader.Garbled;
 import cg.data.resource.ObjectReader;
@@ -19,31 +15,19 @@ import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
 public class CGarbledReader implements ObjectReader<Garbled> {
-	
-	private static final Logger log = LoggerFactory.getLogger(CGarbledReader.class);
-	
-	private Map<String, String> garbleds = Maps.newHashMap();
 
 	@Override
 	public List<Garbled> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("creature_garbled");
-		List<Garbled> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			String[] infos = line.split(" ");
-			if (line.length() == 0 || infos.length < 4) {
-				// nothing
-			} else if (garbleds.containsKey(infos[3])) {
-				log.warn("repeat word : " + infos[3]);
-			} else {
-				list.add(new Garbled(infos[3], infos[2]));
-			}
-		}
-		return list;
+		return ObjectReader.transform(ConfCreatureGarbled.arrayFromExcel(projectData), s -> { return new Garbled(s); });
 	}
 	
 	public static class Garbled {
 		
 		public final String garbled, realWord;
+		
+		Garbled(IConfCreatureGarbled conf) {
+			this(conf.getContent().split(" ")[0], conf.getContent().split(" ")[1]);
+		}
 		
 		Garbled(String garbled, String realWord) {
 			this.garbled = garbled;

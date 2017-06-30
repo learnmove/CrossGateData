@@ -7,30 +7,27 @@ import java.util.Map;
 
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import cg.base.conf.ConfSkill;
+import cg.base.conf.IConfSkill;
 import cg.base.loader.IOCBeanType;
 import cg.base.skill.SkillTemplate;
 import cg.base.sprite.Attribute;
 import cg.base.sprite.AttributeCell;
-import cg.base.util.MathUtil;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.Message;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillTemplateReader implements ObjectReader<SkillTemplate> {
 
 	@Override
 	public List<SkillTemplate> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("skill");
-		List<SkillTemplate> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CSkillTemplate(line, projectData.getMessageManager()));
-		}
-		return list;
+		MessageManager messageManager = projectData.getMessageManager();
+		return ObjectReader.transform(ConfSkill.arrayFromExcel(projectData), s -> { return new CSkillTemplate(s, messageManager);});
 	}
 	
 	public static class CSkillTemplate implements SkillTemplate {
@@ -49,27 +46,27 @@ public class CSkillTemplateReader implements ObjectReader<SkillTemplate> {
 		
 		protected final MessageManager messageManager;
 		
-		private CSkillTemplate(String line, MessageManager messageManager) {
+		private CSkillTemplate(IConfSkill conf, MessageManager messageManager) {
 			this(messageManager);
-			String[] infos = line.split("\t", -2);
-			name = infos[0];
-			id = MathUtil.stringToShort(infos[1]);
-			descriptionId = MathUtil.stringToInt(infos[2], Message.NO_MESSAGE);
-			type = MathUtil.stringToByte(infos[3]);
-			effectWorkLevel = MathUtil.stringToByte(infos[5]);
-			studyPrice = MathUtil.stringToShort(infos[6]);
-			priceRate = MathUtil.stringToShort(infos[7]);
-			needWeaponType = MathUtil.stringToShort(infos[8]);
-			expType = MathUtil.stringToByte(infos[9]);
-			useSpace = MathUtil.stringToByte(infos[10]);
-			attributeCells = Maps.newHashMap();
+			name = conf.getName();
+			id = conf.getId();
+			descriptionId = conf.getDescriptionId();
+			type = conf.getType();
+			effectWorkLevel = conf.getEffectWorkLevel();
+			studyPrice = conf.getStudyPrice();
+			priceRate = conf.getPriceRate();
+			needWeaponType = conf.getNeedWeaponType();
+			expType = conf.getExpType();
+			useSpace = conf.getUseSpace();
+			Map<String, AttributeCell> attributeCells = Maps.newHashMap();
 			AttributeCell attributeCell = new AttributeCell(Attribute.ATTRIBUTE_TYPE_WORK);
-			attributeCell.setValue(Attribute.ATTRIBUTE_WORK_STAMINA, MathUtil.stringToByte(infos[13]));
-			attributeCell.setValue(Attribute.ATTRIBUTE_WORK_DEXTERITY, MathUtil.stringToByte(infos[14]));
-			attributeCell.setValue(Attribute.ATTRIBUTE_WORK_INTELLIGENCE, MathUtil.stringToByte(infos[15]));
+			attributeCell.setValue(Attribute.ATTRIBUTE_WORK_STAMINA, conf.getStamina());
+			attributeCell.setValue(Attribute.ATTRIBUTE_WORK_DEXTERITY, conf.getDexterity());
+			attributeCell.setValue(Attribute.ATTRIBUTE_WORK_INTELLIGENCE, conf.getIntelligence());
 			attributeCells.put(attributeCell.getAttributeType(), attributeCell);
-			notGainExp = infos[16].equals("1");
-			doubleExpType = MathUtil.stringToShort(infos[17]);
+			this.attributeCells = ImmutableMap.copyOf(attributeCells);
+			notGainExp = conf.getNotGainExp();
+			doubleExpType = conf.getDoubleExpType();
 		}
 		
 		protected CSkillTemplate(MessageManager messageManager) {

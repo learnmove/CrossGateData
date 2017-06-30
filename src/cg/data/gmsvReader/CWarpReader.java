@@ -6,31 +6,19 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfWarp;
+import cg.base.conf.IConfWarp;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.map.Warp;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CWarpReader implements ObjectReader<Warp> {
 	
 	@Override
 	public List<Warp> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("warp");
-		List<Warp> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			if (line.indexOf("#") == -1) {
-				list.add(createWarp(line.split("\t", -2)));
-			}
-		}
-		return list;
-	}
-	
-	public static Warp createWarp(String[] infos) {
-		return new CWarp(infos);
+		return ObjectReader.transform(ConfWarp.arrayFromExcel(projectData), s -> { return new CWarp(s); });
 	}
 	
 	public static Warp createWarp(int id, int sourceMapId, int sourceMapEast, int sourceMapSouth, int targetMapId, int targetMapEast, int targetMapSouth, int resourceGlobalId) {
@@ -64,17 +52,15 @@ class CWarpReader implements ObjectReader<Warp> {
 		
 		private int resourceGlobalId;
 		
-		public CWarp(String[] infos) {
+		public CWarp(IConfWarp conf) {
 			this();
-			setId(MathUtil.stringToInt(infos[0]));
-			if (getId() > 0 && infos[1].length() > 0) {
-				setSourceMapId(MathUtil.stringToInt(infos[1]));
-				setSourceMapEast(MathUtil.stringToInt(infos[2]));
-				setSourceMapSouth(MathUtil.stringToInt(infos[3]));
-				setTargetMapId(MathUtil.stringToInt(infos[4]));
-				setTargetMapEast(MathUtil.stringToInt(infos[5]));
-				setTargetMapSouth(MathUtil.stringToInt(infos[6]));
-			}
+			setId(conf.getId());
+			setSourceMapId(conf.getSourceMapId());
+			setSourceMapEast(conf.getSourceMapEast());
+			setSourceMapSouth(conf.getSourceMapSouth());
+			setTargetMapId(conf.getTargetMapId());
+			setTargetMapEast(conf.getTargetMapId());
+			setTargetMapSouth(conf.getTargetMapSouth());
 		}
 		
 		public CWarp() {};

@@ -15,15 +15,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
 
+import cg.base.conf.ConfDungeon;
+import cg.base.conf.IConfDungeon;
 import cg.base.image.ImageDictionary;
 import cg.base.image.ImageReader;
 import cg.base.loader.IOCBeanType;
 import cg.base.map.MapCell;
 import cg.base.util.MathUtil;
+import cg.data.map.BaseMapArea;
 import cg.data.map.GameMap;
 import cg.data.map.LocalInfo;
 import cg.data.map.MapArea;
-import cg.data.map.ReaderMapArea;
 import cg.data.map.Warp;
 import cg.data.map.WarpManager;
 import cg.data.map.dungeon.Dungeon;
@@ -63,13 +65,9 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 
 	@Override
 	public List<Dungeon> read(ProjectData projectData) {
-		imageReader = projectData.getImageManager().getImageReader();
-		String[] lines = projectData.getTextResource("dungeonconf");
-		List<Dungeon> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CDungeon(line, maze));
-		}
+		List<Dungeon> list = ObjectReader.transform(ConfDungeon.arrayFromExcel(projectData), s -> { return new CDungeon(s, maze); });
 		marks.remove(0);
+		imageReader = projectData.getImageManager().getImageReader();
 		ImageDictionary[] imageDictionaries = imageReader.getImageDictionaries(marks.keys());
 		for (int i = 0;i < imageDictionaries.length;i++) {
 			if (imageDictionaries[i] != null) {
@@ -111,59 +109,54 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 		
 		private final File maze;
 		
-		public CDungeon(String line, File maze) {
+		public CDungeon(IConfDungeon conf, File maze) {
 			this.maze = maze;
-			String[] infos = line.split("\t");
-			name = infos[0];
-			floorText = infos[1] + "{0}" + infos[2];
-			mapId = Integer.parseInt(infos[3]);
-			// 4, 5, 6
-			refreshInterval = Integer.parseInt(infos[7]);
-			enterInfo = new ReaderMapArea(infos, 9);
-			exitInfo = new ReaderMapArea(infos, 15);
-			mapCellGlobalId = Integer.parseInt(infos[22]);
-			// 23, 24
-			southWallGlobalId = new int[]{Integer.parseInt(infos[25]), Integer.parseInt(infos[26])};
-			eastWallGlobalId = new int[]{Integer.parseInt(infos[27]), Integer.parseInt(infos[28])};
-			cornerWallGlobalId = Integer.parseInt(infos[29]);
-			warpResourceGlobalId = new int[]{Integer.parseInt(infos[30]), Integer.parseInt(infos[31]), Integer.parseInt(infos[32]), Integer.parseInt(infos[33]), 
-					Integer.parseInt(infos[34]), Integer.parseInt(infos[35]), Integer.parseInt(infos[36]), Integer.parseInt(infos[37])};
-			// 38
-			floorRange = Range.closed(Byte.valueOf(infos[39]), Byte.valueOf(infos[40]));
-			sizeRange = new int[]{Integer.parseInt(infos[41]), Integer.parseInt(infos[42]), Integer.parseInt(infos[43]), Integer.parseInt(infos[44]), 
-					Integer.parseInt(infos[45]), Integer.parseInt(infos[46]), Integer.parseInt(infos[47]), Integer.parseInt(infos[48])};
-			encountId = Integer.parseInt(infos[49]);
-			enemyLevel = Range.closed(Short.valueOf(infos[50]), Short.valueOf(infos[51]));
-			enemyRate = MathUtil.createRange(Byte.valueOf(infos[52]), Byte.valueOf(infos[53]));
-			boxAmount = Short.parseShort(infos[54]);
-			enterMusic = Short.parseShort(infos[55]);
-			changeDayState = infos[56].equals("1");
-			obstacles = new DungeonObstacle[10];
-			
-			MathUtil.mapAddArray(marks, eastWallGlobalId, (byte) 0);
+			name = conf.getName();
+			floorText = conf.getFloorText()[0] + "{0}" + conf.getFloorText()[1];
+			mapId = conf.getMapId();
+			refreshInterval = conf.getRefreshInterval();
+			enterInfo = new BaseMapArea(conf.getEnterMapId(), conf.getEnterMapWest(), conf.getEnterMapNorth(), conf.getEnterMapEast(), conf.getEnterMapNorth());
+			exitInfo = new BaseMapArea(conf.getExitMapId(), conf.getExitMapWest(), conf.getExitMapNorth(), conf.getExitMapEast(), conf.getExitMapNorth());
+			mapCellGlobalId = conf.getMapCellGlobalId();
+			southWallGlobalId = conf.getSouthWallGlobalId();
 			MathUtil.mapAddArray(marks, southWallGlobalId, (byte) 0);
+			eastWallGlobalId = conf.getEastWallGlobalId();
+			MathUtil.mapAddArray(marks, eastWallGlobalId, (byte) 0);
+			cornerWallGlobalId = conf.getCornerWallGlobalId();
 			marks.put(cornerWallGlobalId, (byte) 0);
+			warpResourceGlobalId = conf.getWarpResourceGlobalId();
 			MathUtil.mapAddArray(marks, warpResourceGlobalId, (byte) 0);
-			
+			floorRange = MathUtil.createRange(conf.getFloorMin(), conf.getFloorMax());
+			sizeRange = conf.getSizeRange();
+			encountId = conf.getEncountId();
+			enemyLevel = MathUtil.createRange(conf.getEnemyLevelMin(), conf.getEnemyLevelMax());
+			enemyRate = MathUtil.createRange(conf.getEnemyRateMin(), conf.getEnemyRateMax());
+			boxAmount = conf.getBoxAmount();
+			enterMusic = conf.getEnterMusic();
+			changeDayState = conf.getChangeDayState();
+			int[] imageGlobalIds = conf.getImageGlobalIds();
+			byte[] obstacleCounts = conf.getObstacleCounts();
+			byte[] obstacleEasts = conf.getObstacleEasts();
+			byte[] obstacleSouths = conf.getObstacleSouths();
+			obstacles = new DungeonObstacle[imageGlobalIds.length];
 			for (int i = 0;i < obstacles.length;i++) {
 				obstacles[i] = new DungeonObstacle();
-				obstacles[i].load(infos, i);
-				marks.put(obstacles[i].getImageGlobalId(), (byte) 0);
+				obstacles[i].load(imageGlobalIds[i], new byte[]{obstacleEasts[i], obstacleSouths[i], obstacleCounts[i]});
+				marks.put(imageGlobalIds[i], (byte) 0);
 			}
-			// 97, 98, 99, 100
-			int count = 8;
-			List<NpcInfo> list = Lists.newArrayListWithCapacity(count);
-			for (int i = 0;i < count;i++) {
-				NpcInfo npcInfo = new NpcInfo(MathUtil.stringToInt(infos[101 + i * 2]));
-				npcInfo.setRefreshTime(MathUtil.stringToShort(infos[102 + i * 2]));
-				if (npcInfo.getId() > NpcTemplate.NPC_ID_NULL) {
+			int[] npcIds = conf.getNpcIds();
+			short[] refreshTimes = conf.getRefreshTimes();
+			List<NpcInfo> list = Lists.newArrayListWithCapacity(npcIds.length);
+			for (int i = 0;i < npcIds.length;i++) {
+				NpcInfo npcInfo = new NpcInfo(npcIds[i]);
+				npcInfo.setRefreshTime(refreshTimes[i]);
+				if (npcIds[i] > NpcTemplate.NPC_ID_NULL) {
 					list.add(npcInfo);
 				}
 			}
-			npcInfos = new NpcInfo[list.size()];
-			list.toArray(npcInfos);
-			exitMusic = MathUtil.stringToShort(infos[117]);
-			exitColorPalette = MathUtil.stringToByte(infos[118]);
+			npcInfos = list.toArray(new NpcInfo[list.size()]);
+			exitMusic = conf.getExitMusic();
+			exitColorPalette = conf.getExitColorPalette();
 		}
 
 		@Override

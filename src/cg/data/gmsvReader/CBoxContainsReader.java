@@ -6,25 +6,19 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfBoxContains;
+import cg.base.conf.IConfBoxContains;
 import cg.base.loader.IOCBeanType;
-import cg.base.util.MathUtil;
 import cg.data.map.BoxContains;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CBoxContainsReader implements ObjectReader<BoxContains> {
 	
 	@Override
 	public List<BoxContains> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("boxcontains");
-		List<BoxContains> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CBoxContains(line.split("\t")));
-		}
-		return list;
+		return ObjectReader.transform(ConfBoxContains.arrayFromExcel(projectData), s -> { return new CBoxContains(s); });
 	}
 	
 	private static class CBoxContains implements BoxContains {
@@ -37,12 +31,12 @@ class CBoxContainsReader implements ObjectReader<BoxContains> {
 		
 		private String type;
 		
-		public CBoxContains(String[] infos) {
-			id = MathUtil.stringToByte(infos[0]);
-			value = MathUtil.stringToInt(infos[3]);
-			count = MathUtil.stringToByte(infos[4], DEFAULT_COUNT);
-			rate = MathUtil.stringToByte(infos[5]);
-			type = infos[6];
+		public CBoxContains(IConfBoxContains conf) {
+			id = conf.getId();
+			value = conf.getValue();
+			count = (byte) Math.max(DEFAULT_COUNT, conf.getCount());
+			rate = conf.getRate();
+			type = conf.getType();
 		}
 
 		@Override

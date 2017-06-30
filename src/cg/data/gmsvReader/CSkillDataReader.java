@@ -3,10 +3,13 @@ package cg.data.gmsvReader;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.Queue;
 
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.Lists;
+
+import cg.base.conf.ConfTech;
+import cg.base.conf.IConfTech;
 import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.battle.skill.SkillLevelData;
@@ -16,19 +19,13 @@ import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.sprite.Message;
 
-import com.google.common.collect.Lists;
-
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 
 	@Override
 	public List<SkillLevelData> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("tech");
-		List<SkillLevelData> skillDatas = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			skillDatas.add(new CSkillData(line, projectData.getMessageManager()));
-		}
-		return skillDatas;
+		MessageManager messageManager = projectData.getMessageManager();
+		return ObjectReader.transform(ConfTech.arrayFromExcel(projectData), s -> { return new CSkillData(s, messageManager); });
 	}
 	
 	public static class CSkillData implements SkillLevelData {
@@ -45,41 +42,34 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 		
 		protected byte level, useSpace;
 		
-		private CSkillData(String line, MessageManager messageManager) {
+		private CSkillData(IConfTech conf, MessageManager messageManager) {
 			this(messageManager);
-			String[] infos = line.split("\t", -2);
-			name = infos[0];
-			techType = infos[1];
-			String[] effects = infos[2].length() > 0 ? infos[2].split(",") : new String[0];
+			name = conf.getName();
+			techType = conf.getTechType();
+			String[] effects = conf.getSelfEffects().length() > 0 ? conf.getSelfEffects().split(",") : new String[0];
 			selfEffects = new SelfEffect[effects.length];
 			for (int i = 0;i < effects.length;i++) {
 				String[] params = effects[i].split(":");
-				if (params.length > 1) {
-					selfEffects[i] = new CSelfEffect(params[0], MathUtil.stringToShort(params[1]), this);
-				} else {
-					selfEffects[i] = new CSelfEffect(params[0], (short) 0, this);
+				selfEffects[i] = new CSelfEffect(params[0], params.length > 1 ? MathUtil.stringToShort(params[1]) : 0, this);
+			}
+			skillCode = conf.getSkillCode();
+			descriptionId = conf.getDescriptionId();
+			skillId = conf.getSkillId();
+			level = conf.getLevel();
+			useSpace = conf.getUseSpace();
+			targetType = conf.getTargetType();
+			price = conf.getPrice();
+			costMp = conf.getCostMp();
+			short[] produces = conf.getProduce();
+			List<Short> list = Lists.newArrayListWithCapacity(produces.length);
+			for (short produceId : produces) {
+				if (produceId > 0) {
+					list.add(produceId);
 				}
 			}
-			skillCode = MathUtil.stringToInt(infos[3]);
-			descriptionId = MathUtil.stringToInt(infos[4], Message.NO_MESSAGE);
-			skillId = MathUtil.stringToShort(infos[5]);
-			level = MathUtil.stringToByte(infos[6]);
-			useSpace = MathUtil.stringToByte(infos[7]);
-			targetType = MathUtil.stringToShort(infos[8]);
-			price = MathUtil.stringToInt(infos[9]);
-			costMp = MathUtil.stringToShort(infos[11]);
-			Queue<Short> list = Lists.newLinkedList();
-			short produce = MathUtil.stringToShort(infos[13]);
-			if (produce > 0) {
-				list.add(produce);
-			}
-			produce = MathUtil.stringToShort(infos[14]);
-			if (produce > 0) {
-				list.add(produce);
-			}
 			produces = new short[list.size()];
-			for (int i = 0;!list.isEmpty();i++) {
-				produces[i] = list.poll();
+			for (int i = 0;i < list.size();i++) {
+				produces[i] = list.get(i);
 			}
 		}
 		
