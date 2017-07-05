@@ -17,7 +17,6 @@ import cg.data.battle.skill.SkillLevelData.SelfEffect;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-import cg.data.sprite.Message;
 
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillDataReader implements ObjectReader<SkillLevelData> {
@@ -67,9 +66,9 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 					list.add(produceId);
 				}
 			}
-			produces = new short[list.size()];
+			this.produces = new short[list.size()];
 			for (int i = 0;i < list.size();i++) {
-				produces[i] = list.get(i);
+				this.produces[i] = list.get(i);
 			}
 		}
 		
@@ -99,8 +98,7 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 
 		@Override
 		public String getDescription() {
-			Message message = messageManager.getMessage(descriptionId);
-			return message == null ? "" : message.getContent();
+			return messageManager.getMessage(descriptionId);
 		}
 
 		@Override

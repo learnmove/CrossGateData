@@ -49,7 +49,6 @@ import cg.data.item.ItemTemplate;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-import cg.data.sprite.Message;
 
 @IOCBean(type=IOCBeanType.READER)
 class CItemReader implements ObjectReader<ItemTemplate> {
@@ -522,14 +521,12 @@ class CItemReader implements ObjectReader<ItemTemplate> {
 
 		@Override
 		public String getDescription() {
-			Message message = descriptionId == -1 ? null : messageManager.getMessage(descriptionId);
-			return message == null ? "" : message.getContent();
+			return messageManager.getMessage(descriptionId);
 		}
 
 		@Override
 		public String getRightButtonDescription() {
-			Message message = rightButtonDescriptionId == -1 ? null : messageManager.getMessage(rightButtonDescriptionId);
-			return message == null ? "" : message.getContent();
+			return messageManager.getMessage(rightButtonDescriptionId);
 		}
 
 		@Override

@@ -6,25 +6,19 @@ import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
+import cg.base.conf.ConfTitleName;
+import cg.base.conf.IConfTitleName;
 import cg.base.loader.IOCBeanType;
 import cg.base.sprite.Title;
-import cg.base.util.MathUtil;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
 
 @IOCBean(type=IOCBeanType.READER)
 class CTitleReader implements ObjectReader<Title> {
 	
 	@Override
 	public List<Title> read(ProjectData projectData) {
-		String[] lines = projectData.getTextResource("titlename");
-		List<Title> list = Lists.newArrayListWithCapacity(lines.length);
-		for (String line : lines) {
-			list.add(new CTitle(line));
-		}
-		return list;
+		return ObjectReader.transform(ConfTitleName.arrayFromExcel(projectData), s -> { return new CTitle(s); });
 	}
 	
 	private static class CTitle implements Title {
@@ -33,10 +27,9 @@ class CTitleReader implements ObjectReader<Title> {
 		
 		private String name;
 		
-		public CTitle(String line) {
-			String[] infos = line.split("\t");
-			id = MathUtil.stringToShort(infos[0]);
-			name = infos[1];
+		public CTitle(IConfTitleName conf) {
+			id = conf.getId();
+			name = conf.getName();
 		}
 
 		@Override

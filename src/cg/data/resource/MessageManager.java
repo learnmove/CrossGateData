@@ -9,17 +9,20 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import cg.base.conf.ConfMsg;
+import cg.base.conf.IConfMsg;
 import cg.data.gmsvReader.CGarbledReader.Garbled;
-import cg.data.sprite.Message;
 import gnu.trove.impl.unmodifiable.TUnmodifiableIntObjectMap;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class MessageManager implements ProjectDataListener {
 	
+	private static final int NO_MESSAGE = 0;
+	
 	private static final Logger log = LoggerFactory.getLogger(MessageManager.class);
 	
-	private TIntObjectMap<Message> messages;
+	private TIntObjectMap<String> messages;
 	
 	private Map<String, String> garbleds;
 
@@ -30,11 +33,10 @@ public class MessageManager implements ProjectDataListener {
 	}
 	
 	private void loadMessage(ProjectData  projectData) {
-		TIntObjectMap<Message> messages = new TIntObjectHashMap<>();
-		List<Message> list = projectData.read(Message.class);
-		for (int i = 0;i < list.size();i++) {
-			Message message = list.get(i);
-			messages.put(message.getId(), message);
+		TIntObjectMap<String> messages = new TIntObjectHashMap<>();
+		IConfMsg[] confs = ConfMsg.arrayFromExcel(projectData);
+		for (int i = 0;i < confs.length;i++) {
+			messages.put(confs[i].getId(), confs[i].getContent());
 		}
 		this.messages = new TUnmodifiableIntObjectMap<>(messages);
 	}
@@ -49,9 +51,9 @@ public class MessageManager implements ProjectDataListener {
 		this.garbleds = ImmutableMap.copyOf(garbleds);
 	}
 	
-	public Message getMessage(int msgId) {
-		if (msgId != Message.NO_MESSAGE && !messages.containsKey(msgId)) {
-			log.warn("{} is null.", msgId);
+	public String getMessage(int msgId) {
+		if (msgId != NO_MESSAGE && !messages.containsKey(msgId)) {
+			log.warn("Message [{}] is null.", msgId);
 		}
 		return messages.get(msgId);
 	}

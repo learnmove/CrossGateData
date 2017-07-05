@@ -19,7 +19,6 @@ import cg.base.sprite.AttributeCell;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-import cg.data.sprite.Message;
 
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillTemplateReader implements ObjectReader<SkillTemplate> {
@@ -85,8 +84,7 @@ public class CSkillTemplateReader implements ObjectReader<SkillTemplate> {
 
 		@Override
 		public String getDescription() {
-			Message message = messageManager.getMessage(descriptionId);
-			return message == null ? "" : message.getContent();
+			return messageManager.getMessage(descriptionId);
 		}
 
 		@Override
