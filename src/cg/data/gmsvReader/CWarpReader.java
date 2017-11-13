@@ -59,7 +59,7 @@ class CWarpReader implements ObjectReader<Warp> {
 			setSourceMapEast(conf.getSourceMapEast());
 			setSourceMapSouth(conf.getSourceMapSouth());
 			setTargetMapId(conf.getTargetMapId());
-			setTargetMapEast(conf.getTargetMapId());
+			setTargetMapEast(conf.getTargetMapEast());
 			setTargetMapSouth(conf.getTargetMapSouth());
 		}
 		
