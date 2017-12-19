@@ -74,7 +74,9 @@ class CEnemyAiReader implements ObjectReader<EnemyAiInfo> {
 			byte[] hitRates = conf.getHitRates();
 			aiInfos = new AiInfo[conditions.length];
 			for (int i = 0;i < conditions.length;i++) {
-				aiInfos[i] = new CAiInfo(conditions[i], targetTypes[i], skillCodes[i], hitRates[i]);
+				if (hitRates[i] > 0) {
+					aiInfos[i] = new CAiInfo(conditions[i], targetTypes[i], skillCodes[i], hitRates[i]);
+				}
 			}
 		}
 
