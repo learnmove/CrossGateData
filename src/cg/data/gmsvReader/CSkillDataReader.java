@@ -108,7 +108,7 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 
 		@Override
 		public byte getLevel() {
-			return level > 9 ? 0 : level;
+			return level > 9 ? 1 : level;
 		}
 
 		@Override
