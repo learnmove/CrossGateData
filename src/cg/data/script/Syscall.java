@@ -16,7 +16,7 @@ public class Syscall {
 	
 	public static void main(String[] args) {
 		try {
-			ANTLRInputStream in = new ANTLRInputStream(new FileReader(new File("D:/file/workspace/CrossGateResource/npc/EV_aoki_6515.txt")));
+			ANTLRInputStream in = new ANTLRInputStream(new FileReader(new File("D:/My_space/CrossGateResource/npc/EV_aoki_6515.txt")));
 			GMSVLexer lexer = new GMSVLexer(in);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			GMSVParser parse = new GMSVParser(tokens);
@@ -25,9 +25,9 @@ public class Syscall {
 	
 				@Override
 				public void enterBlock(BlockContext ctx) {
-					System.out.println(ctx.getText());
+					System.out.println("BlockContext : " + ctx.getText());
 					for (int i = 0, loop = ctx.getChildCount();i < loop;i++) {
-						System.out.println(ctx.getChild(i));
+						System.out.println(i + " : " + ctx.getChild(i));
 					}
 				}
 				
@@ -37,7 +37,7 @@ public class Syscall {
 
 				@Override
 				public void enterStrcmpchat(StrcmpchatContext ctx) {
-					System.out.println(ctx.getText());
+					System.out.println("StrcmpchatContext : " + ctx.getText());
 				}
 				
 			});

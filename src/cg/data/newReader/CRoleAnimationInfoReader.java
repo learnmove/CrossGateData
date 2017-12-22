@@ -12,11 +12,8 @@ import org.tool.server.ioc.IOCBean;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import cg.base.animation.AnimationReader;
 import cg.base.conf.ConfAnimation;
 import cg.base.conf.IConfAnimation;
-import cg.base.image.ImageReader;
-import cg.base.io.ResourceInfo;
 import cg.base.loader.IOCBeanType;
 import cg.base.sprite.Unit;
 import cg.data.resource.ObjectReader;
@@ -30,8 +27,6 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 
 	@Override
 	public List<RoleAnimationInfo> read(ProjectData projectData) {
-		ImageReader imageReader = projectData.getImageManager().getImageReader();
-		AnimationReader animationReader = projectData.getAnimationReader();
 		try {
 			IConfAnimation[] confAnimations = ConfAnimation.arrayFromExcel(projectData);
 			Map<Byte, CRoleAnimationInfo> indexs = Maps.newTreeMap();
@@ -45,8 +40,8 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 					animationInfo.roleId = roleId;
 					indexs.put(roleId, animationInfo);
 				}
-				animationInfo.addAnimationInfo(animationReader.getResourceInfo(confAnimation.getAnimationGlobalId()));
-				animationInfo.addHeadInfo(imageReader.getImageDictionary(confAnimation.getHeadGlobalId()));
+				animationInfo.addAnimationId(confAnimation.getAnimationGlobalId());
+				animationInfo.addHeadId(confAnimation.getHeadGlobalId());
 				animationInfo.gender = confAnimation.getGender().equals("男") ? Unit.GENDER_MALE : Unit.GENDER_FEMALE;
 				animationInfo.pageIndex = confAnimation.getPage();
 			}
@@ -61,7 +56,7 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 		
 		private byte roleId, gender, pageIndex;
 		
-		private ResourceInfo[] animationsInfo, headsInfo;
+		private int[] animationIds, headIds;
 
 		@Override
 		public byte getRoleId() {
@@ -72,39 +67,29 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 		public byte getGender() {
 			return gender;
 		}
-
-		@Override
-		public ResourceInfo[] getAnimationsInfo() {
-			return animationsInfo;
-		}
-
-		@Override
-		public ResourceInfo[] getHeadsInfo() {
-			return headsInfo;
-		}
 		
-		public void addAnimationInfo(ResourceInfo resourceInfo) {
-			if (resourceInfo != null) {
-				if (animationsInfo == null) {
-					animationsInfo = new ResourceInfo[]{resourceInfo};
+		public void addAnimationId(int id) {
+			if (id > 0) {
+				if (animationIds == null) {
+					animationIds = new int[]{id};
 				} else {
-					ResourceInfo[] ret = new ResourceInfo[animationsInfo.length + 1];
-					System.arraycopy(animationsInfo, 0, ret, 0, animationsInfo.length);
-					ret[animationsInfo.length] = resourceInfo;
-					animationsInfo = ret;
+					int[] ret = new int[animationIds.length + 1];
+					System.arraycopy(animationIds, 0, ret, 0, animationIds.length);
+					ret[animationIds.length] = id;
+					animationIds = ret;
 				}
 			}
 		}
 		
-		public void addHeadInfo(ResourceInfo resourceInfo) {
-			if (resourceInfo != null) {
-				if (headsInfo == null) {
-					headsInfo = new ResourceInfo[]{resourceInfo};
+		public void addHeadId(int id) {
+			if (id > 0) {
+				if (headIds == null) {
+					headIds = new int[]{id};
 				} else {
-					ResourceInfo[] ret = new ResourceInfo[headsInfo.length + 1];
-					System.arraycopy(headsInfo, 0, ret, 0, headsInfo.length);
-					ret[headsInfo.length] = resourceInfo;
-					headsInfo = ret;
+					int[] ret = new int[headIds.length + 1];
+					System.arraycopy(headIds, 0, ret, 0, headIds.length);
+					ret[headIds.length] = id;
+					headIds = ret;
 				}
 			}
 		}
@@ -112,6 +97,16 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 		@Override
 		public byte getSelectPageIndex() {
 			return pageIndex;
+		}
+
+		@Override
+		public int[] getAnimationIds() {
+			return animationIds;
+		}
+
+		@Override
+		public int[] getHeadIds() {
+			return headIds;
 		}
 		
 	}

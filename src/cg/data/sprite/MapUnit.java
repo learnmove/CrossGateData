@@ -21,10 +21,6 @@ public interface MapUnit extends Unit, Updatable {
 	
 	GameMap getMap();
 	
-	void removeFromWorld();
-	
-	boolean getBeRemoved();
-	
 	void receiveMove(MapUnit unit, MoveState state);
 	
 	IVoUnit writeInfoVO();

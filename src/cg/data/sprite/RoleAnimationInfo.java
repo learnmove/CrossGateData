@@ -1,7 +1,5 @@
 package cg.data.sprite;
 
-import cg.base.io.ResourceInfo;
-
 public interface RoleAnimationInfo {
 	
 	byte NO_SELECT_PAGE = -1;
@@ -12,8 +10,8 @@ public interface RoleAnimationInfo {
 	
 	byte getSelectPageIndex();
 	
-	ResourceInfo[] getAnimationsInfo();
+	int[] getAnimationIds();
 	
-	ResourceInfo[] getHeadsInfo();
+	int[] getHeadIds();
 
 }

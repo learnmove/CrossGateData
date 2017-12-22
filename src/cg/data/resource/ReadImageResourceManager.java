@@ -3,9 +3,9 @@ package cg.data.resource;
 import cg.base.conf.ConfImage;
 import cg.base.conf.IConfImage;
 import cg.base.image.CImageManager;
-import cg.base.image.ImageReader;
 import cg.base.io.CImageResource;
 import cg.base.reader.CImageReader;
+import cg.base.reader.ImageReader;
 
 public class ReadImageResourceManager extends CImageManager implements ProjectDataListener {
 

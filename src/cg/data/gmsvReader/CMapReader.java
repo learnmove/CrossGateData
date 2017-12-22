@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import cg.base.image.ImageDictionary;
-import cg.base.image.ImageReader;
 import cg.base.map.MapCell;
+import cg.base.reader.ImageReader;
 import cg.base.util.MathUtil;
 import cg.data.loader.IDataPlatform;
 import cg.data.map.MapInfo;

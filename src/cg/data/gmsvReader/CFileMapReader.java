@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cg.base.image.ImageDictionary;
-import cg.base.image.ImageReader;
 import cg.base.map.MapCell;
+import cg.base.reader.ImageReader;
 import cg.base.util.IOUtils;
 import cg.base.util.MathUtil;
 import cg.data.loader.IDataPlatform;
