@@ -128,6 +128,7 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
 			inputStreamHandler.clear();
 		}
+		imageManager.getImageDictionaryReader().clear();
 	}
 
 	@Override

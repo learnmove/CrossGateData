@@ -68,8 +68,6 @@ public class CFileMapReader implements MapReader {
 		
 		public static final byte HEAD_LENGTH = 44;
 		
-		private final FileInputStream fis;
-		
 		private int mapId, maxEast, maxSouth;
 		
 		private String name;
@@ -88,15 +86,18 @@ public class CFileMapReader implements MapReader {
 			} catch (Exception e) {
 				mapId = Integer.parseInt(infos[1]);
 			}
-			fis = new FileInputStream(file);
-			warpIds = new TIntIntHashMap();
-			
-			readHead();
-			readContent();
-			analysis(warpManager.getWarps(mapId));
+			try (FileInputStream fis = new FileInputStream(file)) {
+				warpIds = new TIntIntHashMap();
+				
+				readHead(fis);
+				readContent(fis);
+				analysis(warpManager.getWarps(mapId));
+			} catch (Exception e) {
+				throw e;
+			}
 		}
 		
-		private void readHead() throws IOException {
+		private void readHead(FileInputStream fis) throws IOException {
 			byte[] datas = new byte[HEAD_LENGTH];
 			fis.read(datas);
 			byte[] bytes = new byte[6];
@@ -130,13 +131,13 @@ public class CFileMapReader implements MapReader {
 			}
 		}
 		
-		private void readContent() throws IOException {
+		private void readContent(FileInputStream fis) throws IOException {
 			int size = maxEast * maxSouth;
 			globalIds = new int[size];
 			objectIds = new int[size];
-			readInt(globalIds, null);
+			readInt(fis, globalIds, null);
 			ImageDictionaryReader reader = platform.getSourceData().getImageManager().getImageDictionaryReader();
-			readInt(objectIds, (east, south, id) -> {
+			readInt(fis, objectIds, (east, south, id) -> {
 				ImageDictionary imageDictionary = reader.getImageDictionary(id);
 				if (imageDictionary != null) {
 					setMark(imageDictionary, east, south, marks);
@@ -144,7 +145,7 @@ public class CFileMapReader implements MapReader {
 			});
 		}
 		
-		private void readInt(int[] array, ContentReader reader) throws IOException {
+		private void readInt(FileInputStream fis, int[] array, ContentReader reader) throws IOException {
 			int index;
 			byte[] datas = new byte[DATA_LENGTH];
 			for (int east = 0;east < maxEast;east++) {
