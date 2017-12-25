@@ -4,7 +4,9 @@ import cg.base.conf.ConfImage;
 import cg.base.conf.IConfImage;
 import cg.base.image.CImageManager;
 import cg.base.io.CImageResource;
+import cg.base.reader.CImageDictionaryReader;
 import cg.base.reader.CImageReader;
+import cg.base.reader.ImageDictionaryReader;
 import cg.base.reader.ImageReader;
 
 public class ReadImageResourceManager extends CImageManager implements ProjectDataListener {
@@ -21,11 +23,17 @@ public class ReadImageResourceManager extends CImageManager implements ProjectDa
 					conf.getName(), conf.getPalette().toLowerCase().equals("true")));
 		}
 		imageReader.load();
+		imageDictionaryReader.load();
 	}
 
 	@Override
 	protected ImageReader createImageReader(String clientFilePath) {
 		return new CImageReader(this, clientFilePath);
+	}
+
+	@Override
+	protected ImageDictionaryReader createImageDictionaryReader(String clientFilePath) {
+		return new CImageDictionaryReader(this, clientFilePath);
 	}
 
 }

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Table;
 
 import cg.base.image.ImageDictionary;
-import cg.base.reader.ImageReader;
+import cg.base.reader.ImageDictionaryReader;
 import cg.data.map.Warp;
 import cg.data.map.WarpManager;
 import cg.data.sprite.NpcInfo;
@@ -59,12 +59,12 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	
 	private FileInputStream fis;
 	
-	private final ImageReader imageReader;
+	private final ImageDictionaryReader reader;
 	
 	private final WarpManager warpManager;
 	
-	public DungeonMapInfo(ImageReader imageReader, WarpManager warpManager) {
-		this.imageReader = imageReader;
+	public DungeonMapInfo(ImageDictionaryReader reader, WarpManager warpManager) {
+		this.reader = reader;
 		this.warpManager = warpManager;
 	}
 
@@ -303,7 +303,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 
 	@Override
 	public void setObject(int east, int south, int resourceId) {
-		ImageDictionary imageDictionary = imageReader.getImageDictionary(resourceId);
+		ImageDictionary imageDictionary = reader.getImageDictionary(resourceId);
 		if (imageDictionary != null) {
 			intToByte(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH, resourceId);
 			marks[calcIndex(east, south)] = imageDictionary.getMark();

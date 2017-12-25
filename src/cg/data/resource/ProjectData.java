@@ -124,7 +124,7 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		ioc.getAll().forEach((k, v) -> addObjectReader((ObjectReader) v));
 	}
 	
-	protected void clearResource() {
+	public void clearResource() {
 		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
 			inputStreamHandler.clear();
 		}
@@ -132,8 +132,6 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 
 	@Override
 	public void reload() throws Exception {
-		clearResource();
-
 		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
 			inputStreamHandler.reload();
 		}
@@ -145,19 +143,16 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	}
 	
 	public final String[] getTextResource(String name) {
-		InputStreamHandler<String[]> handler = getInputStreamHandler(String[].class);
-		return handler.get(name);
+		return this.<String[]>getInputStreamHandler(String[].class).get(name);
 	}
 	
 	public final Document getXmlResource(String name) {
-		InputStreamHandler<Document> handler = getInputStreamHandler(Document.class);
-		return handler.get(name);
+		return this.<Document>getInputStreamHandler(Document.class).get(name);
 	}
 	
 	@Override
 	public final Workbook getWorkbook(String name) {
-		InputStreamHandler<Workbook> handler = getInputStreamHandler(Workbook.class);
-		return handler.get(name);
+		return this.<Workbook>getInputStreamHandler(Workbook.class).get(name);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

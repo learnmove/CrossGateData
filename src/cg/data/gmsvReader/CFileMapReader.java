@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import cg.base.image.ImageDictionary;
 import cg.base.map.MapCell;
-import cg.base.reader.ImageReader;
+import cg.base.reader.ImageDictionaryReader;
 import cg.base.util.IOUtils;
 import cg.base.util.MathUtil;
 import cg.data.loader.IDataPlatform;
@@ -124,10 +124,10 @@ public class CFileMapReader implements MapReader {
 		
 		private void readContent() throws IOException {
 			byte[] objectImageGlobalIds = readBytes(getMaxEast() * getMaxSouth() * DATA_LENGTH, getMaxEast() * getMaxSouth() * DATA_LENGTH);
-			ImageReader imageReader = platform.getSourceData().getImageManager().getImageReader();
+			ImageDictionaryReader reader = platform.getSourceData().getImageManager().getImageDictionaryReader();
 			for (int east = 0;east < maxEast;east++) {
 				for (int south = 0;south < maxSouth;south++) {
-					ImageDictionary imageDictionary = imageReader.getImageDictionary(MathUtil.bytesToInt2(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH));
+					ImageDictionary imageDictionary = reader.getImageDictionary(MathUtil.bytesToInt2(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH));
 					if (imageDictionary != null) {
 						setMark(imageDictionary, east, south, marks);
 					}

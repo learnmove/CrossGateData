@@ -20,7 +20,7 @@ import cg.base.conf.IConfDungeon;
 import cg.base.image.ImageDictionary;
 import cg.base.loader.IOCBeanType;
 import cg.base.map.MapCell;
-import cg.base.reader.ImageReader;
+import cg.base.reader.ImageDictionaryReader;
 import cg.base.util.MathUtil;
 import cg.data.map.BaseMapArea;
 import cg.data.map.GameMap;
@@ -53,7 +53,7 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 	
 	private static int WARP_ID = -1;
 	
-	private ImageReader imageReader;
+	private ImageDictionaryReader reader;
 	
 	private final File maze;
 	
@@ -67,11 +67,11 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 	public List<Dungeon> read(ProjectData projectData) {
 		List<Dungeon> list = ObjectReader.transform(ConfDungeon.arrayFromExcel(projectData), s -> { return new CDungeon(s, maze); });
 		marks.remove(0);
-		imageReader = projectData.getImageManager().getImageReader();
-		ImageDictionary[] imageDictionaries = imageReader.getImageDictionaries(marks.keys());
-		for (int i = 0;i < imageDictionaries.length;i++) {
-			if (imageDictionaries[i] != null) {
-				marks.put(imageDictionaries[i].getGlobalId(), imageDictionaries[i].getMark());
+		reader = projectData.getImageManager().getImageDictionaryReader();
+		for (int globalId : marks.keys()) {
+			ImageDictionary imageDictionary = reader.getImageDictionary(globalId);
+			if (imageDictionary != null) {
+				marks.put(imageDictionary.getGlobalId(), imageDictionary.getMark());
 			}
 		}
 		return list;
@@ -176,7 +176,7 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			List<TIntObjectMap<int[]>> cellsList = Lists.newArrayListWithCapacity(mapInfos.length);
 			int levelRange = enemyLevel.upperEndpoint() - enemyLevel.lowerEndpoint(), maxFloor = mapInfos.length;
 			for (int floor = 0;floor < maxFloor;floor++) {
-				mapInfos[floor] = new DungeonMapInfo(imageReader, warpManager);
+				mapInfos[floor] = new DungeonMapInfo(reader, warpManager);
 				mapInfos[floor].setMapId(mapId + (floor << 16));
 				mapInfos[floor].setName(getName() + MessageFormat.format(floorText, floor + 1));
 				TIntObjectMap<int[]> canUseCells = mapInfos[floor].create(CREATE_SUB_ROOM_RATE, this, false, (short) ((floor + 1) * levelRange / maxFloor + enemyLevel.lowerEndpoint()));
