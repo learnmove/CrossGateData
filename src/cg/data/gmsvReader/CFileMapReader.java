@@ -58,6 +58,12 @@ public class CFileMapReader implements MapReader {
 		return getClass().getName();
 	}
 	
+	private static interface ContentReader {
+		
+		void read(int east, int south, int content);
+		
+	}
+	
 	public class FileMapInfo implements MapInfo {
 		
 		public static final byte HEAD_LENGTH = 44;
@@ -69,6 +75,8 @@ public class CFileMapReader implements MapReader {
 		private String name;
 		
 		private byte[] marks;
+		
+		private int[] globalIds, objectIds;
 		
 		private TIntIntMap warpIds;
 		
@@ -116,20 +124,36 @@ public class CFileMapReader implements MapReader {
 			maxEast = MathUtil.bytesToShort2(datas, 40);
 			maxSouth = MathUtil.bytesToShort2(datas, 42);
 			
-			marks = new byte[getMaxEast() * getMaxSouth()];
+			marks = new byte[maxEast * maxSouth];
 			for (int i = 0;i < marks.length;i++) {
 				marks[i] = MapCell.MARK_NOMARL;
 			}
 		}
 		
 		private void readContent() throws IOException {
-			byte[] objectImageGlobalIds = readBytes(getMaxEast() * getMaxSouth() * DATA_LENGTH, getMaxEast() * getMaxSouth() * DATA_LENGTH);
+			int size = maxEast * maxSouth;
+			globalIds = new int[size];
+			objectIds = new int[size];
+			readInt(globalIds, null);
 			ImageDictionaryReader reader = platform.getSourceData().getImageManager().getImageDictionaryReader();
+			readInt(objectIds, (east, south, id) -> {
+				ImageDictionary imageDictionary = reader.getImageDictionary(id);
+				if (imageDictionary != null) {
+					setMark(imageDictionary, east, south, marks);
+				}
+			});
+		}
+		
+		private void readInt(int[] array, ContentReader reader) throws IOException {
+			int index;
+			byte[] datas = new byte[DATA_LENGTH];
 			for (int east = 0;east < maxEast;east++) {
 				for (int south = 0;south < maxSouth;south++) {
-					ImageDictionary imageDictionary = reader.getImageDictionary(MathUtil.bytesToInt2(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH));
-					if (imageDictionary != null) {
-						setMark(imageDictionary, east, south, marks);
+					index = calcIndex(east, south);
+					fis.read(datas);
+					array[index] = MathUtil.bytesToInt2(datas, 0, DATA_LENGTH);
+					if (reader != null) {
+						reader.read(east, south, array[index]);
 					}
 				}
 			}
@@ -163,18 +187,6 @@ public class CFileMapReader implements MapReader {
 		private int calcShortIndex(int east, int south) {
 			return calcIndex(east, south) << 1;
 		}
-		
-		private synchronized byte[] readBytes(int position, int size) {
-			try {
-				fis.getChannel().position(HEAD_LENGTH + position);
-				byte[] datas = new byte[size];
-				fis.read(datas);
-				return datas;
-			} catch (IOException e) {
-				log.error("", e);
-				return null;
-			}
-		}
 
 		@Override
 		public int getMapId() {
@@ -198,17 +210,17 @@ public class CFileMapReader implements MapReader {
 
 		@Override
 		public int getImageGlobalId(int east, int south) {
-			return east < 0 || east >= getMaxEast() || south < 0 || south >= getMaxSouth() ? 0 : MathUtil.bytesToInt2(readBytes(calcShortIndex(east, south), DATA_LENGTH), 0, DATA_LENGTH);
+			return east < 0 || east >= maxEast || south < 0 || south >= maxSouth ? 0 : globalIds[calcShortIndex(east, south)];
 		}
 
 		@Override
 		public int getObjectId(int east, int south) {
-			return east < 0 || east >= getMaxEast() || south < 0 || south >= getMaxSouth() ? 0 : MathUtil.bytesToInt2(readBytes(getMaxEast() * getMaxSouth() * DATA_LENGTH + calcShortIndex(east, south), DATA_LENGTH), 0, DATA_LENGTH);
+			return east < 0 || east >= maxEast || south < 0 || south >= maxSouth ? 0 : objectIds[calcShortIndex(east, south)];
 		}
 
 		@Override
 		public byte getMark(int east, int south) {
-			return east < 0 || east >= getMaxEast() || south < 0 || south >= getMaxSouth() ? 0 : marks[calcIndex(east, south)];
+			return east < 0 || east >= maxEast || south < 0 || south >= maxSouth ? 0 : marks[calcIndex(east, south)];
 		}
 
 		@Override
