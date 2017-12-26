@@ -29,6 +29,7 @@ public abstract class DataBuilder extends Builder implements IDataPlatform {
 	@Override
 	protected final void loadMore() throws Exception {
 		serverFilePath = loadServerFilePath();
+		fileVersionManager = createFileVersionManager();
 		model = createModel();
 		reloadManager = createReloadManager();
 		projectData = createProjectData();
