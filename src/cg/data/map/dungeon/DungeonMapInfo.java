@@ -51,7 +51,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	
 	private int mapId, maxEast, maxSouth, goWarpId, backWarpId;
 	
-	private String name;
+	private String name, fileName;
 	
 	private byte[] cellImageGlobalIds, objectImageGlobalIds, marks;
 	
@@ -196,6 +196,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	public void release(File maze) {
 		try {
 			File file = new File(maze, "" + System.currentTimeMillis());
+			fileName = file.getName();
 			file.createNewFile();
 			FileOutputStream fos = new FileOutputStream(file);
 			fos.write(cellImageGlobalIds);
@@ -338,6 +339,11 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	@Override
 	public void setMarks(byte[] marks) {
 		this.marks = marks;
+	}
+
+	@Override
+	public String getFileName() {
+		return fileName;
 	}
 
 }

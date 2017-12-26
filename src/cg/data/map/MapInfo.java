@@ -36,6 +36,8 @@ public interface MapInfo {
 	
 	void setObject(int east, int south, int resourceId);
 	
+	String getFileName();
+	
 	public static class CLocalInfo implements LocalInfo {
 		
 		private int mapId, east, south;

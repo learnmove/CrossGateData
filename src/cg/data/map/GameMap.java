@@ -2,11 +2,10 @@ package cg.data.map;
 
 import java.util.List;
 
-import cg.base.map.MapCellContainer;
 import cg.data.sprite.MapUnit;
 import cg.data.sprite.RateEncountInfo;
 
-public interface GameMap extends MapCellContainer {
+public interface GameMap {
 	
 	byte LOCAL_MIDDLE_EAST = -1;
 	
@@ -35,6 +34,8 @@ public interface GameMap extends MapCellContainer {
 	RateEncountInfo getEncountInfo(int east, int south, boolean must, int rateFix);
 	
 	void addWarp(Warp warp);
+	
+	boolean needDownload();
 	
 	public static class NpcLocal implements LocalInfo {
 		

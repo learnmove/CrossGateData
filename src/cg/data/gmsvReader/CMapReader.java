@@ -77,7 +77,7 @@ public class CMapReader implements MapReader {
 		
 		private int mapId, maxEast, maxSouth;
 		
-		private String name;
+		private String name, fileName;
 		
 		private byte[] cellImageGlobalIds, objectImageGlobalIds, marks;
 		
@@ -85,6 +85,7 @@ public class CMapReader implements MapReader {
 		
 		public CMapInfo(MapMemo mapMemo, Map<Integer, Warp> warps) throws IOException {
 			name = mapMemo.getName();
+			fileName = mapMemo.getFileName();
 			mapId = mapMemo.getMapId();
 			warpIds = Maps.newHashMap();
 			File file = new File(platform.getClientFilePath());
@@ -213,6 +214,11 @@ public class CMapReader implements MapReader {
 				MathUtil.intToByte(objectImageGlobalIds, calcShortIndex(east, south), DATA_LENGTH, resourceId);
 				setMark(imageDictionary, east, south, marks);
 			}
+		}
+
+		@Override
+		public String getFileName() {
+			return fileName;
 		}
 		
 	}

@@ -70,7 +70,7 @@ public class CFileMapReader implements MapReader {
 		
 		private int mapId, maxEast, maxSouth;
 		
-		private String name;
+		private String name, fileName;
 		
 		private byte[] marks;
 		
@@ -79,7 +79,7 @@ public class CFileMapReader implements MapReader {
 		private TIntIntMap warpIds;
 		
 		public FileMapInfo(File file, WarpManager warpManager) throws IOException {
-			String fileName = file.getName();
+			fileName = file.getName();
 			String[] infos = fileName.split("_");
 			try {
 				mapId = Integer.parseInt(infos[0]);
@@ -88,7 +88,6 @@ public class CFileMapReader implements MapReader {
 			}
 			try (FileInputStream fis = new FileInputStream(file)) {
 				warpIds = new TIntIntHashMap();
-				
 				readHead(fis);
 				readContent(fis);
 				analysis(warpManager.getWarps(mapId));
@@ -257,6 +256,11 @@ public class CFileMapReader implements MapReader {
 		public int outputMarks(OutputStream os) throws IOException {
 			os.write(marks);
 			return marks.length;
+		}
+
+		@Override
+		public String getFileName() {
+			return fileName;
 		}
 		
 	}
