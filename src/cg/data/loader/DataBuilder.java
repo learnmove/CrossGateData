@@ -3,7 +3,6 @@ package cg.data.loader;
 import java.net.URI;
 
 import cg.base.loader.Builder;
-import cg.data.gmsvReader.CFileMapReader;
 import cg.data.map.CWarpManager;
 import cg.data.map.MapReader;
 import cg.data.map.WarpManager;
@@ -65,9 +64,7 @@ public abstract class DataBuilder extends Builder implements IDataPlatform {
 		return new CWarpManager(getSourceData());
 	}
 
-	protected MapReader createMapReader() {
-		return new CFileMapReader("map", this);
-	}
+	protected abstract MapReader createMapReader();
 	
 	protected abstract URI loadServerFilePath() throws Exception;
 

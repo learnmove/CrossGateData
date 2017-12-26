@@ -3,7 +3,6 @@ package cg.data.gmsvReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
@@ -64,7 +63,7 @@ public class CFileMapReader implements MapReader {
 		
 	}
 	
-	public class FileMapInfo implements MapInfo {
+	private class FileMapInfo implements MapInfo {
 		
 		public static final byte HEAD_LENGTH = 44;
 		
@@ -251,11 +250,6 @@ public class CFileMapReader implements MapReader {
 		@Override
 		public String toString() {
 			return MessageFormat.format("MapInfo[{0}] {1} {{2},{3}}.", getMapId(), getName(), getMaxEast(), getMaxSouth());
-		}
-		
-		public int outputMarks(OutputStream os) throws IOException {
-			os.write(marks);
-			return marks.length;
 		}
 
 		@Override
