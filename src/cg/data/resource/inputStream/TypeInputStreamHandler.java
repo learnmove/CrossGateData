@@ -3,7 +3,6 @@ package cg.data.resource.inputStream;
 import static cg.base.util.IOUtils.PATH_SPLIT;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +23,8 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 	protected List<URI> uris = Lists.newLinkedList();
 	
 	protected Map<String, T> resources = Maps.newHashMap();
+	
+	protected Map<String, String> lowerCaseNames = Maps.newHashMap();
 	
 	protected final String type;
 	
@@ -51,6 +52,7 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 	
 	protected void add(String name, T value) {
 		resources.put(name, value);
+		lowerCaseNames.put(name.toLowerCase(), name);
 	}
 
 	@Override
@@ -60,21 +62,13 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 
 	@Override
 	public T get(String name) {
-		return resources.get(name.replace(".txt", ""));
+		String key = name.replace(".txt", "");
+		return resources.containsKey(key) ? resources.get(key) : resources.get(lowerCaseNames.get(key.toLowerCase()));
 	}
 
 	@Override
 	public void clear() {
 		resources.clear();
-	}
-
-	@Override
-	public Collection<DataInfo> getDataInfos() {
-		Collection<DataInfo> collection = Lists.newArrayListWithCapacity(uris.size());
-		for (URI uri : uris) {
-			collection.add(new DataInfo(uri.toString(), type));
-		}
-		return collection;
 	}
 	
 	protected static void getStream(URI uri, URLHandler handler) throws Exception {
@@ -83,11 +77,6 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 		} else {
 			IOUtils.getStream(uri, handler);
 		}
-	}
-
-	@Override
-	public Collection<String> getNames() {
-		return resources.keySet();
 	}
 
 }

@@ -4,7 +4,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import cg.data.map.AreaFileHandler;
 import cg.data.map.AreaLoader;
 import cg.data.map.AreaNetHandler;
 import cg.data.resource.inputStream.InputStreamHandler;
-import cg.data.resource.inputStream.InputStreamHandler.DataInfo;
 import cg.data.resource.inputStream.InputStreamHandlers;
 import cg.data.resource.loader.ServerResourceLoader;
 
@@ -179,18 +177,6 @@ public abstract class ProjectData implements Reloadable, IExcelProvider, ISource
 	@SuppressWarnings("unchecked")
 	public final <X, T extends ObjectReader<X>> T getReader(Class<X> clz) {
 		return (T) objectReaders.get(clz.toString());
-	}
-	
-	@SuppressWarnings("unchecked")
-	public final List<DataInfo> getFileList() {
-		int size = 0;
-		List<DataInfo> list = Lists.newArrayListWithCapacity(size);
-		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
-			Collection<DataInfo> dataInfos = inputStreamHandler.getDataInfos();
-			size += dataInfos.size();
-			list.addAll(dataInfos);
-		}
-		return list;
 	}
 	
 	public final void addListener(ProjectDataListener listener) {
