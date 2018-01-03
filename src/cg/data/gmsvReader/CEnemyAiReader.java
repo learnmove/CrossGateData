@@ -2,7 +2,6 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
@@ -10,16 +9,9 @@ import cg.base.conf.ConfEnemyAI;
 import cg.base.loader.IOCBeanType;
 import cg.data.ai.EnemyAiInfo;
 import cg.data.ai.EnemyAiInfo.AiInfo;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-class CEnemyAiReader implements ObjectReader<EnemyAiInfo> {
-
-	@Override
-	public List<EnemyAiInfo> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfEnemyAI.arrayFromExcel(projectData), s -> { return new CEnemyAiInfo(s); });
-	}
+class CEnemyAiReader extends BaseObjectReader<EnemyAiInfo, ConfEnemyAI> {
 	
 	private static class CAiInfo implements AiInfo {
 		
@@ -65,20 +57,6 @@ class CEnemyAiReader implements ObjectReader<EnemyAiInfo> {
 		private int id;
 		
 		private AiInfo[] aiInfos;
-		
-		public CEnemyAiInfo(ConfEnemyAI conf) {
-			id = conf.getId();
-			byte[] conditions = conf.getConditions();
-			byte[] targetTypes = conf.getTargetTypes();
-			int[] skillCodes = conf.getSkillCodes();
-			byte[] hitRates = conf.getHitRates();
-			aiInfos = new AiInfo[conditions.length];
-			for (int i = 0;i < conditions.length;i++) {
-				if (hitRates[i] > 0) {
-					aiInfos[i] = new CAiInfo(conditions[i], targetTypes[i], skillCodes[i], hitRates[i]);
-				}
-			}
-		}
 
 		@Override
 		public int getId() {
@@ -96,6 +74,28 @@ class CEnemyAiReader implements ObjectReader<EnemyAiInfo> {
 	public void output(File outFile, Collection<EnemyAiInfo> collection) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected Class<ConfEnemyAI> getFromClass() {
+		return ConfEnemyAI.class;
+	}
+
+	@Override
+	protected EnemyAiInfo transform(ConfEnemyAI s) {
+		CEnemyAiInfo ret = new CEnemyAiInfo();
+		ret.id = s.getId();
+		byte[] conditions = s.getConditions();
+		byte[] targetTypes = s.getTargetTypes();
+		int[] skillCodes = s.getSkillCodes();
+		byte[] hitRates = s.getHitRates();
+		ret.aiInfos = new AiInfo[conditions.length];
+		for (int i = 0;i < conditions.length;i++) {
+			if (hitRates[i] > 0) {
+				ret.aiInfos[i] = new CAiInfo(conditions[i], targetTypes[i], skillCodes[i], hitRates[i]);
+			}
+		}
+		return ret;
 	}
 
 }

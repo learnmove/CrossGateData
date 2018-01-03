@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public interface ObjectReader<T> {
@@ -18,7 +19,7 @@ public interface ObjectReader<T> {
 		for (S s : array) {
 			list.add(transform.apply(s));
 		}
-		return list;
+		return ImmutableList.copyOf(list);
 	}
 
 }

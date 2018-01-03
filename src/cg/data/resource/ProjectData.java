@@ -20,10 +20,10 @@ import com.google.common.collect.Maps;
 import cg.base.animation.AnimationReader;
 import cg.base.image.ImageManager;
 import cg.base.io.IExcelProvider;
+import cg.base.io.ITextProvider;
 import cg.base.loader.IOCBeanType;
 import cg.base.loader.ISourceData;
 import cg.base.util.IOUtils;
-import cg.data.gmsvReader.CAnimationReaderEx;
 import cg.data.loader.IDataPlatform;
 import cg.data.map.AreaFileHandler;
 import cg.data.map.AreaLoader;
@@ -33,7 +33,7 @@ import cg.data.resource.inputStream.InputStreamHandler.DataInfo;
 import cg.data.resource.inputStream.InputStreamHandlers;
 import cg.data.resource.loader.ServerResourceLoader;
 
-public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
+public abstract class ProjectData implements Reloadable, IExcelProvider, ISourceData, ITextProvider {
 	
 	public static final String FILE_TYPE_TEXT = "txt";
 	
@@ -99,17 +99,9 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 		loadReaderBeans();
 	}
 	
-	protected ImageManager createImageManager(IDataPlatform dataPlatform) {
-		ReadImageResourceManager imageManager = new ReadImageResourceManager(dataPlatform.getClientFilePath());
-		addListener(imageManager);
-		return imageManager;
-	}
+	protected abstract ImageManager createImageManager(IDataPlatform dataPlatform);
 	
-	protected AnimationReader createAnimationReader(IDataPlatform dataPlatform) {
-		CAnimationReaderEx animationReader = new CAnimationReaderEx(dataPlatform.getClientFilePath(), dataPlatform.getTimer());
-		addListener(animationReader);
-		return animationReader;
-	}
+	protected abstract AnimationReader createAnimationReader(IDataPlatform dataPlatform);
 	
 	protected MessageManager createMessageManager() {
 		MessageManager messageManager = new MessageManager();
@@ -142,7 +134,8 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 			log.info("{} reload finish.", listener.getClass().getSimpleName());
 		}
 	}
-	
+
+	@Override
 	public final String[] getTextResource(String name) {
 		return this.<String[]>getInputStreamHandler(String[].class).get(name);
 	}
@@ -162,17 +155,20 @@ public class ProjectData implements Reloadable, IExcelProvider, ISourceData {
 	}
 	
 	public final <T> void addObjectReader(ObjectReader<T> reader) {
-		Type[] types = reader.getClass().getGenericInterfaces();
+		Class<?> clz = reader.getClass();
+		Type[] types = clz.getGenericInterfaces();
+		Type[] subTypes;
 		if (types.length > 0 && types[0] instanceof ParameterizedType) {
 			ParameterizedType parameterizedType = (ParameterizedType) types[0];
-			Type[] subTypes = parameterizedType.getActualTypeArguments();
-			if (subTypes.length > 0 && subTypes[0] instanceof Class) {
-				objectReaders.put(subTypes[0].toString(), reader);
-			} else {
-				log.warn("{}::addObjectReader() subTypes not fit.", getClass().getName());
-			}
+			subTypes = parameterizedType.getActualTypeArguments();
 		} else {
-			log.warn("{}::addObjectReader() types not fit.", getClass().getName());
+			subTypes = ((ParameterizedType) clz.getGenericSuperclass()).getActualTypeArguments();
+//			log.warn("{}::addObjectReader() types not fit.", getClass().getName());
+		}
+		if (subTypes.length > 0 && subTypes[0] instanceof Class) {
+			objectReaders.put(subTypes[0].toString(), reader);
+		} else {
+			log.warn("{}::addObjectReader() subTypes not fit.", getClass().getName());
 		}
 	}
 	
