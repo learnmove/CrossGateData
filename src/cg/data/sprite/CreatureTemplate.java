@@ -38,9 +38,9 @@ public interface CreatureTemplate {
 	
 	short getDifficultyOfCatch();
 	
-	byte getCardLevel();
+	short getCardLevel();
 	
-	byte getNeedCharm();
+	short getNeedCharm();
 	
 	byte[] getElements();
 	

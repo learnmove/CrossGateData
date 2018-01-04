@@ -21,7 +21,7 @@ public class CEncountInfoReader implements ObjectReader<EncountInfo> {
 
 	@Override
 	public List<EncountInfo> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfEncount.arrayFromExcel(projectData), s -> { return new CEncountInfo(s); });
+		return Lists.transform(ConfEncount.arrayFromText(projectData), s -> { return new CEncountInfo(s); });
 	}
 	
 	private static class CEncountInfo implements EncountInfo {

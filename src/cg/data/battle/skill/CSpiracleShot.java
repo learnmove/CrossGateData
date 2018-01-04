@@ -13,11 +13,11 @@ class CSpiracleShot implements Shot, ProjectDataListener {
 
 	@Override
 	public void reload(ProjectData projectData) throws Exception {
-		IConfTrajectory[] confs = ConfTrajectory.arrayFromExcel(projectData);
-		int size = confs.length;
+		List<IConfTrajectory> confs = ConfTrajectory.arrayFromExcel(projectData);
+		int size = confs.size();
 		trajectories = new int[size << 1][];
 		for (int i = 0;i < size;i++) {
-			String[] infos = confs[i].getShot().split("=")[1].split(",");
+			String[] infos = confs.get(i).getShot().split("=")[1].split(",");
 			int symmetry = size + i, mod = infos.length;
 			trajectories[i] = new int[mod];
 			trajectories[symmetry] = new int[mod];

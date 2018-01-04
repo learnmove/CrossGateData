@@ -34,9 +34,10 @@ public class MessageManager implements ProjectDataListener {
 	
 	private void loadMessage(ProjectData  projectData) {
 		TIntObjectMap<String> messages = new TIntObjectHashMap<>();
-		IConfMsg[] confs = ConfMsg.arrayFromExcel(projectData);
-		for (int i = 0;i < confs.length;i++) {
-			messages.put(confs[i].getId(), confs[i].getContent());
+		List<IConfMsg> confs = ConfMsg.arrayFromText(projectData);
+		for (int i = 0;i < confs.size();i++) {
+			IConfMsg conf = confs.get(i);
+			messages.put(conf.getId(), conf.getContent());
 		}
 		this.messages = new TUnmodifiableIntObjectMap<>(messages);
 	}

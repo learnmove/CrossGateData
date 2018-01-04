@@ -564,7 +564,7 @@ public interface EnemyAiInfo {
 		
 		int getSkillCode();
 		
-		byte getRate();
+		short getRate();
 		
 	}
 

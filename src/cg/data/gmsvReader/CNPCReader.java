@@ -2,24 +2,15 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import cg.base.conf.ConfNPC;
-import cg.base.conf.IConfNPC;
 import cg.base.loader.IOCBeanType;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import cg.data.sprite.NpcTemplate;
 
 @IOCBean(type=IOCBeanType.READER)
-class CNPCReader implements ObjectReader<NpcTemplate> {
-
-	@Override
-	public List<NpcTemplate> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfNPC.arrayFromExcel(projectData), s -> { return new CNpcTemplate(s); });
-	}
+class CNPCReader extends BaseObjectReader<NpcTemplate, ConfNPC> {
 	
 	private static class CNpcTemplate implements NpcTemplate {
 		
@@ -30,18 +21,6 @@ class CNPCReader implements ObjectReader<NpcTemplate> {
 		private int[] coordinates;
 		
 		private byte dir, appearTime;
-		
-		public CNpcTemplate(IConfNPC conf) {
-			type = conf.getType();
-			name = conf.getName();
-			id = conf.getId();
-			mapId = conf.getMapId();
-			coordinates = conf.getCoordinates();
-			dir = conf.getDir();
-			resourcesId = conf.getResourcesId() == 0 ? -1 : conf.getResourcesId();
-			appearTime = conf.getAppearTime();
-			talkType = conf.getTalkType();
-		}
 
 		@Override
 		public String toString() {
@@ -105,6 +84,26 @@ class CNPCReader implements ObjectReader<NpcTemplate> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfNPC> getFromClass() {
+		return ConfNPC.class;
+	}
+
+	@Override
+	NpcTemplate transform(ConfNPC s) {
+		CNpcTemplate ret = new CNpcTemplate();
+		ret.type = s.getType();
+		ret.name = s.getName();
+		ret.id = s.getId();
+		ret.mapId = s.getMapId();
+		ret.coordinates = s.getCoordinates();
+		ret.dir = s.getDir();
+		ret.resourcesId = s.getResourcesId() == 0 ? -1 : s.getResourcesId();
+		ret.appearTime = s.getAppearTime();
+		ret.talkType = s.getTalkType();
+		return ret;
 	}
 
 }

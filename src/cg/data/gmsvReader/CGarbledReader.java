@@ -2,7 +2,6 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
@@ -10,16 +9,9 @@ import cg.base.conf.ConfCreatureGarbled;
 import cg.base.conf.IConfCreatureGarbled;
 import cg.base.loader.IOCBeanType;
 import cg.data.gmsvReader.CGarbledReader.Garbled;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-public class CGarbledReader implements ObjectReader<Garbled> {
-
-	@Override
-	public List<Garbled> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfCreatureGarbled.arrayFromExcel(projectData), s -> { return new Garbled(s); });
-	}
+public class CGarbledReader extends BaseObjectReader<Garbled, ConfCreatureGarbled> {
 	
 	public static class Garbled {
 		
@@ -41,6 +33,16 @@ public class CGarbledReader implements ObjectReader<Garbled> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfCreatureGarbled> getFromClass() {
+		return ConfCreatureGarbled.class;
+	}
+
+	@Override
+	Garbled transform(ConfCreatureGarbled s) {
+		return new Garbled(s);
 	}
 
 }

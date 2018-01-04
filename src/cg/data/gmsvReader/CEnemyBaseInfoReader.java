@@ -21,26 +21,19 @@ import static cg.base.sprite.Attribute.BP_VITALITY;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
 import cg.base.conf.ConfEnemyBase;
 import cg.base.loader.IOCBeanType;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import cg.data.sprite.CreatureTemplate;
 
 @IOCBean(type=IOCBeanType.READER)
-class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
-
-	@Override
-	public List<CreatureTemplate> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfEnemyBase.arrayFromExcel(projectData), s -> { return new CCreatureTemplate(s); });
-	}
+class CEnemyBaseInfoReader extends BaseObjectReader<CreatureTemplate, ConfEnemyBase> {
 	
 	private static class CCreatureTemplate implements CreatureTemplate {
 		
@@ -58,9 +51,9 @@ class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 		
 		private short difficultyOfCatch;
 		
-		private byte cardLevel;
+		private short cardLevel;
 		
-		private byte needCharm;
+		private short needCharm;
 		
 		private byte[] elementAttributes;
 		
@@ -75,41 +68,6 @@ class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 		private boolean canCatch;
 		
 		private int[] skillCodes;
-		
-		public CCreatureTemplate(ConfEnemyBase conf) {
-			name = conf.getName();
-			id = conf.getId();
-			basePointCount = conf.getBasePointCount();
-			basePointFloat = conf.getBasePointFloat();
-			race = conf.getRace();
-			difficultyOfCatch = conf.getDifficultyOfCatch();
-			cardLevel = conf.getCardLevel();
-			needCharm = conf.getNeedCharm();
-			cardType = conf.getCardType();
-			skillAmount = conf.getSkillAmount();
-			animationId = conf.getAnimationId();
-			cardFileId = conf.getCardFileId();
-			canCatch = conf.getCanCatch();
-			elementAttributes = conf.getElements();
-			skillCodes = conf.getSkills();
-			
-			attributes = HashBasedTable.create();
-			attributes.put(ATTRIBUTE_TYPE_BP, BP_VITALITY, conf.getVitality());
-			attributes.put(ATTRIBUTE_TYPE_BP, BP_STRENGTH, conf.getStrength());
-			attributes.put(ATTRIBUTE_TYPE_BP, BP_TOUGH, conf.getTough());
-			attributes.put(ATTRIBUTE_TYPE_BP, BP_QUICK, conf.getQuick());
-			attributes.put(ATTRIBUTE_TYPE_BP, BP_MAGIC, conf.getMagic());
-			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, conf.getHit());
-			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, conf.getAvoid());
-			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, conf.getCritical());
-			attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, conf.getCounter());
-			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, conf.getPoison());
-			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, conf.getIntoxication());
-			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, conf.getSleep());
-			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, conf.getConfusion());
-			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, conf.getStone());
-			attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, conf.getAmnesia());
-		}
 
 		@Override
 		public String getName() {
@@ -147,12 +105,12 @@ class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 		}
 
 		@Override
-		public byte getCardLevel() {
+		public short getCardLevel() {
 			return cardLevel;
 		}
 
 		@Override
-		public byte getNeedCharm() {
+		public short getNeedCharm() {
 			return needCharm;
 		}
 
@@ -197,6 +155,50 @@ class CEnemyBaseInfoReader implements ObjectReader<CreatureTemplate> {
 	public void output(File outFile, Collection<CreatureTemplate> collection) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfEnemyBase> getFromClass() {
+		return ConfEnemyBase.class;
+	}
+
+	@Override
+	CreatureTemplate transform(ConfEnemyBase s) {
+		CCreatureTemplate ret = new CCreatureTemplate();
+		ret.name = s.getName();
+		ret.id = s.getId();
+		ret.basePointCount = s.getBasePointCount();
+		ret.basePointFloat = s.getBasePointFloat();
+		ret.race = s.getRace();
+		ret.difficultyOfCatch = s.getDifficultyOfCatch();
+		ret.cardLevel = s.getCardLevel();
+		ret.needCharm = s.getNeedCharm();
+		ret.cardType = s.getCardType();
+		ret.skillAmount = s.getSkillAmount();
+		ret.animationId = s.getAnimationId();
+		ret.cardFileId = s.getCardFileId();
+		ret.canCatch = s.getCanCatch();
+		ret.elementAttributes = s.getElements();
+		ret.skillCodes = s.getSkills();
+		
+		Table<String, Byte, Short> attributes = HashBasedTable.create();
+		attributes.put(ATTRIBUTE_TYPE_BP, BP_VITALITY, s.getVitality());
+		attributes.put(ATTRIBUTE_TYPE_BP, BP_STRENGTH, s.getStrength());
+		attributes.put(ATTRIBUTE_TYPE_BP, BP_TOUGH, s.getTough());
+		attributes.put(ATTRIBUTE_TYPE_BP, BP_QUICK, s.getQuick());
+		attributes.put(ATTRIBUTE_TYPE_BP, BP_MAGIC, s.getMagic());
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, s.getHit());
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, s.getAvoid());
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, s.getCritical());
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, s.getCounter());
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, s.getPoison());
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, s.getIntoxication());
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, s.getSleep());
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, s.getConfusion());
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, s.getStone());
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, s.getAmnesia());
+		ret.attributes = ImmutableTable.copyOf(attributes);
+		return ret;
 	}
 
 }

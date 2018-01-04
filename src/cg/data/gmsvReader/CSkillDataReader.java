@@ -9,27 +9,19 @@ import org.tool.server.ioc.IOCBean;
 import com.google.common.collect.Lists;
 
 import cg.base.conf.ConfTech;
-import cg.base.conf.IConfTech;
 import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.battle.skill.SkillLevelData;
 import cg.data.battle.skill.SkillLevelData.SelfEffect;
 import cg.data.resource.MessageManager;
-import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-public class CSkillDataReader implements ObjectReader<SkillLevelData> {
-
-	@Override
-	public List<SkillLevelData> read(ProjectData projectData) {
-		MessageManager messageManager = projectData.getMessageManager();
-		return ObjectReader.transform(ConfTech.arrayFromExcel(projectData), s -> { return new CSkillData(s, messageManager); });
-	}
+public class CSkillDataReader extends BaseObjectReader<SkillLevelData, ConfTech> {
 	
 	public static class CSkillData implements SkillLevelData {
 		
-		protected MessageManager messageManager;
+		protected static MessageManager messageManager;
 		
 		protected String name, techType;
 		
@@ -40,41 +32,6 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 		protected short skillId, costMp, targetType, produces[];
 		
 		protected byte level, useSpace;
-		
-		private CSkillData(IConfTech conf, MessageManager messageManager) {
-			this(messageManager);
-			name = conf.getName();
-			techType = conf.getTechType();
-			String[] effects = conf.getSelfEffects().length() > 0 ? conf.getSelfEffects().split(",") : new String[0];
-			selfEffects = new SelfEffect[effects.length];
-			for (int i = 0;i < effects.length;i++) {
-				String[] params = effects[i].split(":");
-				selfEffects[i] = new CSelfEffect(params[0], params.length > 1 ? MathUtil.stringToShort(params[1]) : 0, this);
-			}
-			skillCode = conf.getSkillCode();
-			descriptionId = conf.getDescriptionId();
-			skillId = conf.getSkillId();
-			level = conf.getLevel();
-			useSpace = conf.getUseSpace();
-			targetType = conf.getTargetType();
-			price = conf.getPrice();
-			costMp = conf.getCostMp();
-			short[] produces = conf.getProduce();
-			List<Short> list = Lists.newArrayListWithCapacity(produces.length);
-			for (short produceId : produces) {
-				if (produceId > 0) {
-					list.add(produceId);
-				}
-			}
-			this.produces = new short[list.size()];
-			for (int i = 0;i < list.size();i++) {
-				this.produces[i] = list.get(i);
-			}
-		}
-		
-		protected CSkillData(MessageManager messageManager) {
-			this.messageManager = messageManager;
-		}
 
 		@Override
 		public String getName() {
@@ -108,7 +65,7 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 
 		@Override
 		public byte getLevel() {
-			return level > 9 ? 1 : level;
+			return level > 20 ? 1 : level;
 		}
 
 		@Override
@@ -203,6 +160,49 @@ public class CSkillDataReader implements ObjectReader<SkillLevelData> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfTech> getFromClass() {
+		return ConfTech.class;
+	}
+
+	@Override
+	SkillLevelData transform(ConfTech s) {
+		CSkillData ret = new CSkillData();
+		ret.name = s.getName();
+		ret.techType = s.getTechType();
+		String[] effects = s.getSelfEffects().length() > 0 ? s.getSelfEffects().split(",") : new String[0];
+		ret.selfEffects = new SelfEffect[effects.length];
+		for (int i = 0;i < effects.length;i++) {
+			String[] params = effects[i].split(":");
+			ret.selfEffects[i] = new CSelfEffect(params[0], params.length > 1 ? MathUtil.stringToShort(params[1]) : 0, ret);
+		}
+		ret.skillCode = s.getSkillCode();
+		ret.descriptionId = s.getDescriptionId();
+		ret.skillId = s.getSkillId();
+		ret.level = s.getLevel();
+		ret.useSpace = s.getUseSpace();
+		ret.targetType = s.getTargetType();
+		ret.price = s.getPrice();
+		ret.costMp = s.getCostMp();
+		short[] produces = s.getProduce();
+		List<Short> list = Lists.newArrayListWithCapacity(produces.length);
+		for (short produceId : produces) {
+			if (produceId > 0) {
+				list.add(produceId);
+			}
+		}
+		ret.produces = new short[list.size()];
+		for (int i = 0;i < list.size();i++) {
+			ret.produces[i] = list.get(i);
+		}
+		return ret;
+	}
+
+	@Override
+	protected void readFinish(ProjectData projectData) {
+		CSkillData.messageManager = projectData.getMessageManager();
 	}
 
 }

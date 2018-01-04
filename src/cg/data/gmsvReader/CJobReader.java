@@ -2,27 +2,18 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import cg.base.conf.ConfJob;
-import cg.base.conf.IConfJob;
 import cg.base.loader.IOCBeanType;
 import cg.data.job.Job;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import gnu.trove.impl.unmodifiable.TUnmodifiableShortByteMap;
 import gnu.trove.map.TShortByteMap;
 import gnu.trove.map.hash.TShortByteHashMap;
 
 @IOCBean(type=IOCBeanType.READER)
-class CJobReader implements ObjectReader<Job> {
-
-	@Override
-	public List<Job> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfJob.arrayFromExcel(projectData), s -> { return new CJob(s); });
-	}
+class CJobReader extends BaseObjectReader<Job, ConfJob> {
 	
 	private static class CJob implements Job {
 		
@@ -36,25 +27,7 @@ class CJobReader implements ObjectReader<Job> {
 		
 		private byte[] euipmentLevels;
 		
-		private final TShortByteMap promotionSkills;
-		
-		public CJob(IConfJob conf) {
-			name = conf.getName();
-			id = conf.getId();
-			type = conf.getType();
-			cost = conf.getCost();
-			fame = conf.getFame();
-			TShortByteMap promotionSkills = new TShortByteHashMap();
-			short[] skillIds = conf.getPromotionSkillIds();
-			byte[] skillLevels = conf.getPromotionSkillLevels();
-			for (int i = 0;i < skillIds.length;i++) {
-				if (skillIds[i] > 0) {
-					promotionSkills.put(skillIds[i], skillLevels[i]);
-				}
-			}
-			this.promotionSkills = new TUnmodifiableShortByteMap(promotionSkills);
-			euipmentLevels = conf.getEuipmentLevels();
-		}
+		private TShortByteMap promotionSkills;
 
 		@Override
 		public String getName() {
@@ -103,6 +76,32 @@ class CJobReader implements ObjectReader<Job> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfJob> getFromClass() {
+		return ConfJob.class;
+	}
+
+	@Override
+	Job transform(ConfJob s) {
+		CJob ret = new CJob();
+		ret.name = s.getName();
+		ret.id = s.getId();
+		ret.type = s.getType();
+		ret.cost = s.getCost();
+		ret.fame = s.getFame();
+		TShortByteMap promotionSkills = new TShortByteHashMap();
+		short[] skillIds = s.getPromotionSkillIds();
+		byte[] skillLevels = s.getPromotionSkillLevels();
+		for (int i = 0;i < skillIds.length;i++) {
+			if (skillIds[i] > 0) {
+				promotionSkills.put(skillIds[i], skillLevels[i]);
+			}
+		}
+		ret.promotionSkills = new TUnmodifiableShortByteMap(promotionSkills);
+		ret.euipmentLevels = s.getEuipmentLevels();
+		return ret;
 	}
 
 }

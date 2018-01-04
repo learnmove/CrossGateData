@@ -49,8 +49,6 @@ public class CSkillInfoReader implements ObjectReader<SkillInfo> {
 		private Map<Integer, SkillLevelData> skillLevelDatas;
 		
 		private CSkillInfo(Element element, MessageManager messageManager) {
-			super(messageManager);
-			
 			attributeCells = Maps.newHashMap();
 			name = element.getAttributeValue("name");
 			id = MathUtil.stringToShort(element.getAttributeValue("id"));
@@ -103,7 +101,6 @@ public class CSkillInfoReader implements ObjectReader<SkillInfo> {
 		protected int beginAnimation, attachAnimation, hitAnimation, backAnimation, trackAnimation;
 		
 		private CSkillLevelData(Element element, short skillId, MessageManager messageManager) {
-			super(messageManager);
 			name = element.getAttributeValue("name");
 			techType = element.getAttributeValue("tech");
 			skillCode = MathUtil.stringToInt(element.getAttributeValue("skillCode"));

@@ -2,25 +2,16 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import cg.base.conf.ConfEnemyTalk;
-import cg.base.conf.IConfEnemyTalk;
 import cg.base.loader.IOCBeanType;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import cg.data.sprite.EnemyTalkInfo;
 import cg.data.sprite.EnemyTalkInfo.TalkInfo;
 
 @IOCBean(type=IOCBeanType.READER)
-class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
-
-	@Override
-	public List<EnemyTalkInfo> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfEnemyTalk.arrayFromExcel(projectData), s -> { return new CEnemyTalkInfo(s); });
-	}
+class CEnemyTalkReader extends BaseObjectReader<EnemyTalkInfo, ConfEnemyTalk> {
 	
 	private static class CTalkInfo implements TalkInfo {
 		
@@ -30,9 +21,9 @@ class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 		
 		private byte fontSize;
 		
-		private byte fontColor;
+		private short fontColor;
 		
-		public CTalkInfo(byte talkCondition, int talkMsgId, byte fontSize, byte fontColor) {
+		public CTalkInfo(byte talkCondition, int talkMsgId, byte fontSize, short fontColor) {
 			this.talkCondition = talkCondition;
 			this.talkMsgId = talkMsgId;
 			this.fontSize = fontSize;
@@ -55,7 +46,7 @@ class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 		}
 
 		@Override
-		public byte getFontColor() {
+		public short getFontColor() {
 			return fontColor;
 		}
 		
@@ -66,18 +57,6 @@ class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 		private int id;
 		
 		private TalkInfo[] talkInfos;
-		
-		public CEnemyTalkInfo(IConfEnemyTalk conf) {
-			id = conf.getId();
-			byte[] conditions = conf.getTalkConditions();
-			int[] msgIds = conf.getTalkMsgIds();
-			byte[] fontSizes = conf.getFontSizes();
-			byte[] fontColors = conf.getFontColors();
-			talkInfos = new TalkInfo[conditions.length];
-			for (int i = 0;i < conditions.length;i++) {
-				talkInfos[i] = new CTalkInfo(conditions[i], msgIds[i], fontSizes[i], fontColors[i]);
-			}
-		}
 
 		@Override
 		public int getId() {
@@ -96,6 +75,26 @@ class CEnemyTalkReader implements ObjectReader<EnemyTalkInfo> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfEnemyTalk> getFromClass() {
+		return ConfEnemyTalk.class;
+	}
+
+	@Override
+	EnemyTalkInfo transform(ConfEnemyTalk s) {
+		CEnemyTalkInfo ret = new CEnemyTalkInfo();
+		ret.id = s.getId();
+		byte[] conditions = s.getTalkConditions();
+		int[] msgIds = s.getTalkMsgIds();
+		byte[] fontSizes = s.getFontSizes();
+		short[] fontColors = s.getFontColors();
+		ret.talkInfos = new TalkInfo[conditions.length];
+		for (int i = 0;i < conditions.length;i++) {
+			ret.talkInfos[i] = new CTalkInfo(conditions[i], msgIds[i], fontSizes[i], fontColors[i]);
+		}
+		return ret;
 	}
 
 }

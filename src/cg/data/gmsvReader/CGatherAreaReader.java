@@ -2,12 +2,10 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import cg.base.conf.ConfTechArea;
-import cg.base.conf.IConfTechArea;
 import cg.base.loader.IOCBeanType;
 import cg.data.item.DropItemGroup;
 import cg.data.item.DropItemGroup.DropItem;
@@ -15,16 +13,9 @@ import cg.data.map.BaseMapArea;
 import cg.data.map.GatherArea;
 import cg.data.map.GatherArea.GatherInfo;
 import cg.data.map.MapArea;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-class CGatherAreaReader implements ObjectReader<GatherArea> {
-
-	@Override
-	public List<GatherArea> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfTechArea.arrayFromExcel(projectData), s -> { return new CGatherArea(s); });
-	}
+class CGatherAreaReader extends BaseObjectReader<GatherArea, ConfTechArea> {
 	
 	private static class CGatherInfo implements GatherInfo {
 		
@@ -35,20 +26,6 @@ class CGatherAreaReader implements ObjectReader<GatherArea> {
 		private short skillId, failRate;
 		
 		private DropItemGroup itemGroup;
-		
-		public CGatherInfo(IConfTechArea conf) {
-			name = conf.getName();
-			id = conf.getId();
-			skillId = conf.getSkillId();
-			failRate = conf.getFailRate();
-			int[] itemIds = conf.getItemIds();
-			int[] rates = conf.getRates();
-			DropItem[] dropItems = new DropItem[itemIds.length];
-			for (int i = 0;i < itemIds.length;i++) {
-				dropItems[i] = new CDropItem(itemIds[i], rates[i] == -1 ? rates[i] : 100);
-			}
-			itemGroup = new CDropItemGroup(dropItems);
-		}
 
 		@Override
 		public String getName() {
@@ -82,11 +59,6 @@ class CGatherAreaReader implements ObjectReader<GatherArea> {
 		private GatherInfo gatherInfo;
 		
 		private MapArea area;
-		
-		public CGatherArea(IConfTechArea conf) {
-			gatherInfo = new CGatherInfo(conf);
-			area = new BaseMapArea(conf.getMapId(), conf.getWest(), conf.getNorth(), conf.getEast(), conf.getSouth());
-		}
 
 		@Override
 		public GatherInfo getGatherInfo() {
@@ -156,6 +128,31 @@ class CGatherAreaReader implements ObjectReader<GatherArea> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfTechArea> getFromClass() {
+		return ConfTechArea.class;
+	}
+
+	@Override
+	GatherArea transform(ConfTechArea s) {
+		CGatherArea ret = new CGatherArea();
+		CGatherInfo gatherInfo = new CGatherInfo();
+		gatherInfo.name = s.getName();
+		gatherInfo.id = s.getId();
+		gatherInfo.skillId = s.getSkillId();
+		gatherInfo.failRate = s.getFailRate();
+		int[] itemIds = s.getItemIds();
+		int[] rates = s.getRates();
+		DropItem[] dropItems = new DropItem[itemIds.length];
+		for (int i = 0;i < itemIds.length;i++) {
+			dropItems[i] = new CDropItem(itemIds[i], rates[i] == -1 ? rates[i] : 100);
+		}
+		gatherInfo.itemGroup = new CDropItemGroup(dropItems);
+		ret.gatherInfo = gatherInfo;
+		ret.area = new BaseMapArea(s.getMapId(), s.getWest(), s.getNorth(), s.getEast(), s.getSouth());
+		return ret;
 	}
 
 }

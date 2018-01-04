@@ -2,24 +2,15 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import cg.base.conf.ConfWarp;
-import cg.base.conf.IConfWarp;
 import cg.base.loader.IOCBeanType;
 import cg.data.map.Warp;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-class CWarpReader implements ObjectReader<Warp> {
-	
-	@Override
-	public List<Warp> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfWarp.arrayFromExcel(projectData), s -> { return new CWarp(s); });
-	}
+class CWarpReader extends BaseObjectReader<Warp, ConfWarp> {
 	
 	public static Warp createWarp(int id, int sourceMapId, int sourceMapEast, int sourceMapSouth, int targetMapId, int targetMapEast, int targetMapSouth, int resourceGlobalId) {
 		CWarp warp = new CWarp();
@@ -51,19 +42,6 @@ class CWarpReader implements ObjectReader<Warp> {
 		private int targetMapSouth;
 		
 		private int resourceGlobalId;
-		
-		public CWarp(IConfWarp conf) {
-			this();
-			setId(conf.getId());
-			setSourceMapId(conf.getSourceMapId());
-			setSourceMapEast(conf.getSourceMapEast());
-			setSourceMapSouth(conf.getSourceMapSouth());
-			setTargetMapId(conf.getTargetMapId());
-			setTargetMapEast(conf.getTargetMapEast());
-			setTargetMapSouth(conf.getTargetMapSouth());
-		}
-		
-		public CWarp() {};
 
 		@Override
 		public int getId() {
@@ -149,6 +127,24 @@ class CWarpReader implements ObjectReader<Warp> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfWarp> getFromClass() {
+		return ConfWarp.class;
+	}
+
+	@Override
+	Warp transform(ConfWarp s) {
+		CWarp warp = new CWarp();
+		warp.setId(s.getId());
+		warp.setSourceMapId(s.getSourceMapId());
+		warp.setSourceMapEast(s.getSourceMapEast());
+		warp.setSourceMapSouth(s.getSourceMapSouth());
+		warp.setTargetMapId(s.getTargetMapId());
+		warp.setTargetMapEast(s.getTargetMapEast());
+		warp.setTargetMapSouth(s.getTargetMapSouth());
+		return warp;
 	}
 
 }

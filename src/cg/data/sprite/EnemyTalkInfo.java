@@ -2,15 +2,15 @@ package cg.data.sprite;
 
 public interface EnemyTalkInfo {
 	
-	byte TALK_CONDITION_BATTLE_START = 1; // Õ½¶·¿ªÊ¼Ê±
+	byte TALK_CONDITION_BATTLE_START = 1; // Õ½ï¿½ï¿½ï¿½ï¿½Ê¼Ê±
 	
-	byte TALK_CONDITION_ATTACK = 25; // ¹¥»÷Ê±
+	byte TALK_CONDITION_ATTACK = 25; // ï¿½ï¿½ï¿½ï¿½Ê±
 	
-	byte TALK_CONDITION_DEFEND = 9; // ·ÀÓùÊ±
+	byte TALK_CONDITION_DEFEND = 9; // ï¿½ï¿½ï¿½ï¿½Ê±
 	
-	byte TALK_CONDITION_USE_MAGIC = 11; // Ê¹ÓÃÄ§·¨Ê±
+	byte TALK_CONDITION_USE_MAGIC = 11; // Ê¹ï¿½ï¿½Ä§ï¿½ï¿½Ê±
 	
-	byte TALK_CONDITION_DEAD = 13; // ËÀÍöÊ±
+	byte TALK_CONDITION_DEAD = 13; // ï¿½ï¿½ï¿½ï¿½Ê±
 	
 	int getId();
 	
@@ -24,7 +24,7 @@ public interface EnemyTalkInfo {
 		
 		byte getFontSize();
 		
-		byte getFontColor();
+		short getFontColor();
 		
 	}
 

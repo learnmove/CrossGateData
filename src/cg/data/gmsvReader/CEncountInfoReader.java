@@ -11,22 +11,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 import cg.base.conf.ConfEncount;
-import cg.base.conf.IConfEncount;
 import cg.base.loader.IOCBeanType;
 import cg.data.map.BaseMapArea;
 import cg.data.map.MapArea;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import cg.data.sprite.EncountInfo;
 import cg.data.sprite.EncountInfo.GroupInfo;
 
 @IOCBean(type=IOCBeanType.READER)
-class CEncountInfoReader implements ObjectReader<EncountInfo> {
-
-	@Override
-	public List<EncountInfo> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfEncount.arrayFromExcel(projectData), s -> { return new CEncountInfo(s); });
-	}
+class CEncountInfoReader extends BaseObjectReader<EncountInfo, ConfEncount> {
 	
 	private static class CEncountInfo implements EncountInfo {
 		
@@ -39,22 +31,6 @@ class CEncountInfoReader implements ObjectReader<EncountInfo> {
 		private byte priority;
 		
 		private List<GroupInfo> groupInfos;
-		
-		public CEncountInfo(IConfEncount conf) {
-			id = conf.getId();
-			area = new BaseMapArea(conf.getMapId(), conf.getWest(), conf.getNorth(), conf.getEast(), conf.getSouth());
-			amount = Range.closed(conf.getMin(), conf.getMax());
-			priority = conf.getPriority();
-			int[] groups = conf.getGroups();
-			byte[] rates = conf.getRates();
-			groupInfos = Lists.newArrayListWithCapacity(groups.length);
-			for (int i = 0;i < groups.length;i++) {
-				if (groups[i] == 0) {
-					break;
-				}
-				groupInfos.add(new CGroupInfo(groups[i], rates[i]));
-			}
-		}
 
 		@Override
 		public int getId() {
@@ -78,7 +54,7 @@ class CEncountInfoReader implements ObjectReader<EncountInfo> {
 
 		@Override
 		public List<GroupInfo> getGroupInfos() {
-			return ImmutableList.copyOf(groupInfos);
+			return groupInfos;
 		}
 		
 	}
@@ -110,6 +86,31 @@ class CEncountInfoReader implements ObjectReader<EncountInfo> {
 	public void output(File outFile, Collection<EncountInfo> collection) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfEncount> getFromClass() {
+		return ConfEncount.class;
+	}
+
+	@Override
+	EncountInfo transform(ConfEncount s) {
+		CEncountInfo ret = new CEncountInfo();
+		ret.id = s.getId();
+		ret.area = new BaseMapArea(s.getMapId(), s.getWest(), s.getNorth(), s.getEast(), s.getSouth());
+		ret.amount = Range.closed(s.getMin(), s.getMax());
+		ret.priority = s.getPriority();
+		int[] groups = s.getGroups();
+		byte[] rates = s.getRates();
+		List<GroupInfo> groupInfos = Lists.newArrayListWithCapacity(groups.length);
+		for (int i = 0;i < groups.length;i++) {
+			if (groups[i] == 0) {
+				break;
+			}
+			groupInfos.add(new CGroupInfo(groups[i], rates[i]));
+		}
+		ret.groupInfos = ImmutableList.copyOf(groupInfos);
+		return ret;
 	}
 
 }

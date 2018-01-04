@@ -31,104 +31,31 @@ import static cg.base.util.MathUtil.createRange;
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Range;
 import com.google.common.collect.Table;
 
 import cg.base.conf.ConfItemSet;
-import cg.base.conf.IConfItemSet;
 import cg.base.loader.IOCBeanType;
 import cg.data.item.ItemTemplate;
 import cg.data.resource.MessageManager;
-import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-class CItemReader implements ObjectReader<ItemTemplate> {
-
-	@Override
-	public List<ItemTemplate> read(ProjectData projectData) {
-		MessageManager messageManager = projectData.getMessageManager();
-		return ObjectReader.transform(ConfItemSet.arrayFromExcel(projectData), s -> { return read(s, messageManager); });
-	}
-	
-	private static CItemTemplate read(IConfItemSet conf, MessageManager messageManager) {
-		CItemTemplate itemTemplate = new CItemTemplate();
-		itemTemplate.messageManager = messageManager;
-		itemTemplate.unidentifyName = conf.getUnidentifyName();
-		itemTemplate.identifyName = conf.getIdentifyName();
-		itemTemplate.useEffect = conf.getUseEffect();
-		itemTemplate.useInit = conf.getUseInit();
-		itemTemplate.useProcess = conf.getUseProcess();
-		itemTemplate.dropProcess = conf.getDropProcess();
-		itemTemplate.pickupProcess = conf.getPickupProcess();
-		itemTemplate.id = conf.getId();
-		itemTemplate.iconId = conf.getIconId();
-		itemTemplate.sellPrice = conf.getSellPrice();
-		itemTemplate.type = conf.getType();
-		itemTemplate.doubleHand = conf.getDoubleHand();
-		itemTemplate.canDoubleClick = conf.getCanDoubleClick();
-		itemTemplate.canUseInBattle = conf.getCanUseInBattle();
-		itemTemplate.groupSize = (short) Math.max(conf.getGroupSize(), 1);
-		itemTemplate.level = conf.getLevel();
-		itemTemplate.durable = createRange(conf.getDurableMin(), conf.getDurableMax());
-		itemTemplate.attackCount = createRange(conf.getAttackCountMin(), conf.getAttackCountMax());
-		itemTemplate.isPrecent = conf.getIsPrecent();
-		itemTemplate.luck = createRange(conf.getLuckMin(), conf.getLuckMax());
-		itemTemplate.elementAttribute_1 = conf.getElementType1();
-		itemTemplate.elementAttribute_2 = conf.getElementType2();
-		itemTemplate.elementAttributeValue_1 = conf.getElementValue1();
-		itemTemplate.elementAttributeValue_2 = conf.getElementValue2();
-		itemTemplate.specialType = conf.getSpecialType();
-		itemTemplate.subTypeParam = conf.getSubTypeParams();
-		itemTemplate.gemWeaponType = conf.getGemWeaponType();
-		itemTemplate.gemArmorType = conf.getGemArmorType();
-		itemTemplate.logoutDispear = conf.getLogoutDispear();
-		itemTemplate.dropDispear = conf.getDropDispear();
-		itemTemplate.canPostByPet = conf.getCanPostByPet();
-		itemTemplate.canComposite = conf.getCanComposite();
-		itemTemplate.descriptionId = conf.getDescriptionId() == 0 ? -1 : conf.getDescriptionId();
-		itemTemplate.rightButtonDescriptionId = conf.getRightButtonDescriptionId() == 0 ? -1 : conf.getRightButtonDescriptionId();
-		itemTemplate.identifyRate = conf.getIdentifyRate();
-		itemTemplate.magicAttack = createRange(conf.getMagicAttackMin(), conf.getMagicAttackMax());
-		
-		Table<String, Byte, Range<Integer>> attributes = itemTemplate.attributes;
-		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_ATTACK, createRange(conf.getAttackMin(), conf.getAttackMax()));
-		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_DEFEND, createRange(conf.getDefendMin(), conf.getDefendMax()));
-		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_AGILITY, createRange(conf.getAgilityMin(), conf.getAgilityMax()));
-		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_HP_MAX, createRange(conf.getHpMin(), conf.getHpMax()));
-		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_MP_MAX, createRange(conf.getMpMin(), conf.getMpMax()));
-		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_MIND, createRange(conf.getMindMin(), conf.getMindMax()));
-		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_RECOVER, createRange(conf.getRecoverMin(), conf.getRecoverMax()));
-		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, createRange(conf.getCriticalMin(), conf.getCriticalMax()));
-		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, createRange(conf.getCounterMin(), conf.getCounterMax()));
-		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, createRange(conf.getHitMin(), conf.getHitMax()));
-		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, createRange(conf.getAovidMin(), conf.getAovidMax()));
-		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_CHARM, createRange(conf.getCharmMin(), conf.getCharmMax()));
-		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_STAMINA, createRange(conf.getStaminaMax(), conf.getStaminaMax()));
-		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_DEXTERITY, createRange(conf.getDexterityMin(), conf.getDexterityMax()));
-		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_INTELLIGENCE, createRange(conf.getIntelligenceMin(), conf.getIntelligenceMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, createRange(conf.getPoisonMin(), conf.getPoisonMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, createRange(conf.getSleepMin(), conf.getSleepMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, createRange(conf.getStoneMin(), conf.getStoneMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, createRange(conf.getIntoxicationMin(), conf.getIntoxicationMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, createRange(conf.getConfusionMin(), conf.getConfusionMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, createRange(conf.getAmnesiaMin(), conf.getAmnesiaMax()));
-		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_MAGIC, createRange(conf.getResistMagicMin(), conf.getResistMagicMax()));
-		
-		return itemTemplate;
-	}
+class CItemReader extends BaseObjectReader<ItemTemplate, ConfItemSet> {
 	
 	private static class CItemTemplate implements ItemTemplate {
 		
-		private MessageManager messageManager;
+		private static MessageManager messageManager;
 		
 		private int id;
 		
@@ -209,7 +136,6 @@ class CItemReader implements ObjectReader<ItemTemplate> {
 		private Range<Short> magicAttack;
 		
 		public CItemTemplate() {
-			attributes = HashBasedTable.create();
 			attributeTypes = ArrayListMultimap.create();
 			subTypeParam = new int[2];
 		}
@@ -556,6 +482,109 @@ class CItemReader implements ObjectReader<ItemTemplate> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfItemSet> getFromClass() {
+		return ConfItemSet.class;
+	}
+
+	@Override
+	ItemTemplate transform(ConfItemSet s) {
+		CItemTemplate itemTemplate = new CItemTemplate();
+		itemTemplate.unidentifyName = s.getUnidentifyName();
+		itemTemplate.identifyName = s.getIdentifyName();
+		itemTemplate.useEffect = s.getUseEffect();
+		itemTemplate.useInit = s.getUseInit();
+		itemTemplate.useProcess = s.getUseProcess();
+		itemTemplate.dropProcess = s.getDropProcess();
+		itemTemplate.pickupProcess = s.getPickupProcess();
+		itemTemplate.id = s.getId();
+		itemTemplate.iconId = s.getIconId();
+		itemTemplate.sellPrice = s.getSellPrice();
+		itemTemplate.type = s.getType();
+		itemTemplate.doubleHand = s.getDoubleHand();
+		itemTemplate.canDoubleClick = s.getCanDoubleClick();
+		itemTemplate.canUseInBattle = s.getCanUseInBattle();
+		itemTemplate.groupSize = (short) Math.max(s.getGroupSize(), 1);
+		itemTemplate.level = s.getLevel();
+		itemTemplate.durable = createRange(s.getDurableMin(), s.getDurableMax());
+		itemTemplate.attackCount = createRange(s.getAttackCountMin(), s.getAttackCountMax());
+		itemTemplate.isPrecent = s.getIsPrecent();
+		itemTemplate.luck = createRange(s.getLuckMin(), s.getLuckMax());
+		itemTemplate.elementAttribute_1 = s.getElementType1();
+		itemTemplate.elementAttribute_2 = s.getElementType2();
+		itemTemplate.elementAttributeValue_1 = s.getElementValue1();
+		itemTemplate.elementAttributeValue_2 = s.getElementValue2();
+		itemTemplate.specialType = s.getSpecialType();
+		itemTemplate.subTypeParam = s.getSubTypeParams();
+		itemTemplate.gemWeaponType = s.getGemWeaponType();
+		itemTemplate.gemArmorType = s.getGemArmorType();
+		itemTemplate.logoutDispear = s.getLogoutDispear();
+		itemTemplate.dropDispear = s.getDropDispear();
+		itemTemplate.canPostByPet = s.getCanPostByPet();
+		itemTemplate.canComposite = s.getCanComposite();
+		itemTemplate.descriptionId = s.getDescriptionId() == 0 ? -1 : s.getDescriptionId();
+		itemTemplate.rightButtonDescriptionId = s.getRightButtonDescriptionId() == 0 ? -1 : s.getRightButtonDescriptionId();
+		itemTemplate.identifyRate = s.getIdentifyRate();
+		itemTemplate.magicAttack = createRange(s.getMagicAttackMin(), s.getMagicAttackMax());
+		
+		Table<String, Byte, Range<Integer>> attributes = HashBasedTable.create();
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_ATTACK, createRange(s.getAttackMin(), s.getAttackMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_DEFEND, createRange(s.getDefendMin(), s.getDefendMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_AGILITY, createRange(s.getAgilityMin(), s.getAgilityMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_HP_MAX, createRange(s.getHpMin(), s.getHpMax()));
+		attributes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_MP_MAX, createRange(s.getMpMin(), s.getMpMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_MIND, createRange(s.getMindMin(), s.getMindMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_RECOVER, createRange(s.getRecoverMin(), s.getRecoverMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL, createRange(s.getCriticalMin(), s.getCriticalMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER, createRange(s.getCounterMin(), s.getCounterMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT, createRange(s.getHitMin(), s.getHitMax()));
+		attributes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID, createRange(s.getAovidMin(), s.getAovidMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_CHARM, createRange(s.getCharmMin(), s.getCharmMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_STAMINA, createRange(s.getStaminaMax(), s.getStaminaMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_DEXTERITY, createRange(s.getDexterityMin(), s.getDexterityMax()));
+		attributes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_INTELLIGENCE, createRange(s.getIntelligenceMin(), s.getIntelligenceMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON, createRange(s.getPoisonMin(), s.getPoisonMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP, createRange(s.getSleepMin(), s.getSleepMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE, createRange(s.getStoneMin(), s.getStoneMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION, createRange(s.getIntoxicationMin(), s.getIntoxicationMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION, createRange(s.getConfusionMin(), s.getConfusionMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA, createRange(s.getAmnesiaMin(), s.getAmnesiaMax()));
+		attributes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_MAGIC, createRange(s.getResistMagicMin(), s.getResistMagicMax()));
+		itemTemplate.attributes = ImmutableTable.copyOf(attributes);
+		
+		ListMultimap<String, Byte> attributeTypes = LinkedListMultimap.create();
+		attributeTypes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_ATTACK);
+		attributeTypes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_DEFEND);
+		attributeTypes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_AGILITY);
+		attributeTypes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_HP_MAX);
+		attributeTypes.put(ATTRIBUTE_TYPE_BASE, ATTRIBUTE_MP_MAX);
+		attributeTypes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_MIND);
+		attributeTypes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_RECOVER);
+		attributeTypes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_CRITICAL);
+		attributeTypes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_COUNTER);
+		attributeTypes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_HIT);
+		attributeTypes.put(ATTRIBUTE_TYPE_EXTEND, ATTRIBUTE_EXTEND_AVOID);
+		attributeTypes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_CHARM);
+		attributeTypes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_STAMINA);
+		attributeTypes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_DEXTERITY);
+		attributeTypes.put(ATTRIBUTE_TYPE_WORK, ATTRIBUTE_WORK_INTELLIGENCE);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_POISON);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_SLEEP);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_STONE);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_INTOXICATION);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_CONFUSION);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_AMNESIA);
+		attributeTypes.put(ATTRIBUTE_TYPE_RESIST, ATTRIBUTE_RESIST_MAGIC);
+		itemTemplate.attributeTypes = ImmutableListMultimap.copyOf(attributeTypes);
+		
+		return itemTemplate;
+	}
+	
+	@Override
+	protected void readFinish(ProjectData projectData) {
+		CItemTemplate.messageManager = projectData.getMessageManager();
 	}
 
 }

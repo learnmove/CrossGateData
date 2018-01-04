@@ -2,7 +2,6 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
@@ -10,16 +9,9 @@ import cg.base.conf.ConfTitleName;
 import cg.base.conf.IConfTitleName;
 import cg.base.loader.IOCBeanType;
 import cg.base.sprite.Title;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-class CTitleReader implements ObjectReader<Title> {
-	
-	@Override
-	public List<Title> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfTitleName.arrayFromExcel(projectData), s -> { return new CTitle(s); });
-	}
+class CTitleReader extends BaseObjectReader<Title, ConfTitleName> {
 	
 	private static class CTitle implements Title {
 		
@@ -49,6 +41,16 @@ class CTitleReader implements ObjectReader<Title> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfTitleName> getFromClass() {
+		return ConfTitleName.class;
+	}
+
+	@Override
+	Title transform(ConfTitleName s) {
+		return new CTitle(s);
 	}
 
 }

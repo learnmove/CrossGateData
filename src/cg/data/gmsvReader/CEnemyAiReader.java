@@ -21,9 +21,9 @@ class CEnemyAiReader extends BaseObjectReader<EnemyAiInfo, ConfEnemyAI> {
 		
 		private int skillCode;
 		
-		private byte hitRate;
+		private short hitRate;
 		
-		public CAiInfo(byte condition, byte targetType, int skillCode, byte hitRate) {
+		public CAiInfo(byte condition, byte targetType, int skillCode,short hitRate) {
 			this.condition = condition;
 			this.targetType = targetType;
 			this.skillCode = skillCode;
@@ -46,7 +46,7 @@ class CEnemyAiReader extends BaseObjectReader<EnemyAiInfo, ConfEnemyAI> {
 		}
 
 		@Override
-		public byte getRate() {
+		public short getRate() {
 			return hitRate;
 		}
 		
@@ -88,7 +88,7 @@ class CEnemyAiReader extends BaseObjectReader<EnemyAiInfo, ConfEnemyAI> {
 		byte[] conditions = s.getConditions();
 		byte[] targetTypes = s.getTargetTypes();
 		int[] skillCodes = s.getSkillCodes();
-		byte[] hitRates = s.getHitRates();
+		short[] hitRates = s.getHitRates();
 		ret.aiInfos = new AiInfo[conditions.length];
 		for (int i = 0;i < conditions.length;i++) {
 			if (hitRates[i] > 0) {

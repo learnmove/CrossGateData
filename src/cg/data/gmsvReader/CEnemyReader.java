@@ -2,30 +2,21 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.Range;
 
 import cg.base.conf.ConfEnemy;
-import cg.base.conf.IConfEnemy;
 import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
 import cg.data.item.DropItemGroup;
 import cg.data.item.DropItemGroup.DropItem;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import cg.data.sprite.EnemyInfo;
 
 @IOCBean(type=IOCBeanType.READER)
-class CEnemyReader implements ObjectReader<EnemyInfo> {
+class CEnemyReader extends BaseObjectReader<EnemyInfo, ConfEnemy> {
 
-	@Override
-	public List<EnemyInfo> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfEnemy.arrayFromExcel(projectData), s -> { return new CEnemyInfo(s); });
-	}
-	
 	private static class CEnemyInfo implements EnemyInfo {
 		
 		private String name;
@@ -43,36 +34,6 @@ class CEnemyReader implements ObjectReader<EnemyInfo> {
 		private byte[] actionCode;
 		
 		private int[] summonCode;
-		
-		public CEnemyInfo(IConfEnemy conf) {
-			name = conf.getName();
-			aiParams = conf.getAiParams().split(";");
-			enemyId = conf.getEnemyId();
-			enemybaseId = conf.getEnemybaseId();
-			level = MathUtil.createRange(conf.getMinLevel(), conf.getMaxLevel());
-			amount = MathUtil.createRange(conf.getMinAmount(), conf.getMaxAmount());
-			aiId = conf.getAiId();
-			gainExp = conf.getGainExp();
-			battleScore = conf.getBattleScore();
-			canCatch = conf.getCanCatch();
-			int[] drops = conf.getDrops();
-			int[] dropRates = conf.getDropRates();
-			DropItem[] dropItems = new DropItem[drops.length];
-			for (int i = 0;i < drops.length;i++) {
-				dropItems[i] = new CDropItem(drops[i], dropRates[i]);
-			}
-			dropItemGroup = new CDropItemGroup(dropItems);
-			int[] steals = conf.getSteals();
-			int[] stealRates = conf.getStealRates();
-			DropItem[] stealItems = new DropItem[steals.length];
-			for (int i = 0;i < stealItems.length;i++) {
-				stealItems[i] = new CDropItem(steals[i], stealRates[i]);
-			}
-			stealItemGroup = new CDropItemGroup(stealItems);
-			actionCode = conf.getActionCodes();
-			summonCode = conf.getSummonCodes();
-			enemyTalk = conf.getEnemyTalk();
-		}
 		
 		@Override
 		public String getEnemyName() {
@@ -156,6 +117,44 @@ class CEnemyReader implements ObjectReader<EnemyInfo> {
 			throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfEnemy> getFromClass() {
+		return ConfEnemy.class;
+	}
+
+	@Override
+	EnemyInfo transform(ConfEnemy s) {
+		CEnemyInfo ret = new CEnemyInfo();
+		ret.name = s.getName();
+		ret.aiParams = s.getAiParams().split(";");
+		ret.enemyId = s.getEnemyId();
+		ret.enemybaseId = s.getEnemybaseId();
+		ret.level = MathUtil.createRange(s.getMinLevel(), s.getMaxLevel());
+		ret.amount = MathUtil.createRange(s.getMinAmount(), s.getMaxAmount());
+		ret.aiId = s.getAiId();
+		ret.gainExp = s.getGainExp();
+		ret.battleScore = s.getBattleScore();
+		ret.canCatch = s.getCanCatch();
+		int[] drops = s.getDrops();
+		int[] dropRates = s.getDropRates();
+		DropItem[] dropItems = new DropItem[drops.length];
+		for (int i = 0;i < drops.length;i++) {
+			dropItems[i] = new CDropItem(drops[i], dropRates[i]);
+		}
+		ret.dropItemGroup = new CDropItemGroup(dropItems);
+		int[] steals = s.getSteals();
+		int[] stealRates = s.getStealRates();
+		DropItem[] stealItems = new DropItem[steals.length];
+		for (int i = 0;i < stealItems.length;i++) {
+			stealItems[i] = new CDropItem(steals[i], stealRates[i]);
+		}
+		ret.stealItemGroup = new CDropItemGroup(stealItems);
+		ret.actionCode = s.getActionCodes();
+		ret.summonCode = s.getSummonCodes();
+		ret.enemyTalk = s.getEnemyTalk();
+		return ret;
 	}
 
 }

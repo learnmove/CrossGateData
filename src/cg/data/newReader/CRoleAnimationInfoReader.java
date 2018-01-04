@@ -28,7 +28,7 @@ class CRoleAnimationInfoReader implements ObjectReader<RoleAnimationInfo> {
 	@Override
 	public List<RoleAnimationInfo> read(ProjectData projectData) {
 		try {
-			IConfAnimation[] confAnimations = ConfAnimation.arrayFromExcel(projectData);
+			List<IConfAnimation> confAnimations = ConfAnimation.arrayFromExcel(projectData);
 			Map<Byte, CRoleAnimationInfo> indexs = Maps.newTreeMap();
 			for (IConfAnimation confAnimation : confAnimations) {
 				CRoleAnimationInfo animationInfo;

@@ -2,26 +2,17 @@ package cg.data.gmsvReader;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.tool.server.ioc.IOCBean;
 
 import cg.base.conf.ConfGroup;
-import cg.base.conf.IConfGroup;
 import cg.base.loader.IOCBeanType;
 import cg.base.util.MathUtil;
-import cg.data.resource.ObjectReader;
-import cg.data.resource.ProjectData;
 import cg.data.sprite.EnemyGroup;
 import cg.data.sprite.EnemyGroup.SingleGroupInfo;
 
 @IOCBean(type=IOCBeanType.READER)
-class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
-
-	@Override
-	public List<EnemyGroup> read(ProjectData projectData) {
-		return ObjectReader.transform(ConfGroup.arrayFromExcel(projectData), s -> { return new CEnemyGroup(s); });
-	}
+class CEnemyGroupReader extends BaseObjectReader<EnemyGroup, ConfGroup> {
 	
 	private static class CEnemyGroup implements EnemyGroup {
 		
@@ -36,31 +27,6 @@ class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
 		private int notNeedItemId;
 		
 		private SingleGroupInfo[] singleGroupInfos;
-		
-		public CEnemyGroup(IConfGroup conf) {
-			name = conf.getName();
-			String[] locals = conf.getEnemyLocals().split(",");
-			enemyLocals = new byte[ENEMY_MAX_COUNT];
-			for (int i = 0;i < ENEMY_MAX_COUNT;i++) {
-				enemyLocals[i] = locals.length > i && locals[i].length() > 0 ? MathUtil.stringToByte(locals[i]) : LOCAL_RANDOM;
-			}
-			id = conf.getId();
-			needItemId = conf.getNeedItemId();
-			notNeedItemId = conf.getNotNeedItemId();
-			int[] enemyIds = conf.getEnemyIds();
-			byte[] rates = conf.getRates();
-			boolean[] isMustAppears = conf.getIsMustAppears();
-			int size = 0;
-			for (int i = 0;i < enemyIds.length;i++, size++) {
-				if (enemyIds[i] <= 0) {
-					break;
-				}
-			}
-			singleGroupInfos = new SingleGroupInfo[size];
-			for (int i = 0;i < size;i++) {
-				singleGroupInfos[i] = new CSingleGroupInfo(enemyIds[i], rates[i], isMustAppears[i]);
-			}
-		}
 
 		@Override
 		public String getName() {
@@ -126,10 +92,42 @@ class CEnemyGroupReader implements ObjectReader<EnemyGroup> {
 	}
 
 	@Override
-	public void output(File outFile, Collection<EnemyGroup> collection)
-			throws Exception {
+	public void output(File outFile, Collection<EnemyGroup> collection) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	Class<ConfGroup> getFromClass() {
+		return ConfGroup.class;
+	}
+
+	@Override
+	EnemyGroup transform(ConfGroup s) {
+		CEnemyGroup ret = new CEnemyGroup();
+		ret.name = s.getName();
+		String[] locals = s.getEnemyLocals().split(",");
+		ret.enemyLocals = new byte[EnemyGroup.ENEMY_MAX_COUNT];
+		for (int i = 0;i < EnemyGroup.ENEMY_MAX_COUNT;i++) {
+			ret.enemyLocals[i] = locals.length > i && locals[i].length() > 0 ? MathUtil.stringToByte(locals[i]) : EnemyGroup.LOCAL_RANDOM;
+		}
+		ret.id = s.getId();
+		ret.needItemId = s.getNeedItemId();
+		ret.notNeedItemId = s.getNotNeedItemId();
+		int[] enemyIds = s.getEnemyIds();
+		byte[] rates = s.getRates();
+		boolean[] isMustAppears = s.getIsMustAppears();
+		int size = 0;
+		for (int i = 0;i < enemyIds.length;i++, size++) {
+			if (enemyIds[i] <= 0) {
+				break;
+			}
+		}
+		ret.singleGroupInfos = new SingleGroupInfo[size];
+		for (int i = 0;i < size;i++) {
+			ret.singleGroupInfos[i] = new CSingleGroupInfo(enemyIds[i], rates[i], isMustAppears[i]);
+		}
+		return ret;
 	}
 
 }
