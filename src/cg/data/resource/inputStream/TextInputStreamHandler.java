@@ -19,6 +19,7 @@ class TextInputStreamHandler extends TypeInputStreamHandler<String[]> {
 		List<String> list = listURLHandler.getList();
 		String[] ret = list.toArray(new String[list.size()]);
 		listURLHandler.clear();
+		log.info(uri.toString());
 		return ret;
 	}
 

@@ -15,6 +15,7 @@ import cg.base.skill.SkillTemplate;
 import cg.base.sprite.Attribute;
 import cg.base.sprite.AttributeCell;
 import cg.data.resource.MessageManager;
+import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSkill> {
@@ -137,6 +138,11 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 		ret.notGainExp = s.getNotGainExp();
 		ret.doubleExpType = s.getDoubleExpType();
 		return ret;
+	}
+
+	@Override
+	protected void readFinish(ProjectData projectData) {
+		CSkillTemplate.messageManager = projectData.getMessageManager();
 	}
 
 }
