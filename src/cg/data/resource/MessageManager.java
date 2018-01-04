@@ -57,7 +57,7 @@ public class MessageManager implements ProjectDataListener {
 			log.warn("Message [{}] is null.", msgId);
 			return "";
 		}
-		return messages.get(msgId);
+		return messages.containsKey(msgId) ? messages.get(msgId) : "";
 	}
 	
 	public String getRealWord(String garbled) {
