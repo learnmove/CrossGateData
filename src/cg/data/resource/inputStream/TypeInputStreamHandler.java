@@ -3,13 +3,11 @@ package cg.data.resource.inputStream;
 import static cg.base.util.IOUtils.PATH_SPLIT;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cg.base.util.IOUtils;
@@ -20,9 +18,7 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 	
 	protected static final Logger log = LoggerFactory.getLogger(TypeInputStreamHandler.class);
 	
-	protected List<URI> uris = Lists.newLinkedList();
-	
-	protected Map<String, T> resources = Maps.newHashMap();
+	protected Map<String, URI> uris = Maps.newHashMap();
 	
 	protected Map<String, String> lowerCaseNames = Maps.newHashMap();
 	
@@ -31,10 +27,17 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 	public TypeInputStreamHandler(String type) {
 		this.type = type;
 	}
+	
+	protected abstract T get(URI uri) throws Exception;
+	
+	protected void add(String name, URI uri) {
+		uris.put(name, uri);
+		lowerCaseNames.put(name.toLowerCase(), name);
+	}
 
 	@Override
-	public void reload() throws Exception {
-		for (URI uri : uris) {
+	public void addURI(URI uri) {
+		try {
 			String name = IOUtils.decode(uri.toString());
 			int lastDotIndex = name.lastIndexOf(".");
 			name = name.substring(0, lastDotIndex);
@@ -43,32 +46,23 @@ public abstract class TypeInputStreamHandler<T> implements InputStreamHandler<T>
 				name = name.substring(index + 1);
 			}
 			if (!name.startsWith("~$")) {
-				add(name, get(uri));
+				add(name, uri);
 			}
+		} catch (Exception e) {
+			log.error("", e);
 		}
-	}
-	
-	protected abstract T get(URI uri) throws Exception;
-	
-	protected void add(String name, T value) {
-		resources.put(name, value);
-		lowerCaseNames.put(name.toLowerCase(), name);
-	}
-
-	@Override
-	public void addURI(URI uri) {
-		uris.add(uri);
 	}
 
 	@Override
 	public T get(String name) {
 		String key = name.replace(".txt", "");
-		return resources.containsKey(key) ? resources.get(key) : resources.get(lowerCaseNames.get(key.toLowerCase()));
-	}
-
-	@Override
-	public void clear() {
-		resources.clear();
+		try {
+			URI uri = uris.containsKey(key) ? uris.get(key) : uris.get(lowerCaseNames.get(key.toLowerCase()));
+			return uri == null ? null : get(uri);
+		} catch (Exception e) {
+			log.error("", e);
+			return null;
+		}
 	}
 	
 	protected static void getStream(URI uri, URLHandler handler) throws Exception {

@@ -115,18 +115,11 @@ public abstract class ProjectData implements Reloadable, IExcelProvider, ISource
 	}
 	
 	public void clearResource() {
-		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
-			inputStreamHandler.clear();
-		}
 		imageManager.getImageDictionaryReader().clear();
 	}
 
 	@Override
 	public void reload() throws Exception {
-		for (@SuppressWarnings("rawtypes") InputStreamHandler inputStreamHandler : inputStreamHandlers.values()) {
-			inputStreamHandler.reload();
-		}
-		
 		for (ProjectDataListener listener : listeners) {
 			listener.reload(this);
 			log.info("{} reload finish.", listener.getClass().getSimpleName());
