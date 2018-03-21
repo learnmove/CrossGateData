@@ -189,7 +189,13 @@ public class CSkillDataReader extends BaseObjectReader<SkillLevelData, ConfTech>
 		short[] produces = s.getProduce();
 		List<Short> list = Lists.newArrayListWithCapacity(produces.length);
 		for (short produceId : produces) {
-			if (produceId > 0) {
+			if (list.size() == 0) {
+				list.add(produceId);
+			}
+			if (list.get(list.size() - 1) == produceId) {
+				list.clear();
+				break;
+			} else {
 				list.add(produceId);
 			}
 		}
