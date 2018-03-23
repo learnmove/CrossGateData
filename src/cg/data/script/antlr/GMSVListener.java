@@ -1,4 +1,4 @@
-// Generated from D:\file\workspace\CrossGateData\src\cg\data\script\antlr\GMSV.g4 by ANTLR 4.5.1
+// Generated from D:\My_space\CrossGateData\src\cg\data\script\antlr\GMSV.g4 by ANTLR 4.5.1
 
 package cg.data.script.antlr;
 
@@ -20,35 +20,147 @@ public interface GMSVListener extends ParseTreeListener {
 	 */
 	void exitR(GMSVParser.RContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#booleanRule}.
+	 * Enter a parse tree produced by the {@code boo}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
 	 * @param ctx the parse tree
 	 */
-	void enterBooleanRule(GMSVParser.BooleanRuleContext ctx);
+	void enterBoo(GMSVParser.BooContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#booleanRule}.
+	 * Exit a parse tree produced by the {@code boo}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
 	 * @param ctx the parse tree
 	 */
-	void exitBooleanRule(GMSVParser.BooleanRuleContext ctx);
+	void exitBoo(GMSVParser.BooContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#intRule}.
+	 * Enter a parse tree produced by the {@code booParens}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterBooParens(GMSVParser.BooParensContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code booParens}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitBooParens(GMSVParser.BooParensContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code mulBoo}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulBoo(GMSVParser.MulBooContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mulBoo}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulBoo(GMSVParser.MulBooContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code expBoo}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpBoo(GMSVParser.ExpBooContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expBoo}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpBoo(GMSVParser.ExpBooContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AndOr}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndOr(GMSVParser.AndOrContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AndOr}
+	 * labeled alternative in {@link GMSVParser#booleanRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndOr(GMSVParser.AndOrContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GMSVParser#exprBoolean}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprBoolean(GMSVParser.ExprBooleanContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GMSVParser#exprBoolean}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprBoolean(GMSVParser.ExprBooleanContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code parens}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterParens(GMSVParser.ParensContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code parens}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitParens(GMSVParser.ParensContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MulDiv}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulDiv(GMSVParser.MulDivContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MulDiv}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulDiv(GMSVParser.MulDivContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AddSub}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddSub(GMSVParser.AddSubContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AddSub}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddSub(GMSVParser.AddSubContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code intRule}
+	 * labeled alternative in {@link GMSVParser#expr}.
 	 * @param ctx the parse tree
 	 */
 	void enterIntRule(GMSVParser.IntRuleContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#intRule}.
+	 * Exit a parse tree produced by the {@code intRule}
+	 * labeled alternative in {@link GMSVParser#expr}.
 	 * @param ctx the parse tree
 	 */
 	void exitIntRule(GMSVParser.IntRuleContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#stringRule}.
+	 * Enter a parse tree produced by the {@code id}
+	 * labeled alternative in {@link GMSVParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterStringRule(GMSVParser.StringRuleContext ctx);
+	void enterId(GMSVParser.IdContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#stringRule}.
+	 * Exit a parse tree produced by the {@code id}
+	 * labeled alternative in {@link GMSVParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitStringRule(GMSVParser.StringRuleContext ctx);
+	void exitId(GMSVParser.IdContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterInt(GMSVParser.IntContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code int}
+	 * labeled alternative in {@link GMSVParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitInt(GMSVParser.IntContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GMSVParser#startRule}.
 	 * @param ctx the parse tree
@@ -1110,15 +1222,15 @@ public interface GMSVListener extends ParseTreeListener {
 	 */
 	void exitYes(GMSVParser.YesContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#mutilBOOLEAN}.
+	 * Enter a parse tree produced by {@link GMSVParser#mutilCOMMON}.
 	 * @param ctx the parse tree
 	 */
-	void enterMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx);
+	void enterMutilCOMMON(GMSVParser.MutilCOMMONContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#mutilBOOLEAN}.
+	 * Exit a parse tree produced by {@link GMSVParser#mutilCOMMON}.
 	 * @param ctx the parse tree
 	 */
-	void exitMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx);
+	void exitMutilCOMMON(GMSVParser.MutilCOMMONContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GMSVParser#mutilINT}.
 	 * @param ctx the parse tree
@@ -1130,13 +1242,13 @@ public interface GMSVListener extends ParseTreeListener {
 	 */
 	void exitMutilINT(GMSVParser.MutilINTContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#mutilCOMMON}.
+	 * Enter a parse tree produced by {@link GMSVParser#mutilBOOLEAN}.
 	 * @param ctx the parse tree
 	 */
-	void enterMutilCOMMON(GMSVParser.MutilCOMMONContext ctx);
+	void enterMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#mutilCOMMON}.
+	 * Exit a parse tree produced by {@link GMSVParser#mutilBOOLEAN}.
 	 * @param ctx the parse tree
 	 */
-	void exitMutilCOMMON(GMSVParser.MutilCOMMONContext ctx);
+	void exitMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx);
 }
