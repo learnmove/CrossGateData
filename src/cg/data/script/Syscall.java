@@ -19,6 +19,7 @@ import cg.data.script.antlr.GMSVParser.AndOrContext;
 import cg.data.script.antlr.GMSVParser.BlockContext;
 import cg.data.script.antlr.GMSVParser.ExprBooleanContext;
 import cg.data.script.antlr.GMSVParser.IntContext;
+import cg.data.script.antlr.GMSVParser.ItemContext;
 import cg.data.script.antlr.GMSVParser.JobContext;
 import cg.data.script.help.BooleanHelpers;
 import cg.data.script.help.IntBooleanHelpers;
@@ -35,7 +36,7 @@ public class Syscall extends GMSVBaseListener {
 	
 	@Override
 	public void enterJob(JobContext ctx) {
-		pushVariable(2);
+		pushVariable(1);
 	}
 	
 	protected final <T> void pushVariable(T variable) {
@@ -48,8 +49,15 @@ public class Syscall extends GMSVBaseListener {
 	}
 
 	@Override
+	public void enterItem(ItemContext ctx) {
+		printChildren(ctx);
+		pushVariable(1);
+	}
+
+	@Override
 	public final void exitExprBoolean(ExprBooleanContext ctx) {
-		boolean result = IntBooleanHelpers.compare(ctx.op.getType(), popLast(), popLast());
+		printChildren(ctx);
+		boolean result = IntBooleanHelpers.reverseCompare(ctx.op.getType(), popLast(), popLast());
 		System.out.println("ctx result : " + ctx.getText() + " = " + result);
 		pushVariable(result);
 	}
@@ -61,7 +69,7 @@ public class Syscall extends GMSVBaseListener {
 
 	@Override
 	public void exitAndOr(AndOrContext ctx) {
-		boolean result = BooleanHelpers.compare(ctx.op.getType(), popLast(), popLast());
+		boolean result = BooleanHelpers.reverseCompare(ctx.op.getType(), popLast(), popLast());
 		System.out.println("ctx result : " + ctx.getText() + " = " + result);
 		pushVariable(result);
 	}

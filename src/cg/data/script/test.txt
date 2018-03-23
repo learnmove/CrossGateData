@@ -1,1 +1,1 @@
-job==1&&job==job
+Job == 1 && Item18100 >= 1

@@ -30,6 +30,10 @@ public class BooleanHelpers {
 		return getHelper(type).logicCompare(o1, o2);
 	}
 	
+	public static boolean reverseCompare(int type, boolean o1, boolean o2) {
+		return compare(type, o2, o1);
+	}
+	
 	private static class And implements BooleanHelper<Boolean> {
 
 		@Override
