@@ -17,7 +17,8 @@ import cg.data.script.antlr.GMSVLexer;
 import cg.data.script.antlr.GMSVParser;
 import cg.data.script.antlr.GMSVParser.AndOrContext;
 import cg.data.script.antlr.GMSVParser.BlockContext;
-import cg.data.script.antlr.GMSVParser.ExprBooleanContext;
+import cg.data.script.antlr.GMSVParser.EndwindowContext;
+import cg.data.script.antlr.GMSVParser.ExprBooContext;
 import cg.data.script.antlr.GMSVParser.IntContext;
 import cg.data.script.antlr.GMSVParser.ItemContext;
 import cg.data.script.antlr.GMSVParser.JobContext;
@@ -49,13 +50,14 @@ public class Syscall extends GMSVBaseListener {
 	}
 
 	@Override
-	public void enterItem(ItemContext ctx) {
-		printChildren(ctx);
+	public void exitItem(ItemContext ctx) {
+		int itemId = Integer.parseInt(ctx.getChild(1).getText());
+		System.out.println("exitItem itemId = " + itemId);
 		pushVariable(1);
 	}
 
 	@Override
-	public final void exitExprBoolean(ExprBooleanContext ctx) {
+	public final void exitExprBoo(ExprBooContext ctx) {
 		printChildren(ctx);
 		boolean result = IntBooleanHelpers.reverseCompare(ctx.op.getType(), popLast(), popLast());
 		System.out.println("ctx result : " + ctx.getText() + " = " + result);
@@ -72,6 +74,12 @@ public class Syscall extends GMSVBaseListener {
 		boolean result = BooleanHelpers.reverseCompare(ctx.op.getType(), popLast(), popLast());
 		System.out.println("ctx result : " + ctx.getText() + " = " + result);
 		pushVariable(result);
+	}
+
+	@Override
+	public void enterEndwindow(EndwindowContext ctx) {
+		System.out.println("enterEndwindow" + ctx.getText());
+		printChildren(ctx);
 	}
 
 	protected static void printChildren(ParserRuleContext ctx) {
@@ -98,7 +106,7 @@ public class Syscall extends GMSVBaseListener {
 			GMSVParser parse = new GMSVParser(tokens);
 //			ParseTree parseTree = parse.mutilCOMMON();
 //			ParseTree parseTree = parse.block();
-			ParseTree parseTree = parse.booleanRule();
+			ParseTree parseTree = parse.exprBoolean();
 			ParseTreeWalker walker = new ParseTreeWalker();
 			Syscall syscall = new Syscall();
 			walker.walk(syscall, parseTree);
