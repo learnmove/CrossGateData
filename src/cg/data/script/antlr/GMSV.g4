@@ -166,7 +166,7 @@ setvisitor : 'SetVisitor' exprInt NEWLINE; // 设置访问者数量
 shapenext : 'ShapeNext' | 'shapenext' exprInt NEWLINE; // 设定NPC变换形象
 shipchardown : 'ShipCharDown' exprInt; // 下船？
 shipchartake : 'ShipCharTake' exprInt exprInt; // 上船
-shipgetstoptime : 'ShipGetStopTime'; // 
+shipgetstoptime : 'ShipGetStopTime'; // 获取靠岸时间
 skilllevel : 'Skilllevel' | 'skilllevel' | 'SkillLevel' exprInt; // 设定技能等級
 stackitemspace : 'StackItemSpace' NEWLINE; // 
 strcmpchat : ('StrCmpChat' | 'strcmpchat') ('=' | '==') exprString; // 判断 msg对话字句

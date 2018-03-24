@@ -27,7 +27,9 @@ import cg.data.script.help.IntBooleanHelpers;
 
 public class Syscall extends GMSVBaseListener {
 	
-	private List<Object> variables = Lists.newLinkedList();
+	private final List<Object> variables = Lists.newLinkedList();
+	
+	private ScriptCall call;
 	
 	@Override
 	public void enterBlock(BlockContext ctx) {
@@ -37,7 +39,7 @@ public class Syscall extends GMSVBaseListener {
 	
 	@Override
 	public void enterJob(JobContext ctx) {
-		pushVariable(1);
+		pushVariable(call.job());
 	}
 	
 	protected final <T> void pushVariable(T variable) {
@@ -53,7 +55,7 @@ public class Syscall extends GMSVBaseListener {
 	public void exitItem(ItemContext ctx) {
 		int itemId = Integer.parseInt(ctx.getChild(1).getText());
 		System.out.println("exitItem itemId = " + itemId);
-		pushVariable(1);
+		pushVariable(call.item(itemId));
 	}
 
 	@Override
