@@ -174,6 +174,30 @@ public class GMSVBaseListener implements GMSVListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMultiBlock(GMSVParser.MultiBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMultiBlock(GMSVParser.MultiBlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterComRule(GMSVParser.ComRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitComRule(GMSVParser.ComRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCommonRule(GMSVParser.CommonRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -181,6 +205,18 @@ public class GMSVBaseListener implements GMSVListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCommonRule(GMSVParser.CommonRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBlockRule(GMSVParser.BlockRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlockRule(GMSVParser.BlockRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1434,37 +1470,37 @@ public class GMSVBaseListener implements GMSVListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMutilCOMMON(GMSVParser.MutilCOMMONContext ctx) { }
+	@Override public void enterMultiCOMMON(GMSVParser.MultiCOMMONContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMutilCOMMON(GMSVParser.MutilCOMMONContext ctx) { }
+	@Override public void exitMultiCOMMON(GMSVParser.MultiCOMMONContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMutilINT(GMSVParser.MutilINTContext ctx) { }
+	@Override public void enterMultiINT(GMSVParser.MultiINTContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMutilINT(GMSVParser.MutilINTContext ctx) { }
+	@Override public void exitMultiINT(GMSVParser.MultiINTContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx) { }
+	@Override public void enterMultiBOOLEAN(GMSVParser.MultiBOOLEANContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx) { }
+	@Override public void exitMultiBOOLEAN(GMSVParser.MultiBOOLEANContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

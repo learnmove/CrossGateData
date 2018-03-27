@@ -162,6 +162,30 @@ public interface GMSVListener extends ParseTreeListener {
 	 */
 	void exitInt(GMSVParser.IntContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code multiBlock}
+	 * labeled alternative in {@link GMSVParser#progRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiBlock(GMSVParser.MultiBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code multiBlock}
+	 * labeled alternative in {@link GMSVParser#progRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiBlock(GMSVParser.MultiBlockContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code comRule}
+	 * labeled alternative in {@link GMSVParser#progRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterComRule(GMSVParser.ComRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code comRule}
+	 * labeled alternative in {@link GMSVParser#progRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitComRule(GMSVParser.ComRuleContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GMSVParser#commonRule}.
 	 * @param ctx the parse tree
 	 */
@@ -171,6 +195,16 @@ public interface GMSVListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCommonRule(GMSVParser.CommonRuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GMSVParser#blockRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockRule(GMSVParser.BlockRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GMSVParser#blockRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockRule(GMSVParser.BlockRuleContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GMSVParser#addfeversec}.
 	 * @param ctx the parse tree
@@ -1212,33 +1246,33 @@ public interface GMSVListener extends ParseTreeListener {
 	 */
 	void exitYes(GMSVParser.YesContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#mutilCOMMON}.
+	 * Enter a parse tree produced by {@link GMSVParser#multiCOMMON}.
 	 * @param ctx the parse tree
 	 */
-	void enterMutilCOMMON(GMSVParser.MutilCOMMONContext ctx);
+	void enterMultiCOMMON(GMSVParser.MultiCOMMONContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#mutilCOMMON}.
+	 * Exit a parse tree produced by {@link GMSVParser#multiCOMMON}.
 	 * @param ctx the parse tree
 	 */
-	void exitMutilCOMMON(GMSVParser.MutilCOMMONContext ctx);
+	void exitMultiCOMMON(GMSVParser.MultiCOMMONContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#mutilINT}.
+	 * Enter a parse tree produced by {@link GMSVParser#multiINT}.
 	 * @param ctx the parse tree
 	 */
-	void enterMutilINT(GMSVParser.MutilINTContext ctx);
+	void enterMultiINT(GMSVParser.MultiINTContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#mutilINT}.
+	 * Exit a parse tree produced by {@link GMSVParser#multiINT}.
 	 * @param ctx the parse tree
 	 */
-	void exitMutilINT(GMSVParser.MutilINTContext ctx);
+	void exitMultiINT(GMSVParser.MultiINTContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link GMSVParser#mutilBOOLEAN}.
+	 * Enter a parse tree produced by {@link GMSVParser#multiBOOLEAN}.
 	 * @param ctx the parse tree
 	 */
-	void enterMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx);
+	void enterMultiBOOLEAN(GMSVParser.MultiBOOLEANContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link GMSVParser#mutilBOOLEAN}.
+	 * Exit a parse tree produced by {@link GMSVParser#multiBOOLEAN}.
 	 * @param ctx the parse tree
 	 */
-	void exitMutilBOOLEAN(GMSVParser.MutilBOOLEANContext ctx);
+	void exitMultiBOOLEAN(GMSVParser.MultiBOOLEANContext ctx);
 }

@@ -2,15 +2,13 @@ package cg.data.script;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-import com.google.common.collect.Lists;
 
 import cg.data.script.antlr.GMSVBaseListener;
 import cg.data.script.antlr.GMSVLexer;
@@ -27,9 +25,27 @@ import cg.data.script.help.IntBooleanHelpers;
 
 public class Syscall extends GMSVBaseListener {
 	
-	private final List<Object> variables = Lists.newLinkedList();
+	private final ParseTreeProperty<Integer> intProperty = new ParseTreeProperty<>();
+	
+	private final ParseTreeProperty<Boolean> booleanProperty = new ParseTreeProperty<>();
 	
 	private ScriptCall call;
+	
+	protected void putValue(ParseTree node, int value) {
+		intProperty.put(node, value);
+	}
+	
+	protected int getIntValue(ParseTree node) {
+		return intProperty.get(node);
+	}
+	
+	protected void putValue(ParseTree node, boolean value) {
+		booleanProperty.put(node, value);
+	}
+	
+	protected boolean getBooleanValue(ParseTree node) {
+		return booleanProperty.get(node);
+	}
 	
 	@Override
 	public void enterBlock(BlockContext ctx) {
@@ -39,43 +55,42 @@ public class Syscall extends GMSVBaseListener {
 	
 	@Override
 	public void enterJob(JobContext ctx) {
-		pushVariable(call.job());
+		putValue(ctx, call.job());
 	}
 	
-	protected final <T> void pushVariable(T variable) {
-		variables.add(variable);
-	}
+//	protected final <T> void pushVariable(T variable) {
+//		variables.add(variable);
+//	}
 
 	@Override
 	public void enterInt(IntContext ctx) {
-		pushVariable(Integer.parseInt(ctx.getText()));
+		putValue(ctx, Integer.parseInt(ctx.INT().getText()));
 	}
 
 	@Override
 	public void exitItem(ItemContext ctx) {
 		int itemId = Integer.parseInt(ctx.getChild(1).getText());
 		System.out.println("exitItem itemId = " + itemId);
-		pushVariable(call.item(itemId));
+		putValue(ctx, call.item(itemId));
 	}
 
 	@Override
 	public final void exitExprBoo(ExprBooContext ctx) {
 		printChildren(ctx);
-		boolean result = IntBooleanHelpers.reverseCompare(ctx.op.getType(), popLast(), popLast());
+		int left = getIntValue(ctx.getChild(0));
+		int right = getIntValue(ctx.getChild(1));
+		boolean result = IntBooleanHelpers.compare(ctx.op.getType(), left, right);
 		System.out.println("ctx result : " + ctx.getText() + " = " + result);
-		pushVariable(result);
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected final <T> T popLast() {
-		return (T) variables.remove(variables.size() - 1);
+		putValue(ctx, result);
 	}
 
 	@Override
 	public void exitAndOr(AndOrContext ctx) {
-		boolean result = BooleanHelpers.reverseCompare(ctx.op.getType(), popLast(), popLast());
+		boolean left = getBooleanValue(ctx.getChild(0));
+		boolean right = getBooleanValue(ctx.getChild(1));
+		boolean result = BooleanHelpers.compare(ctx.op.getType(), left, right);
 		System.out.println("ctx result : " + ctx.getText() + " = " + result);
-		pushVariable(result);
+		putValue(ctx, result);
 	}
 
 	@Override
@@ -90,13 +105,9 @@ public class Syscall extends GMSVBaseListener {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public final <T> T getResult() {
-		return (T) variables.get(variables.size() - 1);
-	}
-	
-	public final void clear() {
-		variables.clear();
+	public final void clear(ParseTree node) {
+		intProperty.removeFrom(node);
+		booleanProperty.removeFrom(node);
 	}
 
 	public static void main(String[] args) {
@@ -112,7 +123,8 @@ public class Syscall extends GMSVBaseListener {
 			ParseTreeWalker walker = new ParseTreeWalker();
 			Syscall syscall = new Syscall();
 			walker.walk(syscall, parseTree);
-			System.out.println("Result : " + syscall.getResult().toString());
+			syscall.clear(parseTree);
+//			System.out.println("Result : " + syscall.getResult().toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

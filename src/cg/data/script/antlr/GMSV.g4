@@ -49,27 +49,32 @@ OR : '||' ;
 /*               system function               */
 /* =========================================== */
 
-// 命名变量
 r : NAME INT;
-// 字符串
+
 exprString : ALLSTRING ;
-// 布尔表达式
+
 exprBoolean : exprInt op=('<>'|'!='|'>='|'>'|'<='|'<'|'==') exprInt	# exprBoo
 	| exprBoolean op=('&&'|'||') exprBoolean						# AndOr
-	| mutilBOOLEAN 													# mulBoo
+	| multiBOOLEAN 													# mulBoo
 	| BOOLEAN														# boo
 	| '(' exprBoolean ')'											# booParens
 	;
-// 整型表达式
+	
 exprInt : exprInt op=('*'|'/'|'%') exprInt	# MulDiv
 	| exprInt op=('+'|'-') exprInt 			# AddSub
 	| r 									# id
 	| INT 									# int
-	| mutilINT 								# intRule
+	| multiINT 								# intRule
 	| '(' exprInt ')'						# parens
 	;
-//startRule : booleanRule commonRule ;
-commonRule : mutilCOMMON* ;
+	
+progRule : blockRule+ 	#multiBlock
+	| commonRule 		#comRule
+	;
+	
+commonRule : multiCOMMON* ;
+	
+blockRule : block exprBoolean commonRule 'endBlock'? ;
 
 /* =========================================== */
 /*                game function                */
@@ -179,6 +184,6 @@ window_ok : 'Window_OK' | 'Window_ok' | 'Window_Ok' | 'window_ok' | 'window_OK' 
 window_yes : 'window_yes' | 'Window_YES' | 'Window_Yes' | 'Window_yes' | 'WindoW_YES' exprBoolean NEWLINE; // 玩家选"yes"时
 xpos : 'xpos' | 'Xpos' | 'XPos'; // 指定x坐标
 yes : 'YES' | 'Yes' exprBoolean NEWLINE; // 搭配window使用
-mutilCOMMON : addfeversec | addgold | addgoldlevel | addluck | addskillslot | addstampcount | block | changepal | checktitle | encount | endevent | endwindow | gaendwindow | gawindow | giveitem | giveleak0item | giveleak1item | givepet | giverecipe | givestackitem | globalflag | globaltimer | gotob | gotof | killdrugdish | killitem | killitemall | killleak0item | killleak1item | killpet | killpeth | killpetl | leavegroup | localcount | localflag | message | next | no | ok | playse | setaction | setcharm | setdur | setfeverflg | sethouse | sethouselimit | setlevel | setloginpoint | setlp | setobject | setvisitor | shapenext | stackitemspace | systemmessage | warp | window_no | window_ok | window_yes | yes;
-mutilINT : bimage | bbimage | checkitemcategory | checkrealtime | checkskillslot | fame | floor | fp | gold | group | imagetype | item | itemcreatetime | itemdur | itemdurper | itemspace | job | jobancestry | jobrank | level | lp | maxfp | maxlp | metamocount | nowevent | nowtime | pequipitem | petlevel | petspace | phitem | random | shipchardown | shipchartake | shipgetstoptime | skilllevel | trueimage | xpos;
-mutilBOOLEAN : equipitem | haveitem | haveleak0item | haveleak1item | havetitle | houseid | strcmpchat | strstrchat;
+multiCOMMON : addfeversec | addgold | addgoldlevel | addluck | addskillslot | addstampcount | block | changepal | checktitle | encount | endevent | endwindow | gaendwindow | gawindow | giveitem | giveleak0item | giveleak1item | givepet | giverecipe | givestackitem | globalflag | globaltimer | gotob | gotof | killdrugdish | killitem | killitemall | killleak0item | killleak1item | killpet | killpeth | killpetl | leavegroup | localcount | localflag | message | next | no | ok | playse | setaction | setcharm | setdur | setfeverflg | sethouse | sethouselimit | setlevel | setloginpoint | setlp | setobject | setvisitor | shapenext | stackitemspace | systemmessage | warp | window_no | window_ok | window_yes | yes;
+multiINT : bimage | bbimage | checkitemcategory | checkrealtime | checkskillslot | fame | floor | fp | gold | group | imagetype | item | itemcreatetime | itemdur | itemdurper | itemspace | job | jobancestry | jobrank | level | lp | maxfp | maxlp | metamocount | nowevent | nowtime | pequipitem | petlevel | petspace | phitem | random | shipchardown | shipchartake | shipgetstoptime | skilllevel | trueimage | xpos;
+multiBOOLEAN : equipitem | haveitem | haveleak0item | haveleak1item | havetitle | houseid | strcmpchat | strstrchat;
