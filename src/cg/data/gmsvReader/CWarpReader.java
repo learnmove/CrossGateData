@@ -1,5 +1,7 @@
 package cg.data.gmsvReader;
 
+import static cg.data.map.Warp.createWarp;
+
 import java.io.File;
 import java.util.Collection;
 
@@ -11,116 +13,6 @@ import cg.data.map.Warp;
 
 @IOCBean(type=IOCBeanType.READER)
 class CWarpReader extends BaseObjectReader<Warp, ConfWarp> {
-	
-	public static Warp createWarp(int id, int sourceMapId, int sourceMapEast, int sourceMapSouth, int targetMapId, int targetMapEast, int targetMapSouth, int resourceGlobalId) {
-		CWarp warp = new CWarp();
-		warp.setId(id);
-		warp.setSourceMapId(sourceMapId);
-		warp.setSourceMapEast(sourceMapEast);
-		warp.setSourceMapSouth(sourceMapSouth);
-		warp.setTargetMapId(targetMapId);
-		warp.setTargetMapEast(targetMapEast);
-		warp.setTargetMapSouth(targetMapSouth);
-		warp.setResourceGlobalId(resourceGlobalId);
-		return warp;
-	}
-	
-	private static class CWarp implements Warp {
-		
-		private int id;
-		
-		private int sourceMapId;
-		
-		private int targetMapId;
-		
-		private int sourceMapEast;
-		
-		private int sourceMapSouth;
-		
-		private int targetMapEast;
-		
-		private int targetMapSouth;
-		
-		private int resourceGlobalId;
-
-		@Override
-		public int getId() {
-			return id;
-		}
-
-		@Override
-		public int getSourceMapId() {
-			return sourceMapId;
-		}
-
-		@Override
-		public int getTargetMapId() {
-			return targetMapId;
-		}
-
-		@Override
-		public int getSourceMapEast() {
-			return sourceMapEast;
-		}
-
-		@Override
-		public int getSourceMapSouth() {
-			return sourceMapSouth;
-		}
-
-		@Override
-		public int getTargetMapEast() {
-			return targetMapEast;
-		}
-
-		@Override
-		public int getTargetMapSouth() {
-			return targetMapSouth;
-		}
-
-		@Override
-		public int getResourceGlobalId() {
-			return resourceGlobalId;
-		}
-		
-		private void setId(int id) {
-			this.id = id;
-		}
-		
-		private void setSourceMapId(int sourceMapId) {
-			this.sourceMapId = sourceMapId;
-		}
-		
-		private void setSourceMapEast(int sourceMapEast) {
-			this.sourceMapEast = sourceMapEast;
-		}
-		
-		private void setSourceMapSouth(int sourceMapSouth) {
-			this.sourceMapSouth = sourceMapSouth;
-		}
-		
-		private void setTargetMapId(int targetMapId) {
-			this.targetMapId = targetMapId;
-		}
-		
-		private void setTargetMapEast(int targetMapEast) {
-			this.targetMapEast = targetMapEast;
-		}
-		
-		private void setTargetMapSouth(int targetMapSouth) {
-			this.targetMapSouth = targetMapSouth;
-		}
-		
-		private void setResourceGlobalId(int resourceGlobalId) {
-			this.resourceGlobalId = resourceGlobalId;
-		}
-
-		@Override
-		public String toString() {
-			return "{Warp[" + id + "]:from (" + sourceMapId + "," + sourceMapEast + "," + sourceMapSouth + ") to (" + targetMapId + "," + targetMapEast + "," + targetMapSouth + ").";
-		}
-		
-	}
 
 	@Override
 	public void output(File outFile, Collection<Warp> collection)
@@ -136,15 +28,8 @@ class CWarpReader extends BaseObjectReader<Warp, ConfWarp> {
 
 	@Override
 	Warp transform(ConfWarp s) {
-		CWarp warp = new CWarp();
-		warp.setId(s.getId());
-		warp.setSourceMapId(s.getSourceMapId());
-		warp.setSourceMapEast(s.getSourceMapEast());
-		warp.setSourceMapSouth(s.getSourceMapSouth());
-		warp.setTargetMapId(s.getTargetMapId());
-		warp.setTargetMapEast(s.getTargetMapEast());
-		warp.setTargetMapSouth(s.getTargetMapSouth());
-		return warp;
+		return createWarp(s.getId(), s.getSourceMapId(), s.getSourceMapEast(), s.getSourceMapSouth(), 
+				s.getTargetMapId(), s.getTargetMapEast(), s.getTargetMapSouth(), 0);
 	}
 
 }

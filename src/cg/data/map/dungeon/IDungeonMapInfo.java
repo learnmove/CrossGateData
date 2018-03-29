@@ -2,11 +2,8 @@ package cg.data.map.dungeon;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.util.List;
 
 import cg.data.map.MapInfo;
-import cg.data.map.Warp;
-import cg.data.sprite.NpcInfo;
 import gnu.trove.map.TIntObjectMap;
 
 public interface IDungeonMapInfo<T> extends MapInfo {
@@ -32,10 +29,6 @@ public interface IDungeonMapInfo<T> extends MapInfo {
 	int getObjectId(int index);
 	
 	void setName(String name);
-	
-	void setGoWarp(Warp warp, List<NpcInfo> npcInfoList);
-	
-	void setBackWarp(Warp warp, List<NpcInfo> npcInfoList);
 	
 	void output(BufferedWriter bw) throws Exception;
 	

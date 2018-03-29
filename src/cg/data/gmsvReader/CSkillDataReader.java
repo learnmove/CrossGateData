@@ -191,8 +191,7 @@ public class CSkillDataReader extends BaseObjectReader<SkillLevelData, ConfTech>
 		for (short produceId : produces) {
 			if (list.size() == 0) {
 				list.add(produceId);
-			}
-			if (list.get(list.size() - 1) == produceId) {
+			} else if (list.get(list.size() - 1) == produceId) {
 				list.clear();
 				break;
 			} else {

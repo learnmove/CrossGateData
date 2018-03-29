@@ -28,7 +28,7 @@ public interface MapInfo {
 	
 	byte getMark(int east, int south);
 	
-	int getWarpId(int east, int south);
+	Warp getWarp(int east, int south);
 	
 	void addWarp(Warp warp);
 	

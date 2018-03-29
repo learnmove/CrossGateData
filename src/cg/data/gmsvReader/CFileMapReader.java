@@ -5,10 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 import cg.base.image.ImageDictionary;
 import cg.base.map.MapCell;
@@ -17,13 +21,14 @@ import cg.base.util.IOUtils;
 import cg.base.util.MathUtil;
 import cg.data.loader.IDataPlatform;
 import cg.data.map.MapInfo;
-import cg.data.map.MapReader;
 import cg.data.map.Warp;
-import cg.data.map.WarpManager;
-import gnu.trove.map.TIntIntMap;
-import gnu.trove.map.hash.TIntIntHashMap;
+import cg.data.resource.ObjectReader;
+import cg.data.resource.ProjectData;
+import gnu.trove.impl.unmodifiable.TUnmodifiableIntObjectMap;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class CFileMapReader implements MapReader {
+public class CFileMapReader implements ObjectReader<MapInfo> {
 	
 	private static final Logger log = LoggerFactory.getLogger(CFileMapReader.class);
 	
@@ -37,24 +42,21 @@ public class CFileMapReader implements MapReader {
 	}
 
 	@Override
-	public MapInfo[] load() {
-		File file = new File(platform.getClientFilePath());
-		file = new File(file, pathName);
-		File[] mapFiles = file.listFiles();
-		MapInfo[] mapInfos = new MapInfo[mapFiles.length];
-		for (int i = 0;i < mapFiles.length;i++) {
-			try {
-				mapInfos[i] = new FileMapInfo(mapFiles[i], platform.getWarpManager());
-			} catch (IOException e) {
-				log.error("", e);
-			}
+	public List<MapInfo> read(ProjectData projectData) {
+		// Load all warps.
+		Table<Integer, Integer, Warp> warps = HashBasedTable.create();
+		for (Warp warp : projectData.read(Warp.class)) {
+			warps.put(warp.getSourceMapId(), warp.getId(), warp);
 		}
-		return mapInfos;
-	}
-
-	@Override
-	public String getName() {
-		return getClass().getName();
+		// Create all map info.
+		File file = new File(new File(platform.getClientFilePath()), pathName);
+		return ObjectReader.transform(file.listFiles(), input -> {
+			try {
+				return new FileMapInfo(input, warps);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 	
 	private static interface ContentReader {
@@ -75,9 +77,9 @@ public class CFileMapReader implements MapReader {
 		
 		private int[] globalIds, objectIds;
 		
-		private TIntIntMap warpIds;
+		private TIntObjectMap<Warp> warps, extraWarps = new TIntObjectHashMap<>();
 		
-		public FileMapInfo(File file, WarpManager warpManager) throws IOException {
+		public FileMapInfo(File file, Table<Integer, Integer, Warp> warps) throws IOException {
 			fileName = file.getName();
 			String[] infos = fileName.split("_");
 			try {
@@ -86,10 +88,9 @@ public class CFileMapReader implements MapReader {
 				mapId = Integer.parseInt(infos[1]);
 			}
 			try (FileInputStream fis = new FileInputStream(file)) {
-				warpIds = new TIntIntHashMap();
 				readHead(fis);
 				readContent(fis);
-				analysis(warpManager.getWarps(mapId));
+				analysis(warps.row(mapId));
 			} catch (Exception e) {
 				throw e;
 			}
@@ -170,12 +171,15 @@ public class CFileMapReader implements MapReader {
 		
 		private void analysis(Map<Integer, Warp> warps) {
 			if (warps != null) {
-				Collection<Warp> values = warps.values();
-				for (Warp warp : values) {
+				this.warps = new TIntObjectHashMap<>(warps.size());
+				for (Warp warp : warps.values()) {
 					int index = calcIndex(warp.getSourceMapEast(), warp.getSourceMapSouth());
 					marks[index] = MapCell.MARK_WARP;
-					warpIds.put(index, warp.getId());
+					this.warps.put(index, warp);
 				}
+				this.warps = new TUnmodifiableIntObjectMap<>(this.warps);
+			} else {
+				this.warps = new TUnmodifiableIntObjectMap<>(new TIntObjectHashMap<>(0));
 			}
 		}
 		
@@ -223,17 +227,10 @@ public class CFileMapReader implements MapReader {
 		}
 
 		@Override
-		public int getWarpId(int east, int south) {
-			int key = calcIndex(east, south);
-			return warpIds.containsKey(key) ? warpIds.get(key) : NO_WARP_ID;
-		}
-
-		@Override
 		public void addWarp(Warp warp) {
 			int key = calcIndex(warp.getSourceMapEast(), warp.getSourceMapSouth());
-			warpIds.put(key, warp.getId());
+			extraWarps.put(key, warp);
 			marks[key] = MapCell.MARK_WARP;
-			platform.getWarpManager().addWarp(warp);
 		}
 
 		@Override
@@ -256,6 +253,18 @@ public class CFileMapReader implements MapReader {
 		public String getFileName() {
 			return fileName;
 		}
+
+		@Override
+		public Warp getWarp(int east, int south) {
+			int key = calcIndex(east, south);
+			return warps.containsKey(key) ? warps.get(key) : extraWarps.get(key);
+		}
+		
+	}
+
+	@Override
+	public void output(File outFile, Collection<MapInfo> collection) throws Exception {
+		// TODO Auto-generated method stub
 		
 	}
 

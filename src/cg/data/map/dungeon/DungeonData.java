@@ -1,5 +1,7 @@
 package cg.data.map.dungeon;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -8,10 +10,11 @@ import cg.base.map.MapCell;
 import cg.base.util.MathUtil;
 import cg.data.map.GameMap;
 import cg.data.map.MapInfo;
-import cg.data.map.MapReader;
+import cg.data.resource.ObjectReader;
+import cg.data.resource.ProjectData;
 import cg.data.sprite.NpcTemplate;
 
-public class DungeonData implements MapReader {
+public class DungeonData implements ObjectReader<MapInfo> {
 	
 	public static final byte LOCAL_INDEX_MAP_ID = 0;
 	
@@ -19,7 +22,7 @@ public class DungeonData implements MapReader {
 	
 	public static final byte LOCAL_INDEX_SOUTH = 2;
 	
-	private final MapInfo[] mapInfos;
+	private final List<MapInfo> mapInfos;
 	
 	private final NpcTemplate[] npcTemplates;
 	
@@ -27,16 +30,13 @@ public class DungeonData implements MapReader {
 	
 	private final GameMap enterMap, exitMap;
 	
-	private final String name;
-	
-	public DungeonData(MapInfo[] mapInfos, NpcTemplate[] npcTemplates, int eastRange, int southRange, GameMap enterMap, GameMap exitMap, String name) {
+	public DungeonData(MapInfo[] mapInfos, NpcTemplate[] npcTemplates, int eastRange, int southRange, GameMap enterMap, GameMap exitMap) {
 		this.npcTemplates = npcTemplates;
-		this.mapInfos = mapInfos;
+		this.mapInfos = Lists.newArrayList(mapInfos);
 		aoiEastRange = eastRange;
 		aoiSouthRange = southRange;
 		this.enterMap = enterMap;
 		this.exitMap = exitMap;
-		this.name = name;
 	}
 
 	public NpcTemplate[] getNpcTemplates() {
@@ -57,16 +57,6 @@ public class DungeonData implements MapReader {
 	
 	public GameMap getExitMap() {
 		return exitMap;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public MapInfo[] load() {
-		return mapInfos;
 	}
 	
 	public int[][] getCanUseLocals(int count) {
@@ -90,6 +80,17 @@ public class DungeonData implements MapReader {
 			}
 			return array;
 		}
+	}
+
+	@Override
+	public List<MapInfo> read(ProjectData projectData) {
+		return mapInfos;
+	}
+
+	@Override
+	public void output(File outFile, Collection<MapInfo> collection) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

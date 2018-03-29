@@ -3,9 +3,8 @@ package cg.data.loader;
 import java.net.URI;
 
 import cg.base.loader.Builder;
-import cg.data.map.CWarpManager;
-import cg.data.map.MapReader;
-import cg.data.map.WarpManager;
+import cg.data.map.MapInfo;
+import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ReloadManager;
 import cg.data.title.TitleManager;
@@ -20,10 +19,6 @@ public abstract class DataBuilder extends Builder implements IDataPlatform {
 	
 	protected TitleManager titleManager;
 	
-	protected WarpManager warpManager;
-	
-	protected MapReader mapReader;
-	
 	protected URI serverFilePath;
 
 	@Override
@@ -36,8 +31,7 @@ public abstract class DataBuilder extends Builder implements IDataPlatform {
 		registerReload();
 		reloadManager.reload();
 		titleManager = createTitleManager();
-		warpManager = createWarpManager();
-		mapReader = createMapReader();
+		projectData.addObjectReader(createMapReader());
 		loadMore0();
 	}
 	
@@ -61,11 +55,7 @@ public abstract class DataBuilder extends Builder implements IDataPlatform {
 
 	protected abstract ProjectData createProjectData();
 
-	protected WarpManager createWarpManager() {
-		return new CWarpManager(getSourceData());
-	}
-
-	protected abstract MapReader createMapReader();
+	protected abstract ObjectReader<MapInfo> createMapReader();
 	
 	protected abstract URI loadServerFilePath() throws Exception;
 
@@ -87,16 +77,6 @@ public abstract class DataBuilder extends Builder implements IDataPlatform {
 	@Override
 	public final TitleManager getTitleManager() {
 		return titleManager;
-	}
-
-	@Override
-	public final WarpManager getWarpManager() {
-		return warpManager;
-	}
-
-	@Override
-	public final MapReader getMapReader() {
-		return mapReader;
 	}
 	
 	@Override

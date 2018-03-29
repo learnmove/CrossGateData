@@ -11,14 +11,12 @@ import static cg.base.util.MathUtil.intToByte;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.OBSTACLE_COUNT_INDEX;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.OBSTACLE_EAST_INDEX;
 import static cg.data.map.dungeon.DungeonMapRegionInfo.OBSTACLE_SOUTH_INDEX;
-import static cg.data.sprite.NpcInfo.SPECIAL_NPC_ID_WARP;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +26,6 @@ import com.google.common.collect.Table;
 import cg.base.image.ImageDictionary;
 import cg.base.reader.ImageDictionaryReader;
 import cg.data.map.Warp;
-import cg.data.map.WarpManager;
-import cg.data.sprite.NpcInfo;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntIntHashMap;
@@ -49,7 +45,7 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 		1, 1
 	};
 	
-	private int mapId, maxEast, maxSouth, goWarpId, backWarpId;
+	private int mapId, maxEast, maxSouth;
 	
 	private String name, fileName;
 	
@@ -59,13 +55,12 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	
 	private FileInputStream fis;
 	
+	private TIntObjectMap<Warp> warps;
+	
 	private final ImageDictionaryReader reader;
 	
-	private final WarpManager warpManager;
-	
-	public DungeonMapInfo(ImageDictionaryReader reader, WarpManager warpManager) {
+	public DungeonMapInfo(ImageDictionaryReader reader) {
 		this.reader = reader;
-		this.warpManager = warpManager;
 	}
 
 	@Override
@@ -140,43 +135,28 @@ public class DungeonMapInfo implements IDungeonMapInfo<GMSV_Dungeon> {
 	}
 
 	@Override
-	public int getWarpId(int east, int south) {
-		int index = calcIndex(east, south);
-		return goWarpId == index ? goWarpId : backWarpId == index ? backWarpId : NO_WARP_ID;
+	public Warp getWarp(int east, int south) {
+		return warps.get(calcIndex(east, south));
 	}
 
 	@Override
 	public void addWarp(Warp warp) {
 		int key = calcIndex(warp.getSourceMapEast(), warp.getSourceMapSouth());
 		marks[key] = MARK_WARP;
-		warpManager.addWarp(warp);
-	}
-
-	@Override
-	public void setGoWarp(Warp warp, List<NpcInfo> npcInfoList) {
-		goWarpId = warp.getId();
-		addWarp(warp);
-		setWarpResource(warp, npcInfoList);
-	}
-
-	@Override
-	public void setBackWarp(Warp warp, List<NpcInfo> npcInfoList) {
-		backWarpId = warp.getId();
-		addWarp(warp);
-		setWarpResource(warp, npcInfoList);
+		warps.put(key, warp);
 	}
 	
-	private void setWarpResource(Warp warp, List<NpcInfo> npcInfoList) {
-		if (warp.getResourceGlobalId() >= 1 << 16) { // if global id more than 65535, create a NPC
-			NpcInfo npcInfo = new NpcInfo(SPECIAL_NPC_ID_WARP);
-			npcInfo.setCoordinates(new int[]{warp.getSourceMapEast(), warp.getSourceMapSouth(), getMapId()});
-			npcInfo.setResourcesId(warp.getResourceGlobalId());
-			npcInfoList.add(npcInfo);
-		} else { // map image global id must less than 65536
-			int key = calcIndex(warp.getSourceMapEast(), warp.getSourceMapSouth());
-			intToByte(objectImageGlobalIds, key, DATA_LENGTH, warp.getResourceGlobalId());
-		}
-	}
+//	private void setWarpResource(Warp warp, List<NpcInfo> npcInfoList) {
+//		if (warp.getResourceGlobalId() >= 1 << 16) { // If global id more than 65535, create a NPC
+//			NpcInfo npcInfo = new NpcInfo(SPECIAL_NPC_ID_WARP);
+//			npcInfo.setCoordinates(new int[]{warp.getSourceMapEast(), warp.getSourceMapSouth(), getMapId()});
+//			npcInfo.setResourcesId(warp.getResourceGlobalId());
+//			npcInfoList.add(npcInfo);
+//		} else { // map image global id must less than 65536
+//			int key = calcIndex(warp.getSourceMapEast(), warp.getSourceMapSouth());
+//			intToByte(objectImageGlobalIds, key, DATA_LENGTH, warp.getResourceGlobalId());
+//		}
+//	}
 
 	@Override
 	public void output(BufferedWriter bw) throws Exception {

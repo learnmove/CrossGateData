@@ -1,10 +1,9 @@
 package cg.data.map.dungeon;
 
+import com.google.common.collect.Range;
+
 import cg.data.map.GameMap;
 import cg.data.map.MapArea;
-import cg.data.map.WarpManager;
-
-import com.google.common.collect.Range;
 
 public interface Dungeon {
 	
@@ -12,7 +11,7 @@ public interface Dungeon {
 	
 	int getMapId();
 	
-	DungeonData refresh(WarpManager warpManager, GameMap enterMap, GameMap exitMap);
+	DungeonData refresh(GameMap enterMap, GameMap exitMap);
 	
 	int getEncountId();
 	

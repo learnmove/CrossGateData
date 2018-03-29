@@ -27,7 +27,6 @@ import cg.data.map.GameMap;
 import cg.data.map.LocalInfo;
 import cg.data.map.MapArea;
 import cg.data.map.Warp;
-import cg.data.map.WarpManager;
 import cg.data.map.dungeon.Dungeon;
 import cg.data.map.dungeon.DungeonData;
 import cg.data.map.dungeon.DungeonMapInfo;
@@ -170,19 +169,19 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 		}
 
 		@Override
-		public DungeonData refresh(WarpManager warpManager, GameMap enterMap, GameMap exitMap) {
+		public DungeonData refresh(GameMap enterMap, GameMap exitMap) {
 			List<NpcInfo> npcInfoList = Lists.newLinkedList(); // cache the animation warp and box
 			IDungeonMapInfo<GMSV_Dungeon>[] mapInfos = new DungeonMapInfo[MathUtil.getRandomInRangeByte(floorRange)];
 			List<TIntObjectMap<int[]>> cellsList = Lists.newArrayListWithCapacity(mapInfos.length);
 			int levelRange = enemyLevel.upperEndpoint() - enemyLevel.lowerEndpoint(), maxFloor = mapInfos.length;
 			for (int floor = 0;floor < maxFloor;floor++) {
-				mapInfos[floor] = new DungeonMapInfo(reader, warpManager);
+				mapInfos[floor] = new DungeonMapInfo(reader);
 				mapInfos[floor].setMapId(mapId + (floor << 16));
 				mapInfos[floor].setName(getName() + MessageFormat.format(floorText, floor + 1));
 				TIntObjectMap<int[]> canUseCells = mapInfos[floor].create(CREATE_SUB_ROOM_RATE, this, false, (short) ((floor + 1) * levelRange / maxFloor + enemyLevel.lowerEndpoint()));
 				cellsList.add(canUseCells);
 				
-				createWarp(floor, cellsList, warpManager, mapInfos, npcInfoList, enterMap, exitMap);
+				createWarp(floor, cellsList, mapInfos, enterMap, exitMap);
 				mapInfos[floor].createObject(canUseCells, obstacles, this);
 			}
 //			int count = boxAmount;
@@ -199,7 +198,7 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			
 //			output(mapInfos);
 			cellsList.clear();
-			return new DungeonData(mapInfos, npcInfoList.toArray(new NpcTemplate[npcInfoList.size()]), aoiEastRange, aoiSouthRange, enterMap, exitMap, getName());
+			return new DungeonData(mapInfos, npcInfoList.toArray(new NpcTemplate[npcInfoList.size()]), aoiEastRange, aoiSouthRange, enterMap, exitMap);
 		}
 
 		@Override
@@ -270,7 +269,7 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			return list;
 		}
 		
-		private void createWarp(int floor, List<TIntObjectMap<int[]>> cellsList, WarpManager warpManager, IDungeonMapInfo<GMSV_Dungeon>[] mapInfos, List<NpcInfo> npcInfoList, GameMap enterMap, GameMap exitMap) {
+		private void createWarp(int floor, List<TIntObjectMap<int[]>> cellsList, IDungeonMapInfo<GMSV_Dungeon>[] mapInfos, GameMap enterMap, GameMap exitMap) {
 			TIntObjectMap<int[]> canUseCells = cellsList.get(floor);
 			List<Integer> canUseKeys = Ints.asList(canUseCells.keys());
 			int[] local = canUseCells.remove(canUseKeys.remove(MathUtil.getRandom(canUseCells.size())));
@@ -278,7 +277,7 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 			int backMapId, east, south, resourceGlobalId;;
 			Warp comeWarp;
 			int mapId = mapInfos[floor].getMapId();
-			if (floor == 0) { // the first map's come warp in a map which the enter info's map id
+			if (floor == 0) { // The first map's come warp in a map which the enter info's map id.
 				LocalInfo localInfo = GameMapUtil.getAEmptyLocal(enterMap.getMapInfo(), getEnterInfo());
 				if (localInfo == null) {
 					log.warn("The enter is obstacle.");
@@ -286,31 +285,28 @@ class GMSV_DungeonReader implements ObjectReader<Dungeon> {
 				}
 				east = localInfo.getEast();
 				south = localInfo.getSouth();
-				comeWarp = CWarpReader.createWarp(makeWarpId(), enterInfo.getMapId(), east, south, mapId, local[0], local[1], warpResourceGlobalId[ENTER_IN_RESOURCE_GLOBAL_ID_INDEX]);
+				comeWarp = Warp.createWarp(makeWarpId(), enterInfo.getMapId(), east, south, mapId, local[0], local[1], warpResourceGlobalId[ENTER_IN_RESOURCE_GLOBAL_ID_INDEX]);
 				enterMap.addWarp(comeWarp);
 				backMapId = enterInfo.getMapId();
 				resourceGlobalId = warpResourceGlobalId[ENTER_OUT_RESOURCE_GLOBAL_ID_INDEX];
-			} else { // if the map is not first map, the come warp must create in previous map
+			} else { // If the map is not first map, the come warp must create in previous map.
 				TIntObjectMap<int[]> map = cellsList.get(floor - 1);
 				int[] backLocal = map.remove(Ints.asList(map.keys()).get(MathUtil.getRandom(map.size())));
 				east = backLocal[0];
 				south = backLocal[1];
 				backMapId = mapInfos[floor - 1].getMapId();
-				comeWarp = CWarpReader.createWarp(makeWarpId(), backMapId, east, south, mapId, local[0], local[1], warpResourceGlobalId[NEXT_IN_RESOURCE_GLOBAL_ID_INDEX]);
-				mapInfos[floor - 1].setGoWarp(comeWarp, npcInfoList);
+				comeWarp = Warp.createWarp(makeWarpId(), backMapId, east, south, mapId, local[0], local[1], warpResourceGlobalId[NEXT_IN_RESOURCE_GLOBAL_ID_INDEX]);
+				mapInfos[floor - 1].addWarp(comeWarp);
 				resourceGlobalId = warpResourceGlobalId[NEXT_BACK_RESOURCE_GLOBAL_ID_INDEX];
 				if (floor == mapInfos.length - 1 && enterInfo != null) { // the last map must create exit if it has, and players can not go back
 					int[] exitLocal = canUseCells.remove(canUseKeys.remove(MathUtil.getRandom(canUseCells.size())));
 					int exitEast = enterInfo.getEast(), exitSouth = exitInfo.getSouth();
-					Warp exitWarp = CWarpReader.createWarp(makeWarpId(), mapId, exitLocal[0], exitLocal[1], enterInfo.getMapId(), exitEast, exitSouth, warpResourceGlobalId[EXIT_OUT_RESOURCE_GLOBAL_ID_INDEX]);
-					warpManager.addWarp(exitWarp);
-					mapInfos[floor].setGoWarp(exitWarp, npcInfoList);
+					Warp exitWarp = Warp.createWarp(makeWarpId(), mapId, exitLocal[0], exitLocal[1], enterInfo.getMapId(), exitEast, exitSouth, warpResourceGlobalId[EXIT_OUT_RESOURCE_GLOBAL_ID_INDEX]);
+					mapInfos[floor].addWarp(exitWarp);
 				}
-				warpManager.addWarp(comeWarp);
 			}
-			Warp backWarp = CWarpReader.createWarp(makeWarpId(), mapId, local[0], local[1], backMapId, east, south, resourceGlobalId);
-			warpManager.addWarp(backWarp);
-			mapInfos[floor].setBackWarp(backWarp, npcInfoList);
+			Warp backWarp = Warp.createWarp(makeWarpId(), mapId, local[0], local[1], backMapId, east, south, resourceGlobalId);
+			mapInfos[floor].addWarp(backWarp);
 		}
 
 		@Override

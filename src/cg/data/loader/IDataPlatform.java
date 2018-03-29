@@ -1,8 +1,6 @@
 package cg.data.loader;
 
 import cg.base.loader.IPlatform;
-import cg.data.map.MapReader;
-import cg.data.map.WarpManager;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ReloadManager;
 import cg.data.title.TitleManager;
@@ -22,10 +20,6 @@ public interface IDataPlatform extends IPlatform {
 	ReloadManager getReloadManager();
 	
 	TitleManager getTitleManager();
-	
-	WarpManager getWarpManager();
-	
-	MapReader getMapReader();
 	@Override
 	ProjectData getSourceData();
 
