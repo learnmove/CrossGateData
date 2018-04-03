@@ -19,6 +19,8 @@ public interface MapUnit extends Unit, Updatable {
 	
 	void move(GameMap map, int east, int south);
 	
+	void move(int east, int south);
+	
 	GameMap getMap();
 	
 	void receiveMove(MapUnit unit, MoveState state);

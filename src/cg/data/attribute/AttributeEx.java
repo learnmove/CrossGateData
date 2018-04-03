@@ -8,6 +8,8 @@ public interface AttributeEx extends Attribute {
 	
 	byte INJURED_MAX = 4;
 	
+	void setBirthData(BirthData birthData);
+	
 	BirthData getBirthData();
 	
 	void setAttributeCalculator(AttributeCalculator attributeCalculator);
