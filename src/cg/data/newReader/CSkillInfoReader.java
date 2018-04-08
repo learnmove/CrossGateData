@@ -14,9 +14,9 @@ import com.google.common.collect.Maps;
 
 import cg.base.loader.IOCBeanType;
 import cg.base.skill.SkillLevelData;
+import cg.base.skill.SkillTemplate;
 import cg.base.sprite.AttributeCell;
 import cg.base.util.MathUtil;
-import cg.data.battle.skill.SkillInfo;
 import cg.data.gmsvReader.CSkillDataReader.CSelfEffect;
 import cg.data.gmsvReader.CSkillDataReader.CSkillData;
 import cg.data.gmsvReader.CSkillTemplateReader.CSkillTemplate;
@@ -25,15 +25,15 @@ import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
 
 @IOCBean(type=IOCBeanType.READER)
-public class CSkillInfoReader implements ObjectReader<SkillInfo> {
+public class CSkillInfoReader implements ObjectReader<SkillTemplate> {
 
 	@Override
-	public List<SkillInfo> read(ProjectData projectData) {
+	public List<SkillTemplate> read(ProjectData projectData) {
 		Document doc = projectData.getXmlResource("skills");
 		if (doc != null) {
 			Element root = doc.getRootElement();
 			List<Element> list = root.getChildren("skill");
-			List<SkillInfo> ret = Lists.newArrayListWithCapacity(list.size());
+			List<SkillTemplate> ret = Lists.newArrayListWithCapacity(list.size());
 			for (int i = 0;i < list.size();i++) {
 				Element element = list.get(i);
 				ret.add(new CSkillInfo(element, projectData.getMessageManager()));
@@ -44,7 +44,7 @@ public class CSkillInfoReader implements ObjectReader<SkillInfo> {
 		}
 	}
 	
-	protected static class CSkillInfo extends CSkillTemplate implements SkillInfo {
+	protected static class CSkillInfo extends CSkillTemplate {
 		
 		private Map<Integer, SkillLevelData> skillLevelDatas;
 		
@@ -85,12 +85,12 @@ public class CSkillInfoReader implements ObjectReader<SkillInfo> {
 		}
 
 		@Override
-		public SkillLevelData getSkillLevelData(int skillCode) {
+		public SkillLevelData getSkillData(int skillCode) {
 			return skillLevelDatas.get(skillCode);
 		}
 
 		@Override
-		public Collection<SkillLevelData> getSkillLevelDatas() {
+		public Collection<SkillLevelData> getSkillDatas() {
 			return skillLevelDatas.values();
 		}
 		
@@ -161,7 +161,7 @@ public class CSkillInfoReader implements ObjectReader<SkillInfo> {
 	}
 
 	@Override
-	public void output(File outFile, Collection<SkillInfo> collection) throws Exception {
+	public void output(File outFile, Collection<SkillTemplate> collection) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

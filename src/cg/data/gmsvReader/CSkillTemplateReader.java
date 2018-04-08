@@ -7,6 +7,7 @@ import java.util.Map;
 import org.tool.server.ioc.IOCBean;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Maps;
@@ -28,9 +29,9 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 	
 	private static Table<Short, Byte, Integer> LEVELS;
 	
+	private static MessageManager messageManager;
+	
 	public static class CSkillTemplate implements SkillTemplate {
-		
-		protected static MessageManager messageManager;
 		
 		protected String name;
 		
@@ -118,6 +119,11 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 		public SkillLevelData getSkillData(byte skillLevel) {
 			return LEVELS.contains(id, skillLevel) ? getSkillData(LEVELS.get(id, skillLevel)) : null;
 		}
+
+		@Override
+		public Collection<SkillLevelData> getSkillDatas() {
+			return LEVEL_DATAS.containsRow(id) ? LEVEL_DATAS.row(id).values() : ImmutableList.of();
+		}
 		
 	}
 
@@ -159,7 +165,9 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 	}
 
 	@Override
-	protected void readBegin(ProjectData projectData) {
+	protected void readFinish(ProjectData projectData) {
+		messageManager = projectData.getMessageManager();
+		
 		Table<Short, Integer, SkillLevelData> datas = HashBasedTable.create();
 		Table<Short, Byte, Integer> levels = HashBasedTable.create();
 		for (SkillLevelData skillLevelData : projectData.read(SkillLevelData.class)) {
@@ -170,11 +178,6 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 		}
 		LEVEL_DATAS = ImmutableTable.copyOf(datas);
 		LEVELS = ImmutableTable.copyOf(levels);
-	}
-
-	@Override
-	protected void readFinish(ProjectData projectData) {
-		CSkillTemplate.messageManager = projectData.getMessageManager();
 	}
 
 }

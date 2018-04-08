@@ -15,7 +15,6 @@ public abstract class BaseObjectReader<T, S> implements ObjectReader<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public final List<T> read(ProjectData projectData) {
-		readBegin(projectData);
 		Class<S> clz = getFromClass();
 		
 		Method arrayFromText;
@@ -38,8 +37,6 @@ public abstract class BaseObjectReader<T, S> implements ObjectReader<T> {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	protected void readBegin(ProjectData projectData) {}
 	
 	protected void readFinish(ProjectData projectData) {}
 	
