@@ -6,11 +6,15 @@ import java.util.Map;
 
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 
 import cg.base.conf.ConfSkill;
 import cg.base.loader.IOCBeanType;
+import cg.base.skill.SkillLevelData;
 import cg.base.skill.SkillTemplate;
 import cg.base.sprite.Attribute;
 import cg.base.sprite.AttributeCell;
@@ -20,7 +24,13 @@ import cg.data.resource.ProjectData;
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSkill> {
 	
+	private static Table<Short, Integer, SkillLevelData> LEVEL_DATAS;
+	
+	private static Table<Short, Byte, Integer> LEVELS;
+	
 	public static class CSkillTemplate implements SkillTemplate {
+		
+		protected static MessageManager messageManager;
 		
 		protected String name;
 		
@@ -33,8 +43,6 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 		protected boolean notGainExp;
 		
 		protected Map<String, AttributeCell> attributeCells;
-		
-		protected static MessageManager messageManager;
 
 		@Override
 		public String getName() {
@@ -100,6 +108,16 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 		public boolean getNotGainExp() {
 			return notGainExp;
 		}
+
+		@Override
+		public SkillLevelData getSkillData(int skillCode) {
+			return LEVEL_DATAS.get(id, skillCode);
+		}
+
+		@Override
+		public SkillLevelData getSkillData(byte skillLevel) {
+			return LEVELS.contains(id, skillLevel) ? getSkillData(LEVELS.get(id, skillLevel)) : null;
+		}
 		
 	}
 
@@ -138,6 +156,20 @@ public class CSkillTemplateReader extends BaseObjectReader<SkillTemplate, ConfSk
 		ret.notGainExp = s.getNotGainExp();
 		ret.doubleExpType = s.getDoubleExpType();
 		return ret;
+	}
+
+	@Override
+	protected void readBegin(ProjectData projectData) {
+		Table<Short, Integer, SkillLevelData> datas = HashBasedTable.create();
+		Table<Short, Byte, Integer> levels = HashBasedTable.create();
+		for (SkillLevelData skillLevelData : projectData.read(SkillLevelData.class)) {
+			short skillId = skillLevelData.getSkillId();
+			int skillCode = skillLevelData.getSkillCode();
+			datas.put(skillId, skillCode, skillLevelData);
+			levels.put(skillId, skillLevelData.getLevel(), skillCode);
+		}
+		LEVEL_DATAS = ImmutableTable.copyOf(datas);
+		LEVELS = ImmutableTable.copyOf(levels);
 	}
 
 	@Override
