@@ -10,9 +10,9 @@ import com.google.common.collect.Lists;
 
 import cg.base.conf.ConfTech;
 import cg.base.loader.IOCBeanType;
+import cg.base.skill.SkillLevelData;
+import cg.base.skill.SkillLevelData.SelfEffect;
 import cg.base.util.MathUtil;
-import cg.data.battle.skill.SkillLevelData;
-import cg.data.battle.skill.SkillLevelData.SelfEffect;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ProjectData;
 

@@ -2,10 +2,11 @@ package cg.data.battle.skill;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
+import cg.base.skill.SkillLevelData;
 import cg.data.resource.ProjectData;
 import cg.data.resource.ProjectDataListener;
-
-import com.google.common.collect.Maps;
 
 public class CShots implements ProjectDataListener {
 	

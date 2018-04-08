@@ -9,20 +9,20 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.tool.server.ioc.IOCBean;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import cg.base.loader.IOCBeanType;
+import cg.base.skill.SkillLevelData;
 import cg.base.sprite.AttributeCell;
 import cg.base.util.MathUtil;
 import cg.data.battle.skill.SkillInfo;
-import cg.data.battle.skill.SkillLevelData;
 import cg.data.gmsvReader.CSkillDataReader.CSelfEffect;
 import cg.data.gmsvReader.CSkillDataReader.CSkillData;
 import cg.data.gmsvReader.CSkillTemplateReader.CSkillTemplate;
 import cg.data.resource.MessageManager;
 import cg.data.resource.ObjectReader;
 import cg.data.resource.ProjectData;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @IOCBean(type=IOCBeanType.READER)
 public class CSkillInfoReader implements ObjectReader<SkillInfo> {
